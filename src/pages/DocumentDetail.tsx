@@ -153,8 +153,18 @@ export default function DocumentDetail() {
             </div>
           </div>
 
+          {/* Bank info */}
+          {(doc.company.iban || doc.company.bic || doc.company.bankName) && (
+            <div className="mt-10 p-4 bg-secondary/30 rounded-lg">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Coordonnées bancaires</p>
+              {doc.company.bankName && <p className="text-sm text-foreground">Banque : {doc.company.bankName}</p>}
+              {doc.company.iban && <p className="text-sm text-foreground">IBAN : {doc.company.iban}</p>}
+              {doc.company.bic && <p className="text-sm text-foreground">BIC : {doc.company.bic}</p>}
+            </div>
+          )}
+
           {/* Footer */}
-          <div className="mt-16 pt-6 border-t border-border text-center">
+          <div className="mt-8 pt-6 border-t border-border text-center">
             <p className="text-xs text-muted-foreground">{doc.company.name} — {doc.company.address}</p>
             <p className="text-xs text-muted-foreground">{doc.company.email} — {doc.company.phone}</p>
           </div>

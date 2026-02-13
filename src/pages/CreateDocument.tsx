@@ -23,7 +23,7 @@ export default function CreateDocument() {
   const { addDocument } = useDocuments();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [company, setCompany] = useState({ name: 'SpeedWork SAS', address: '12 Rue de la Paix, 75002 Paris', phone: '+33 1 23 45 67 89', email: 'contact@speedwork.com', logo: '' as string | undefined, logoPosition: 'left' as 'left' | 'center' | 'right' });
+  const [company, setCompany] = useState({ name: 'SpeedWork SAS', address: '12 Rue de la Paix, 75002 Paris', phone: '+33 1 23 45 67 89', email: 'contact@speedwork.com', logo: '' as string | undefined, logoPosition: 'left' as 'left' | 'center' | 'right', iban: '', bic: '', bankName: '' });
   const [client, setClient] = useState({ name: '', email: '', phone: '', address: '' });
   const [status, setStatus] = useState<DocumentData['status']>('draft');
   const [dueDate, setDueDate] = useState('');
@@ -174,6 +174,21 @@ export default function CreateDocument() {
               <div className="space-y-1.5">
                 <Label className="text-xs">Adresse</Label>
                 <Input value={company.address} onChange={e => setCompany({ ...company, address: e.target.value })} />
+              </div>
+            </div>
+            <h4 className="font-medium text-sm text-muted-foreground mt-2">Informations bancaires</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs">Banque</Label>
+                <Input value={company.bankName} onChange={e => setCompany({ ...company, bankName: e.target.value })} placeholder="Nom de la banque" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">IBAN</Label>
+                <Input value={company.iban} onChange={e => setCompany({ ...company, iban: e.target.value })} placeholder="FR76 XXXX XXXX XXXX" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">BIC</Label>
+                <Input value={company.bic} onChange={e => setCompany({ ...company, bic: e.target.value })} placeholder="BNPAFRPP" />
               </div>
             </div>
           </div>
