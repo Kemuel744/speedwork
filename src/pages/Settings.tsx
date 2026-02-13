@@ -1,19 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Save } from 'lucide-react';
 import { toast } from 'sonner';
+import { useCompany } from '@/contexts/CompanyContext';
 
 export default function SettingsPage() {
-  const [companyName, setCompanyName] = useState('SpeedWork SAS');
-  const [companyEmail, setCompanyEmail] = useState('contact@speedwork.com');
-  const [companyPhone, setCompanyPhone] = useState('+33 1 23 45 67 89');
-  const [companyAddress, setCompanyAddress] = useState('12 Rue de la Paix, 75002 Paris');
-  const [companyIban, setCompanyIban] = useState('');
-  const [companyBic, setCompanyBic] = useState('');
-  const [companyBankName, setCompanyBankName] = useState('');
-  const [defaultTax, setDefaultTax] = useState(20);
+  const { company, updateCompany } = useCompany();
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,19 +23,19 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label>Nom de l'entreprise</Label>
-              <Input value={companyName} onChange={e => setCompanyName(e.target.value)} />
+              <Input value={company.name} onChange={e => updateCompany({ name: e.target.value })} />
             </div>
             <div className="space-y-1.5">
               <Label>Email</Label>
-              <Input value={companyEmail} onChange={e => setCompanyEmail(e.target.value)} />
+              <Input value={company.email} onChange={e => updateCompany({ email: e.target.value })} />
             </div>
             <div className="space-y-1.5">
               <Label>Téléphone</Label>
-              <Input value={companyPhone} onChange={e => setCompanyPhone(e.target.value)} />
+              <Input value={company.phone} onChange={e => updateCompany({ phone: e.target.value })} />
             </div>
             <div className="space-y-1.5">
               <Label>Adresse</Label>
-              <Input value={companyAddress} onChange={e => setCompanyAddress(e.target.value)} />
+              <Input value={company.address} onChange={e => updateCompany({ address: e.target.value })} />
             </div>
           </div>
         </div>
@@ -51,15 +45,15 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5">
               <Label>Banque</Label>
-              <Input value={companyBankName} onChange={e => setCompanyBankName(e.target.value)} placeholder="Nom de la banque" />
+              <Input value={company.bankName || ''} onChange={e => updateCompany({ bankName: e.target.value })} placeholder="Nom de la banque" />
             </div>
             <div className="space-y-1.5">
               <Label>IBAN</Label>
-              <Input value={companyIban} onChange={e => setCompanyIban(e.target.value)} placeholder="FR76 XXXX XXXX XXXX" />
+              <Input value={company.iban || ''} onChange={e => updateCompany({ iban: e.target.value })} placeholder="FR76 XXXX XXXX XXXX" />
             </div>
             <div className="space-y-1.5">
               <Label>BIC</Label>
-              <Input value={companyBic} onChange={e => setCompanyBic(e.target.value)} placeholder="BNPAFRPP" />
+              <Input value={company.bic || ''} onChange={e => updateCompany({ bic: e.target.value })} placeholder="BNPAFRPP" />
             </div>
           </div>
         </div>
@@ -68,7 +62,7 @@ export default function SettingsPage() {
           <h3 className="font-semibold text-foreground">Facturation</h3>
           <div className="space-y-1.5 max-w-xs">
             <Label>TVA par défaut (%)</Label>
-            <Input type="number" value={defaultTax} onChange={e => setDefaultTax(Number(e.target.value))} min={0} max={100} />
+            <Input type="number" value={company.defaultTaxRate} onChange={e => updateCompany({ defaultTaxRate: Number(e.target.value) })} min={0} max={100} />
           </div>
         </div>
 
