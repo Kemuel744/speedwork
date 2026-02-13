@@ -1,9 +1,9 @@
 import React from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useDocuments } from '@/contexts/DocumentsContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Printer, Download, Copy, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Printer, Download, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 
 const statusMap: Record<string, { label: string; class: string }> = {
@@ -29,8 +29,8 @@ export default function DocumentDetail() {
   }
 
   const st = statusMap[doc.status];
-
   const handlePrint = () => window.print();
+  const logoPos = doc.company.logoPosition || 'left';
 
   const handleConvertToInvoice = () => {
     if (doc.type !== 'quote') return;
@@ -79,6 +79,13 @@ export default function DocumentDetail() {
       {/* A4 Preview */}
       <div className="flex justify-center">
         <div className="a4-preview bg-card rounded-lg shadow-lg border border-border w-full max-w-[210mm] p-8 sm:p-12">
+          {/* Logo */}
+          {doc.company.logo && (
+            <div className={`mb-6 flex ${logoPos === 'center' ? 'justify-center' : logoPos === 'right' ? 'justify-end' : 'justify-start'}`}>
+              <img src={doc.company.logo} alt="Logo" className="h-16 w-auto max-w-[200px] object-contain" />
+            </div>
+          )}
+
           {/* Header */}
           <div className="flex justify-between items-start mb-10">
             <div>
@@ -130,9 +137,15 @@ export default function DocumentDetail() {
 
           {/* Totals */}
           <div className="flex justify-end">
-            <div className="w-64 space-y-2">
+            <div className="w-72 space-y-2">
+              {(doc.laborCost ?? 0) > 0 && (
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Main d'œuvre</span><span className="text-foreground">{doc.laborCost.toLocaleString('fr-FR')} €</span></div>
+              )}
               <div className="flex justify-between text-sm"><span className="text-muted-foreground">Sous-total</span><span className="text-foreground">{doc.subtotal.toLocaleString('fr-FR')} €</span></div>
               <div className="flex justify-between text-sm"><span className="text-muted-foreground">TVA ({doc.taxRate}%)</span><span className="text-foreground">{doc.taxAmount.toLocaleString('fr-FR')} €</span></div>
+              {(doc.withholdingRate ?? 0) > 0 && (
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Retenue à la source ({doc.withholdingRate}%)</span><span className="text-destructive">-{doc.withholdingAmount.toLocaleString('fr-FR')} €</span></div>
+              )}
               <div className="flex justify-between text-lg font-bold pt-3 border-t-2 border-primary/20">
                 <span className="text-foreground">Total</span>
                 <span className="text-primary">{doc.total.toLocaleString('fr-FR')} €</span>

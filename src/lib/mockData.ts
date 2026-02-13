@@ -38,7 +38,7 @@ export const mockDocuments: DocumentData[] = [
       { id: '1', description: 'Développement site web', quantity: 1, unitPrice: 3500, total: 3500 },
       { id: '2', description: 'Hébergement annuel', quantity: 1, unitPrice: 240, total: 240 },
     ],
-    subtotal: 3740, taxRate: 20, taxAmount: 748, total: 4488,
+    subtotal: 3740, laborCost: 0, taxRate: 20, taxAmount: 748, withholdingRate: 0, withholdingAmount: 0, total: 4488,
     createdBy: '1', clientId: '2',
   },
   {
@@ -49,7 +49,7 @@ export const mockDocuments: DocumentData[] = [
     items: [
       { id: '1', description: 'Consulting stratégie digitale', quantity: 5, unitPrice: 800, total: 4000 },
     ],
-    subtotal: 4000, taxRate: 20, taxAmount: 800, total: 4800,
+    subtotal: 4000, laborCost: 0, taxRate: 20, taxAmount: 800, withholdingRate: 0, withholdingAmount: 0, total: 4800,
     createdBy: '1', clientId: '3',
   },
   {
@@ -61,7 +61,7 @@ export const mockDocuments: DocumentData[] = [
       { id: '1', description: 'Refonte application mobile', quantity: 1, unitPrice: 12000, total: 12000 },
       { id: '2', description: 'Tests & QA', quantity: 1, unitPrice: 2000, total: 2000 },
     ],
-    subtotal: 14000, taxRate: 20, taxAmount: 2800, total: 16800,
+    subtotal: 14000, laborCost: 0, taxRate: 20, taxAmount: 2800, withholdingRate: 0, withholdingAmount: 0, total: 16800,
     createdBy: '1', clientId: '2',
   },
   {
@@ -72,7 +72,7 @@ export const mockDocuments: DocumentData[] = [
     items: [
       { id: '1', description: 'Formation React avancé', quantity: 3, unitPrice: 1200, total: 3600 },
     ],
-    subtotal: 3600, taxRate: 20, taxAmount: 720, total: 4320,
+    subtotal: 3600, laborCost: 0, taxRate: 20, taxAmount: 720, withholdingRate: 0, withholdingAmount: 0, total: 4320,
     createdBy: '1', clientId: '4',
   },
   {
@@ -84,7 +84,7 @@ export const mockDocuments: DocumentData[] = [
       { id: '1', description: 'Audit SEO complet', quantity: 1, unitPrice: 1500, total: 1500 },
       { id: '2', description: 'Optimisation performance', quantity: 1, unitPrice: 2500, total: 2500 },
     ],
-    subtotal: 4000, taxRate: 20, taxAmount: 800, total: 4800,
+    subtotal: 4000, laborCost: 0, taxRate: 20, taxAmount: 800, withholdingRate: 0, withholdingAmount: 0, total: 4800,
     createdBy: '1', clientId: '3',
   },
 ];

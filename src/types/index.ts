@@ -27,6 +27,7 @@ export interface CompanyInfo {
   phone: string;
   email: string;
   logo?: string;
+  logoPosition?: 'left' | 'center' | 'right';
 }
 
 export interface DocumentData {
@@ -45,8 +46,11 @@ export interface DocumentData {
   company: CompanyInfo;
   items: LineItem[];
   subtotal: number;
+  laborCost: number;
   taxRate: number;
   taxAmount: number;
+  withholdingRate: number;
+  withholdingAmount: number;
   total: number;
   createdBy: string;
   clientId: string;
