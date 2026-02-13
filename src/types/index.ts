@@ -28,6 +28,9 @@ export interface CompanyInfo {
   email: string;
   logo?: string;
   logoPosition?: 'left' | 'center' | 'right';
+  iban?: string;
+  bic?: string;
+  bankName?: string;
 }
 
 export interface DocumentData {

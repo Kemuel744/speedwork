@@ -10,6 +10,9 @@ export default function SettingsPage() {
   const [companyEmail, setCompanyEmail] = useState('contact@speedwork.com');
   const [companyPhone, setCompanyPhone] = useState('+33 1 23 45 67 89');
   const [companyAddress, setCompanyAddress] = useState('12 Rue de la Paix, 75002 Paris');
+  const [companyIban, setCompanyIban] = useState('');
+  const [companyBic, setCompanyBic] = useState('');
+  const [companyBankName, setCompanyBankName] = useState('');
   const [defaultTax, setDefaultTax] = useState(20);
 
   const handleSave = (e: React.FormEvent) => {
@@ -39,6 +42,24 @@ export default function SettingsPage() {
             <div className="space-y-1.5">
               <Label>Adresse</Label>
               <Input value={companyAddress} onChange={e => setCompanyAddress(e.target.value)} />
+            </div>
+          </div>
+        </div>
+
+        <div className="stat-card space-y-4">
+          <h3 className="font-semibold text-foreground">Informations bancaires</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="space-y-1.5">
+              <Label>Banque</Label>
+              <Input value={companyBankName} onChange={e => setCompanyBankName(e.target.value)} placeholder="Nom de la banque" />
+            </div>
+            <div className="space-y-1.5">
+              <Label>IBAN</Label>
+              <Input value={companyIban} onChange={e => setCompanyIban(e.target.value)} placeholder="FR76 XXXX XXXX XXXX" />
+            </div>
+            <div className="space-y-1.5">
+              <Label>BIC</Label>
+              <Input value={companyBic} onChange={e => setCompanyBic(e.target.value)} placeholder="BNPAFRPP" />
             </div>
           </div>
         </div>
