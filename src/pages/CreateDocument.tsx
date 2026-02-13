@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDocuments } from '@/contexts/DocumentsContext';
+import { useCompany } from '@/contexts/CompanyContext';
 import { DocumentType, LineItem, DocumentData } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,13 +22,24 @@ export default function CreateDocument() {
   const docType: DocumentType = type === 'quote' ? 'quote' : 'invoice';
   const navigate = useNavigate();
   const { addDocument } = useDocuments();
+  const { company: savedCompany } = useCompany();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [company, setCompany] = useState({ name: 'SpeedWork SAS', address: '12 Rue de la Paix, 75002 Paris', phone: '+33 1 23 45 67 89', email: 'contact@speedwork.com', logo: '' as string | undefined, logoPosition: 'left' as 'left' | 'center' | 'right', iban: '', bic: '', bankName: '' });
+  const [company, setCompany] = useState({
+    name: savedCompany.name,
+    address: savedCompany.address,
+    phone: savedCompany.phone,
+    email: savedCompany.email,
+    logo: savedCompany.logo,
+    logoPosition: savedCompany.logoPosition || 'left' as 'left' | 'center' | 'right',
+    iban: savedCompany.iban || '',
+    bic: savedCompany.bic || '',
+    bankName: savedCompany.bankName || '',
+  });
   const [client, setClient] = useState({ name: '', email: '', phone: '', address: '' });
   const [status, setStatus] = useState<DocumentData['status']>('draft');
   const [dueDate, setDueDate] = useState('');
-  const [taxRate, setTaxRate] = useState(20);
+  const [taxRate, setTaxRate] = useState(savedCompany.defaultTaxRate);
   const [laborCost, setLaborCost] = useState(0);
   const [withholdingRate, setWithholdingRate] = useState(0);
   const [items, setItems] = useState<LineItem[]>([
