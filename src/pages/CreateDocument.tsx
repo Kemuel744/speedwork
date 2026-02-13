@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDocuments } from '@/contexts/DocumentsContext';
 import { DocumentType, LineItem, DocumentData } from '@/types';
@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Trash2, Save } from 'lucide-react';
+import { Plus, Trash2, Save, Upload, Image } from 'lucide-react';
 import { toast } from 'sonner';
 
 function generateNumber(type: DocumentType) {
@@ -21,15 +21,32 @@ export default function CreateDocument() {
   const docType: DocumentType = type === 'quote' ? 'quote' : 'invoice';
   const navigate = useNavigate();
   const { addDocument } = useDocuments();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [company, setCompany] = useState({ name: 'SpeedWork SAS', address: '12 Rue de la Paix, 75002 Paris', phone: '+33 1 23 45 67 89', email: 'contact@speedwork.com' });
+  const [company, setCompany] = useState({ name: 'SpeedWork SAS', address: '12 Rue de la Paix, 75002 Paris', phone: '+33 1 23 45 67 89', email: 'contact@speedwork.com', logo: '' as string | undefined, logoPosition: 'left' as 'left' | 'center' | 'right' });
   const [client, setClient] = useState({ name: '', email: '', phone: '', address: '' });
   const [status, setStatus] = useState<DocumentData['status']>('draft');
   const [dueDate, setDueDate] = useState('');
   const [taxRate, setTaxRate] = useState(20);
+  const [laborCost, setLaborCost] = useState(0);
+  const [withholdingRate, setWithholdingRate] = useState(0);
   const [items, setItems] = useState<LineItem[]>([
     { id: crypto.randomUUID(), description: '', quantity: 1, unitPrice: 0, total: 0 },
   ]);
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast.error('Veuillez sélectionner une image');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setCompany(prev => ({ ...prev, logo: ev.target?.result as string }));
+    };
+    reader.readAsDataURL(file);
+  };
 
   const addLine = () => {
     setItems([...items, { id: crypto.randomUUID(), description: '', quantity: 1, unitPrice: 0, total: 0 }]);
@@ -49,9 +66,10 @@ export default function CreateDocument() {
     }));
   };
 
-  const subtotal = items.reduce((s, i) => s + i.total, 0);
+  const subtotal = items.reduce((s, i) => s + i.total, 0) + laborCost;
   const taxAmount = Math.round(subtotal * taxRate / 100 * 100) / 100;
-  const total = Math.round((subtotal + taxAmount) * 100) / 100;
+  const withholdingAmount = Math.round(subtotal * withholdingRate / 100 * 100) / 100;
+  const total = Math.round((subtotal + taxAmount - withholdingAmount) * 100) / 100;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,8 +93,11 @@ export default function CreateDocument() {
       company,
       items,
       subtotal,
+      laborCost,
       taxRate,
       taxAmount,
+      withholdingRate,
+      withholdingAmount,
       total,
       createdBy: '1',
       clientId: '',
@@ -94,10 +115,49 @@ export default function CreateDocument() {
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Company & Client info - side by side */}
+        {/* Company & Client info */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="stat-card space-y-4">
             <h3 className="font-semibold text-foreground">Votre entreprise</h3>
+
+            {/* Logo upload */}
+            <div className="space-y-2">
+              <Label className="text-xs">Logo</Label>
+              <div className="flex items-center gap-4">
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
+                {company.logo ? (
+                  <div className="relative">
+                    <img src={company.logo} alt="Logo" className="h-16 w-auto max-w-[160px] object-contain rounded border border-border" />
+                    <button type="button" className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full w-5 h-5 text-xs flex items-center justify-center" onClick={() => setCompany(prev => ({ ...prev, logo: undefined }))}>×</button>
+                  </div>
+                ) : (
+                  <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
+                    <Upload className="w-4 h-4 mr-2" />Ajouter un logo
+                  </Button>
+                )}
+                {company.logo && (
+                  <Button type="button" variant="ghost" size="sm" onClick={() => fileInputRef.current?.click()}>
+                    <Image className="w-4 h-4 mr-1" />Changer
+                  </Button>
+                )}
+              </div>
+              {company.logo && (
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Position du logo</Label>
+                  <Select value={company.logoPosition} onValueChange={(v: 'left' | 'center' | 'right') => setCompany(prev => ({ ...prev, logoPosition: v }))}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="left">Gauche</SelectItem>
+                      <SelectItem value="center">Centre</SelectItem>
+                      <SelectItem value="right">Droite</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs">Nom</Label>
@@ -143,7 +203,7 @@ export default function CreateDocument() {
 
         {/* Document meta */}
         <div className="stat-card">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="space-y-1.5">
               <Label className="text-xs">Statut</Label>
               <Select value={status} onValueChange={(v: DocumentData['status']) => setStatus(v)}>
@@ -166,6 +226,19 @@ export default function CreateDocument() {
               <Label className="text-xs">TVA (%)</Label>
               <Input type="number" value={taxRate} onChange={e => setTaxRate(Number(e.target.value))} min={0} max={100} />
             </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Retenue à la source (%)</Label>
+              <Input type="number" value={withholdingRate} onChange={e => setWithholdingRate(Number(e.target.value))} min={0} max={100} />
+            </div>
+          </div>
+        </div>
+
+        {/* Labor cost */}
+        <div className="stat-card">
+          <div className="max-w-xs space-y-1.5">
+            <Label className="text-xs">Main d'œuvre (€)</Label>
+            <Input type="number" value={laborCost} onChange={e => setLaborCost(Number(e.target.value))} min={0} step={0.01} placeholder="0.00" />
+            <p className="text-xs text-muted-foreground">Coût de la main d'œuvre ajouté au sous-total</p>
           </div>
         </div>
 
@@ -203,8 +276,15 @@ export default function CreateDocument() {
           {/* Totals */}
           <div className="mt-6 pt-4 border-t border-border">
             <div className="max-w-xs ml-auto space-y-2">
+              <div className="flex justify-between text-sm"><span className="text-muted-foreground">Lignes</span><span className="font-medium text-foreground">{items.reduce((s, i) => s + i.total, 0).toLocaleString('fr-FR')} €</span></div>
+              {laborCost > 0 && (
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Main d'œuvre</span><span className="font-medium text-foreground">{laborCost.toLocaleString('fr-FR')} €</span></div>
+              )}
               <div className="flex justify-between text-sm"><span className="text-muted-foreground">Sous-total</span><span className="font-medium text-foreground">{subtotal.toLocaleString('fr-FR')} €</span></div>
               <div className="flex justify-between text-sm"><span className="text-muted-foreground">TVA ({taxRate}%)</span><span className="font-medium text-foreground">{taxAmount.toLocaleString('fr-FR')} €</span></div>
+              {withholdingRate > 0 && (
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Retenue à la source ({withholdingRate}%)</span><span className="font-medium text-destructive">-{withholdingAmount.toLocaleString('fr-FR')} €</span></div>
+              )}
               <div className="flex justify-between text-lg font-bold pt-2 border-t border-border"><span className="text-foreground">Total</span><span className="text-primary">{total.toLocaleString('fr-FR')} €</span></div>
             </div>
           </div>
