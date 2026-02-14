@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import speedworkLogo from '@/assets/logo.png';
 
 const adminNav = [
   { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
@@ -57,9 +58,7 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
       >
         {/* Logo */}
         <div className="flex items-center gap-3 px-4 h-16 border-b border-sidebar-border shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-sidebar-primary flex items-center justify-center shrink-0">
-            <Zap className="w-4 h-4 text-sidebar-primary-foreground" />
-          </div>
+          <img src={speedworkLogo} alt="SpeedWork" className="h-9 w-auto shrink-0" />
           {!collapsed && <span className="font-bold text-lg tracking-tight text-sidebar-accent-foreground">SpeedWork</span>}
         </div>
 
