@@ -38,6 +38,26 @@ serve(async (req) => {
     }
 
     const { messages } = await req.json();
+
+    // Validate messages array
+    if (!Array.isArray(messages) || messages.length === 0 || messages.length > 50) {
+      return new Response(
+        JSON.stringify({ error: "Format de messages invalide" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    for (const msg of messages) {
+      if (!msg.role || !msg.content ||
+          !["user", "assistant"].includes(msg.role) ||
+          typeof msg.content !== "string" ||
+          msg.content.length > 4000) {
+        return new Response(
+          JSON.stringify({ error: "Message invalide" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
