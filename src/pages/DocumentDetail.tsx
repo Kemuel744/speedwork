@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useDocuments } from '@/contexts/DocumentsContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Printer, Download, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Printer, Download, RefreshCw, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatAmount } from '@/lib/currencies';
 
@@ -63,6 +63,9 @@ export default function DocumentDetail() {
           </div>
         </div>
         <div className="flex gap-2 flex-wrap">
+          <Button variant="outline" size="sm" onClick={() => navigate(`/edit/${doc.id}`)}>
+            <Pencil className="w-4 h-4 mr-2" />Modifier
+          </Button>
           {doc.type === 'quote' && (
             <Button variant="outline" size="sm" onClick={handleConvertToInvoice}>
               <RefreshCw className="w-4 h-4 mr-2" />Convertir en facture
