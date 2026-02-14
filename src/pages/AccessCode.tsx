@@ -4,25 +4,47 @@ import { Button } from '@/components/ui/button';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { Zap, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function AccessCode() {
   const navigate = useNavigate();
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
+  const [attempts, setAttempts] = useState(0);
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     if (code.length < 6) {
       toast.error('Veuillez entrer un code à 6 chiffres');
       return;
     }
+
+    if (attempts >= 5) {
+      toast.error('Trop de tentatives. Réessayez plus tard.');
+      return;
+    }
+
     setLoading(true);
-    // Simulate code verification
-    setTimeout(() => {
-      setLoading(false);
-      // For demo, any 6-digit code works
+    setAttempts((prev) => prev + 1);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('verify-access-code', {
+        body: { code },
+      });
+
+      if (error || !data?.valid) {
+        const message = data?.error || 'Code invalide ou expiré.';
+        toast.error(message);
+        setCode('');
+        return;
+      }
+
       toast.success('Code validé ! Bienvenue sur SpeedWork.');
       navigate('/login');
-    }, 1500);
+    } catch {
+      toast.error('Erreur de connexion. Réessayez.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -62,11 +84,17 @@ export default function AccessCode() {
 
           <Button
             onClick={handleVerify}
-            disabled={code.length < 6 || loading}
+            disabled={code.length < 6 || loading || attempts >= 5}
             className="w-full h-11 font-semibold"
           >
             {loading ? 'Vérification...' : 'Activer mon compte'}
           </Button>
+
+          {attempts >= 5 && (
+            <p className="text-xs text-destructive text-center mt-3">
+              Nombre maximum de tentatives atteint. Réessayez plus tard.
+            </p>
+          )}
 
           <p className="text-xs text-muted-foreground text-center mt-4">
             Vous n'avez pas reçu de code ? Vérifiez vos SMS ou contactez le support.
