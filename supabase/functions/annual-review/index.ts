@@ -38,6 +38,28 @@ serve(async (req) => {
     }
 
     const { documentsSummary, year, clientName } = await req.json();
+
+    // Validate inputs
+    if (!documentsSummary || typeof documentsSummary !== "string" || documentsSummary.length > 10000) {
+      return new Response(
+        JSON.stringify({ error: "Données de résumé invalides" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    const yearNum = typeof year === "string" ? parseInt(year, 10) : year;
+    if (!yearNum || typeof yearNum !== "number" || yearNum < 2000 || yearNum > 2100) {
+      return new Response(
+        JSON.stringify({ error: "Année invalide" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    if (clientName && (typeof clientName !== "string" || clientName.length > 200)) {
+      return new Response(
+        JSON.stringify({ error: "Nom du client invalide" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
