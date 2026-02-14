@@ -1,15 +1,31 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Save } from 'lucide-react';
+import { Save, Upload, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCompany } from '@/contexts/CompanyContext';
 import { currencies } from '@/lib/currencies';
 
 export default function SettingsPage() {
   const { company, updateCompany } = useCompany();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Le fichier est trop volumineux (max 2 Mo)');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      updateCompany({ logo: ev.target?.result as string });
+      toast.success('Logo mis à jour');
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,6 +38,34 @@ export default function SettingsPage() {
       <form onSubmit={handleSave} className="space-y-6 max-w-2xl">
         <div className="stat-card space-y-4">
           <h3 className="font-semibold text-foreground">Informations entreprise</h3>
+
+          {/* Logo upload */}
+          <div className="space-y-2">
+            <Label>Logo de l'entreprise</Label>
+            <div className="flex items-center gap-4">
+              {company.logo ? (
+                <div className="relative">
+                  <img src={company.logo} alt="Logo" className="h-16 w-auto rounded-lg border border-border object-contain" />
+                  <button
+                    type="button"
+                    onClick={() => updateCompany({ logo: undefined })}
+                    className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-0.5"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ) : (
+                <div className="h-16 w-24 rounded-lg border-2 border-dashed border-border flex items-center justify-center text-muted-foreground text-xs">
+                  Aucun logo
+                </div>
+              )}
+              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
+              <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
+                <Upload className="w-4 h-4 mr-2" />Choisir un fichier
+              </Button>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label>Nom de l'entreprise</Label>
