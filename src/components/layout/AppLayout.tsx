@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import AppSidebar from './AppSidebar';
+import ChatBot from '@/components/chat/ChatBot';
 import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -57,6 +58,8 @@ export default function AppLayout() {
       )}>
         <Outlet />
       </main>
+
+      <ChatBot />
     </div>
   );
 }
