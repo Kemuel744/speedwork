@@ -32,6 +32,7 @@ export interface CompanyInfo {
   bic?: string;
   bankName?: string;
   currency?: string;
+  signatoryTitle?: string;
 }
 
 export interface DocumentData {
