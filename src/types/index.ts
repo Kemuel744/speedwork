@@ -31,6 +31,7 @@ export interface CompanyInfo {
   iban?: string;
   bic?: string;
   bankName?: string;
+  currency?: string;
 }
 
 export interface DocumentData {

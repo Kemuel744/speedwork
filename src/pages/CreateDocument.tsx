@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Trash2, Save, Upload, Image } from 'lucide-react';
 import { toast } from 'sonner';
+import { currencies, formatAmount } from '@/lib/currencies';
 
 function generateNumber(type: DocumentType) {
   const prefix = type === 'invoice' ? 'FAC' : 'DEV';
@@ -35,6 +36,7 @@ export default function CreateDocument() {
     iban: savedCompany.iban || '',
     bic: savedCompany.bic || '',
     bankName: savedCompany.bankName || '',
+    currency: savedCompany.currency || 'EUR',
   });
   const [client, setClient] = useState({ name: '', email: '', phone: '', address: '' });
   const [status, setStatus] = useState<DocumentData['status']>('draft');
@@ -257,6 +259,17 @@ export default function CreateDocument() {
               <Label className="text-xs">Retenue à la source (%)</Label>
               <Input type="number" value={withholdingRate} onChange={e => setWithholdingRate(Number(e.target.value))} min={0} max={100} />
             </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Devise</Label>
+              <Select value={company.currency} onValueChange={v => setCompany(prev => ({ ...prev, currency: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {currencies.map(c => (
+                    <SelectItem key={c.code} value={c.code}>{c.symbol} — {c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
@@ -290,7 +303,7 @@ export default function CreateDocument() {
                 <Input className="sm:col-span-5" placeholder="Description" value={item.description} onChange={e => updateLine(item.id, 'description', e.target.value)} required />
                 <Input className="sm:col-span-2" type="number" min={1} value={item.quantity} onChange={e => updateLine(item.id, 'quantity', Number(e.target.value))} />
                 <Input className="sm:col-span-2" type="number" min={0} step={0.01} value={item.unitPrice} onChange={e => updateLine(item.id, 'unitPrice', Number(e.target.value))} />
-                <div className="sm:col-span-2 text-right text-sm font-semibold text-foreground">{item.total.toLocaleString('fr-FR')} €</div>
+                <div className="sm:col-span-2 text-right text-sm font-semibold text-foreground">{formatAmount(item.total, company.currency)}</div>
                 <div className="sm:col-span-1 flex justify-end">
                   <Button type="button" variant="ghost" size="sm" onClick={() => removeLine(item.id)} disabled={items.length === 1}>
                     <Trash2 className="w-3.5 h-3.5 text-destructive" />
@@ -303,16 +316,16 @@ export default function CreateDocument() {
           {/* Totals */}
           <div className="mt-6 pt-4 border-t border-border">
             <div className="max-w-xs ml-auto space-y-2">
-              <div className="flex justify-between text-sm"><span className="text-muted-foreground">Lignes</span><span className="font-medium text-foreground">{items.reduce((s, i) => s + i.total, 0).toLocaleString('fr-FR')} €</span></div>
+              <div className="flex justify-between text-sm"><span className="text-muted-foreground">Lignes</span><span className="font-medium text-foreground">{formatAmount(items.reduce((s, i) => s + i.total, 0), company.currency)}</span></div>
               {laborCost > 0 && (
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Main d'œuvre</span><span className="font-medium text-foreground">{laborCost.toLocaleString('fr-FR')} €</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Main d'œuvre</span><span className="font-medium text-foreground">{formatAmount(laborCost, company.currency)}</span></div>
               )}
-              <div className="flex justify-between text-sm"><span className="text-muted-foreground">Sous-total</span><span className="font-medium text-foreground">{subtotal.toLocaleString('fr-FR')} €</span></div>
-              <div className="flex justify-between text-sm"><span className="text-muted-foreground">TVA ({taxRate}%)</span><span className="font-medium text-foreground">{taxAmount.toLocaleString('fr-FR')} €</span></div>
+              <div className="flex justify-between text-sm"><span className="text-muted-foreground">Sous-total</span><span className="font-medium text-foreground">{formatAmount(subtotal, company.currency)}</span></div>
+              <div className="flex justify-between text-sm"><span className="text-muted-foreground">TVA ({taxRate}%)</span><span className="font-medium text-foreground">{formatAmount(taxAmount, company.currency)}</span></div>
               {withholdingRate > 0 && (
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Retenue à la source ({withholdingRate}%)</span><span className="font-medium text-destructive">-{withholdingAmount.toLocaleString('fr-FR')} €</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Retenue à la source ({withholdingRate}%)</span><span className="font-medium text-destructive">-{formatAmount(withholdingAmount, company.currency)}</span></div>
               )}
-              <div className="flex justify-between text-lg font-bold pt-2 border-t border-border"><span className="text-foreground">Total</span><span className="text-primary">{total.toLocaleString('fr-FR')} €</span></div>
+              <div className="flex justify-between text-lg font-bold pt-2 border-t border-border"><span className="text-foreground">Total</span><span className="text-primary">{formatAmount(total, company.currency)}</span></div>
             </div>
           </div>
         </div>

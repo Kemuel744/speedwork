@@ -20,6 +20,7 @@ const defaultCompany: CompanySettings = {
   iban: '',
   bic: '',
   bankName: '',
+  currency: 'EUR',
   defaultTaxRate: 20,
 };
 

@@ -2,9 +2,11 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCompany } from '@/contexts/CompanyContext';
+import { currencies } from '@/lib/currencies';
 
 export default function SettingsPage() {
   const { company, updateCompany } = useCompany();
@@ -60,9 +62,22 @@ export default function SettingsPage() {
 
         <div className="stat-card space-y-4">
           <h3 className="font-semibold text-foreground">Facturation</h3>
-          <div className="space-y-1.5 max-w-xs">
-            <Label>TVA par défaut (%)</Label>
-            <Input type="number" value={company.defaultTaxRate} onChange={e => updateCompany({ defaultTaxRate: Number(e.target.value) })} min={0} max={100} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
+            <div className="space-y-1.5">
+              <Label>TVA par défaut (%)</Label>
+              <Input type="number" value={company.defaultTaxRate} onChange={e => updateCompany({ defaultTaxRate: Number(e.target.value) })} min={0} max={100} />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Devise</Label>
+              <Select value={company.currency || 'EUR'} onValueChange={v => updateCompany({ currency: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {currencies.map(c => (
+                    <SelectItem key={c.code} value={c.code}>{c.symbol} — {c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
