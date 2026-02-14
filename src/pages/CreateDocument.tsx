@@ -19,36 +19,39 @@ function generateNumber(type: DocumentType) {
 }
 
 export default function CreateDocument() {
-  const { type } = useParams<{ type: string }>();
-  const docType: DocumentType = type === 'quote' ? 'quote' : 'invoice';
+  const { type, id: editId } = useParams<{ type?: string; id?: string }>();
   const navigate = useNavigate();
-  const { addDocument } = useDocuments();
+  const { addDocument, updateDocument, getDocument } = useDocuments();
   const { company: savedCompany } = useCompany();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const editingDoc = editId ? getDocument(editId) : null;
+  const isEditing = !!editingDoc;
+  const docType: DocumentType = editingDoc ? editingDoc.type : (type === 'quote' ? 'quote' : 'invoice');
+
   const [company, setCompany] = useState({
-    name: savedCompany.name,
-    address: savedCompany.address,
-    phone: savedCompany.phone,
-    email: savedCompany.email,
-    logo: savedCompany.logo,
-    logoPosition: savedCompany.logoPosition || 'left' as 'left' | 'center' | 'right',
-    iban: savedCompany.iban || '',
-    bic: savedCompany.bic || '',
-    bankName: savedCompany.bankName || '',
-    currency: savedCompany.currency || 'EUR',
-    signatoryTitle: savedCompany.signatoryTitle || 'Le Directeur Général',
+    name: editingDoc?.company.name ?? savedCompany.name,
+    address: editingDoc?.company.address ?? savedCompany.address,
+    phone: editingDoc?.company.phone ?? savedCompany.phone,
+    email: editingDoc?.company.email ?? savedCompany.email,
+    logo: editingDoc?.company.logo ?? savedCompany.logo,
+    logoPosition: (editingDoc?.company.logoPosition ?? savedCompany.logoPosition ?? 'left') as 'left' | 'center' | 'right',
+    iban: editingDoc?.company.iban ?? savedCompany.iban ?? '',
+    bic: editingDoc?.company.bic ?? savedCompany.bic ?? '',
+    bankName: editingDoc?.company.bankName ?? savedCompany.bankName ?? '',
+    currency: editingDoc?.company.currency ?? savedCompany.currency ?? 'EUR',
+    signatoryTitle: editingDoc?.company.signatoryTitle ?? savedCompany.signatoryTitle ?? 'Le Directeur Général',
   });
-  const [client, setClient] = useState({ name: '', email: '', phone: '', address: '' });
-  const [status, setStatus] = useState<DocumentData['status']>('draft');
-  const [dueDate, setDueDate] = useState('');
-  const [subject, setSubject] = useState('');
-  const [taxRate, setTaxRate] = useState(savedCompany.defaultTaxRate);
-  const [laborCost, setLaborCost] = useState(0);
-  const [withholdingRate, setWithholdingRate] = useState(0);
-  const [items, setItems] = useState<LineItem[]>([
-    { id: crypto.randomUUID(), description: '', quantity: 1, unitPrice: 0, total: 0 },
-  ]);
+  const [client, setClient] = useState(editingDoc?.client ?? { name: '', email: '', phone: '', address: '' });
+  const [status, setStatus] = useState<DocumentData['status']>(editingDoc?.status ?? 'draft');
+  const [dueDate, setDueDate] = useState(editingDoc?.dueDate ?? '');
+  const [subject, setSubject] = useState(editingDoc?.subject ?? '');
+  const [taxRate, setTaxRate] = useState(editingDoc?.taxRate ?? savedCompany.defaultTaxRate);
+  const [laborCost, setLaborCost] = useState(editingDoc?.laborCost ?? 0);
+  const [withholdingRate, setWithholdingRate] = useState(editingDoc?.withholdingRate ?? 0);
+  const [items, setItems] = useState<LineItem[]>(
+    editingDoc?.items ?? [{ id: crypto.randomUUID(), description: '', quantity: 1, unitPrice: 0, total: 0 }],
+  );
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -99,11 +102,11 @@ export default function CreateDocument() {
     }
 
     const doc: DocumentData = {
-      id: crypto.randomUUID(),
-      number: generateNumber(docType),
+      id: editingDoc?.id ?? crypto.randomUUID(),
+      number: editingDoc?.number ?? generateNumber(docType),
       type: docType,
       status,
-      date: new Date().toISOString().split('T')[0],
+      date: editingDoc?.date ?? new Date().toISOString().split('T')[0],
       dueDate: dueDate || undefined,
       client,
       company,
@@ -116,19 +119,26 @@ export default function CreateDocument() {
       withholdingRate,
       withholdingAmount,
       total,
-      createdBy: '1',
-      clientId: '',
+      createdBy: editingDoc?.createdBy ?? '1',
+      clientId: editingDoc?.clientId ?? '',
     };
 
-    addDocument(doc);
-    toast.success(`${docType === 'invoice' ? 'Facture' : 'Devis'} créé(e) avec succès !`);
+    if (isEditing) {
+      updateDocument(doc.id, doc);
+      toast.success(`${docType === 'invoice' ? 'Facture' : 'Devis'} mis(e) à jour !`);
+    } else {
+      addDocument(doc);
+      toast.success(`${docType === 'invoice' ? 'Facture' : 'Devis'} créé(e) avec succès !`);
+    }
     navigate(`/document/${doc.id}`);
   };
 
   return (
     <div className="page-container">
       <h1 className="section-title mb-6">
-        {docType === 'invoice' ? 'Nouvelle Facture' : 'Nouveau Devis'}
+        {isEditing
+          ? `Modifier ${docType === 'invoice' ? 'la facture' : 'le devis'} ${editingDoc?.number}`
+          : docType === 'invoice' ? 'Nouvelle Facture' : 'Nouveau Devis'}
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -357,7 +367,7 @@ export default function CreateDocument() {
 
         <div className="flex justify-end gap-3">
           <Button type="button" variant="outline" onClick={() => navigate(-1)}>Annuler</Button>
-          <Button type="submit"><Save className="w-4 h-4 mr-2" />Enregistrer</Button>
+          <Button type="submit"><Save className="w-4 h-4 mr-2" />{isEditing ? 'Mettre à jour' : 'Enregistrer'}</Button>
         </div>
       </form>
     </div>
