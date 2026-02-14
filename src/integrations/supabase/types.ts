@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      access_code_attempts: {
+        Row: {
+          attempted_at: string
+          id: string
+          ip_hash: string
+        }
+        Insert: {
+          attempted_at?: string
+          id?: string
+          ip_hash: string
+        }
+        Update: {
+          attempted_at?: string
+          id?: string
+          ip_hash?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           address: string | null
