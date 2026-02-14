@@ -102,7 +102,7 @@ export default function Login() {
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center space-y-2">
             <button
               type="button"
               onClick={() => setIsRegister(!isRegister)}
@@ -110,6 +110,11 @@ export default function Login() {
             >
               {isRegister ? 'Déjà un compte ? Se connecter' : "Pas de compte ? S'inscrire"}
             </button>
+            <div>
+              <Link to="/subscription" className="text-sm text-muted-foreground hover:underline">
+                Voir les abonnements
+              </Link>
+            </div>
           </div>
 
           <div className="mt-8 p-4 rounded-lg bg-secondary border border-border">
