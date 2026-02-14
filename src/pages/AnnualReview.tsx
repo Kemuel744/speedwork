@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BarChart3, TrendingUp, AlertTriangle, Lightbulb, Rocket, Loader2, FileText } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import { supabase } from '@/integrations/supabase/client';
 
 const REVIEW_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/annual-review`;
 
@@ -72,11 +73,18 @@ ${monthlyBreakdown || 'Aucune donnée mensuelle disponible.'}`;
     setReport('');
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        setReport('❌ Erreur : Vous devez être connecté pour générer un bilan.');
+        setIsLoading(false);
+        return;
+      }
+
       const resp = await fetch(REVIEW_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
           documentsSummary: buildSummary(),
