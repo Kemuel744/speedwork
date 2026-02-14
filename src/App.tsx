@@ -8,6 +8,8 @@ import { DocumentsProvider } from "@/contexts/DocumentsContext";
 import { CompanyProvider } from "@/contexts/CompanyContext";
 import AppLayout from "@/components/layout/AppLayout";
 import Login from "@/pages/Login";
+import Subscription from "@/pages/Subscription";
+import AccessCode from "@/pages/AccessCode";
 import Dashboard from "@/pages/Dashboard";
 import ClientDashboard from "@/pages/ClientDashboard";
 import Documents from "@/pages/Documents";
@@ -32,7 +34,9 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/login" element={<Login />} />
-              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="/subscription" element={<Subscription />} />
+              <Route path="/access-code" element={<AccessCode />} />
+              <Route path="/" element={<Navigate to="/subscription" replace />} />
               <Route element={<AppLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/client" element={<ClientDashboard />} />
