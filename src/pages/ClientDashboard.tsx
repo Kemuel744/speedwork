@@ -1,6 +1,8 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDocuments } from '@/contexts/DocumentsContext';
+import { useCompany } from '@/contexts/CompanyContext';
+import { formatAmount } from '@/lib/currencies';
 import { Link } from 'react-router-dom';
 import { FileText, Download, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,6 +18,7 @@ const statusMap: Record<string, { label: string; class: string }> = {
 export default function ClientDashboard() {
   const { user } = useAuth();
   const { documents } = useDocuments();
+  const { company } = useCompany();
   const myDocs = documents.filter(d => d.clientId === user?.id || d.client.email === user?.email);
   const myInvoices = myDocs.filter(d => d.type === 'invoice');
   const myQuotes = myDocs.filter(d => d.type === 'quote');
@@ -37,7 +40,7 @@ export default function ClientDashboard() {
                 </Link>
                 <div className="flex items-center gap-3">
                   <Badge variant="outline" className={`text-xs ${st.class}`}>{st.label}</Badge>
-                  <span className="text-sm font-semibold text-foreground">{doc.total.toLocaleString('fr-FR')} €</span>
+                  <span className="text-sm font-semibold text-foreground">{formatAmount(doc.total, company.currency)}</span>
                   <Button variant="ghost" size="sm" asChild>
                     <Link to={`/document/${doc.id}`}><FileText className="w-4 h-4" /></Link>
                   </Button>
@@ -69,7 +72,7 @@ export default function ClientDashboard() {
         <div className="stat-card">
           <p className="text-sm text-muted-foreground">Total dû</p>
           <p className="text-2xl font-bold text-foreground">
-            {myInvoices.filter(d => d.status === 'unpaid').reduce((s, d) => s + d.total, 0).toLocaleString('fr-FR')} €
+            {formatAmount(myInvoices.filter(d => d.status === 'unpaid').reduce((s, d) => s + d.total, 0), company.currency)}
           </p>
         </div>
       </div>
