@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { Zap, ShieldCheck, ArrowLeft } from 'lucide-react';
+import { ShieldCheck, ArrowLeft } from 'lucide-react';
+import speedworkLogo from '@/assets/logo.png';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -52,9 +53,7 @@ export default function AccessCode() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-              <Zap className="w-5 h-5 text-primary-foreground" />
-            </div>
+            <img src={speedworkLogo} alt="SpeedWork" className="h-10 w-auto" />
             <span className="text-xl font-bold text-foreground">SpeedWork</span>
           </div>
 
