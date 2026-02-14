@@ -4,7 +4,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Zap, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import speedworkLogo from '@/assets/logo.png';
 import { toast } from 'sonner';
 
 export default function Login() {
@@ -68,9 +69,7 @@ export default function Login() {
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-accent opacity-90" />
         <div className="relative z-10 text-primary-foreground max-w-md">
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-xl bg-primary-foreground/20 flex items-center justify-center">
-              <Zap className="w-6 h-6" />
-            </div>
+            <img src={speedworkLogo} alt="SpeedWork" className="h-12 w-auto" />
             <span className="text-2xl font-bold">SpeedWork</span>
           </div>
           <h1 className="text-4xl font-bold mb-4 leading-tight">Gérez vos factures et devis en toute simplicité</h1>
@@ -86,9 +85,7 @@ export default function Login() {
       <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-              <Zap className="w-5 h-5 text-primary-foreground" />
-            </div>
+            <img src={speedworkLogo} alt="SpeedWork" className="h-10 w-auto" />
             <span className="text-xl font-bold text-foreground">SpeedWork</span>
           </div>
 

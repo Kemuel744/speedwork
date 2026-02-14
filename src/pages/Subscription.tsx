@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, Zap, Crown, ArrowRight, Smartphone } from 'lucide-react';
+import { Check, Crown, ArrowRight, Smartphone, Zap } from 'lucide-react';
+import speedworkLogo from '@/assets/logo.png';
 import { toast } from 'sonner';
 
 const plans = [
@@ -75,9 +76,7 @@ export default function Subscription() {
       <div className="bg-primary text-primary-foreground py-12 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-primary-foreground/20 flex items-center justify-center">
-              <Zap className="w-5 h-5" />
-            </div>
+            <img src={speedworkLogo} alt="SpeedWork" className="h-10 w-auto" />
             <span className="text-2xl font-bold">SpeedWork</span>
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-3">Choisissez votre abonnement</h1>
