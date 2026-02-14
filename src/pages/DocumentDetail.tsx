@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDocuments } from '@/contexts/DocumentsContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Printer, Download, RefreshCw, Pencil } from 'lucide-react';
+import { ArrowLeft, Printer, Download, RefreshCw, Pencil, Bell, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatAmount } from '@/lib/currencies';
 
@@ -17,8 +17,16 @@ const statusMap: Record<string, { label: string; class: string }> = {
 export default function DocumentDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { getDocument, addDocument } = useDocuments();
+  const { getDocument, addDocument, getReminders, sendManualReminder } = useDocuments();
   const doc = getDocument(id || '');
+  const [reminders, setReminders] = useState<any[]>([]);
+  const [sendingReminder, setSendingReminder] = useState(false);
+
+  useEffect(() => {
+    if (id) {
+      getReminders(id).then(setReminders);
+    }
+  }, [id, getReminders]);
 
   if (!doc) {
     return (
@@ -29,11 +37,26 @@ export default function DocumentDetail() {
     );
   }
 
+  const handleSendReminder = async () => {
+    if (!id) return;
+    setSendingReminder(true);
+    try {
+      await sendManualReminder(id);
+      toast.success('Relance envoyée avec succès');
+      const updated = await getReminders(id);
+      setReminders(updated);
+    } catch {
+      toast.error('Erreur lors de l\'envoi de la relance');
+    } finally {
+      setSendingReminder(false);
+    }
+  };
+
   const st = statusMap[doc.status];
   const handlePrint = () => window.print();
   const logoPos = doc.company.logoPosition || 'left';
 
-  const handleConvertToInvoice = () => {
+  const handleConvertToInvoice = async () => {
     if (doc.type !== 'quote') return;
     const newDoc = {
       ...doc,
@@ -44,9 +67,13 @@ export default function DocumentDetail() {
       date: new Date().toISOString().split('T')[0],
       dueDate: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
     };
-    addDocument(newDoc);
-    toast.success('Devis converti en facture');
-    navigate(`/document/${newDoc.id}`);
+    try {
+      await addDocument(newDoc);
+      toast.success('Devis converti en facture');
+      navigate(`/document/${newDoc.id}`);
+    } catch {
+      toast.error('Erreur lors de la conversion');
+    }
   };
 
   return (
@@ -69,6 +96,11 @@ export default function DocumentDetail() {
           {doc.type === 'quote' && (
             <Button variant="outline" size="sm" onClick={handleConvertToInvoice}>
               <RefreshCw className="w-4 h-4 mr-2" />Convertir en facture
+            </Button>
+          )}
+          {doc.type === 'invoice' && (doc.status === 'unpaid' || doc.status === 'pending') && (
+            <Button variant="outline" size="sm" onClick={handleSendReminder} disabled={sendingReminder}>
+              <Bell className="w-4 h-4 mr-2" />{sendingReminder ? 'Envoi...' : 'Relancer'}
             </Button>
           )}
           <Button variant="outline" size="sm" onClick={handlePrint}>
@@ -197,6 +229,34 @@ export default function DocumentDetail() {
           </div>
         </div>
       </div>
+
+      {/* Reminders history */}
+      {reminders.length > 0 && (
+        <div className="stat-card mt-6 print:hidden">
+          <div className="flex items-center gap-2 mb-4">
+            <Clock className="w-4 h-4 text-muted-foreground" />
+            <h3 className="font-semibold text-foreground">Historique des relances</h3>
+          </div>
+          <div className="space-y-3">
+            {reminders.map((r: any) => (
+              <div key={r.id} className="flex items-start gap-3 p-3 bg-secondary/30 rounded-lg">
+                <Bell className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Badge variant="outline" className="text-xs">
+                      {r.reminder_type === 'auto' ? 'Automatique' : 'Manuelle'}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(r.sent_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                  {r.message && <p className="text-xs text-muted-foreground line-clamp-2">{r.message}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

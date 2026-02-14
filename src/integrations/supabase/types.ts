@@ -32,6 +32,152 @@ export type Database = {
         }
         Relationships: []
       }
+      documents: {
+        Row: {
+          client_address: string | null
+          client_email: string
+          client_name: string
+          client_phone: string | null
+          company_address: string | null
+          company_bank_name: string | null
+          company_bic: string | null
+          company_currency: string | null
+          company_email: string
+          company_iban: string | null
+          company_logo: string | null
+          company_logo_position: string | null
+          company_name: string
+          company_phone: string | null
+          company_signatory_title: string | null
+          created_at: string
+          date: string
+          due_date: string | null
+          id: string
+          items: Json
+          labor_cost: number
+          number: string
+          status: string
+          subject: string | null
+          subtotal: number
+          tax_amount: number
+          tax_rate: number
+          total: number
+          type: string
+          updated_at: string
+          user_id: string
+          withholding_amount: number
+          withholding_rate: number
+        }
+        Insert: {
+          client_address?: string | null
+          client_email: string
+          client_name: string
+          client_phone?: string | null
+          company_address?: string | null
+          company_bank_name?: string | null
+          company_bic?: string | null
+          company_currency?: string | null
+          company_email: string
+          company_iban?: string | null
+          company_logo?: string | null
+          company_logo_position?: string | null
+          company_name: string
+          company_phone?: string | null
+          company_signatory_title?: string | null
+          created_at?: string
+          date?: string
+          due_date?: string | null
+          id?: string
+          items?: Json
+          labor_cost?: number
+          number: string
+          status?: string
+          subject?: string | null
+          subtotal?: number
+          tax_amount?: number
+          tax_rate?: number
+          total?: number
+          type: string
+          updated_at?: string
+          user_id: string
+          withholding_amount?: number
+          withholding_rate?: number
+        }
+        Update: {
+          client_address?: string | null
+          client_email?: string
+          client_name?: string
+          client_phone?: string | null
+          company_address?: string | null
+          company_bank_name?: string | null
+          company_bic?: string | null
+          company_currency?: string | null
+          company_email?: string
+          company_iban?: string | null
+          company_logo?: string | null
+          company_logo_position?: string | null
+          company_name?: string
+          company_phone?: string | null
+          company_signatory_title?: string | null
+          created_at?: string
+          date?: string
+          due_date?: string | null
+          id?: string
+          items?: Json
+          labor_cost?: number
+          number?: string
+          status?: string
+          subject?: string | null
+          subtotal?: number
+          tax_amount?: number
+          tax_rate?: number
+          total?: number
+          type?: string
+          updated_at?: string
+          user_id?: string
+          withholding_amount?: number
+          withholding_rate?: number
+        }
+        Relationships: []
+      }
+      invoice_reminders: {
+        Row: {
+          document_id: string
+          id: string
+          message: string | null
+          reminder_type: string
+          sent_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          document_id: string
+          id?: string
+          message?: string | null
+          reminder_type?: string
+          sent_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          document_id?: string
+          id?: string
+          message?: string | null
+          reminder_type?: string
+          sent_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_reminders_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           address: string | null
@@ -146,6 +292,21 @@ export type Database = {
           plan: Database["public"]["Enums"]["subscription_plan"]
           start_date: string
           status: Database["public"]["Enums"]["subscription_status"]
+        }[]
+      }
+      get_overdue_invoices: {
+        Args: never
+        Returns: {
+          client_email: string
+          client_name: string
+          company_currency: string
+          days_overdue: number
+          document_id: string
+          due_date: string
+          last_reminder: string
+          number: string
+          total: number
+          user_id: string
         }[]
       }
       has_role: {
