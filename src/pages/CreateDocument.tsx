@@ -90,7 +90,7 @@ export default function CreateDocument() {
   const withholdingAmount = Math.round(subtotal * withholdingRate / 100 * 100) / 100;
   const total = Math.round((subtotal + taxAmount - withholdingAmount) * 100) / 100;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!client.name || !client.email) {
       toast.error('Veuillez remplir les informations client');
@@ -123,14 +123,18 @@ export default function CreateDocument() {
       clientId: editingDoc?.clientId ?? '',
     };
 
-    if (isEditing) {
-      updateDocument(doc.id, doc);
-      toast.success(`${docType === 'invoice' ? 'Facture' : 'Devis'} mis(e) à jour !`);
-    } else {
-      addDocument(doc);
-      toast.success(`${docType === 'invoice' ? 'Facture' : 'Devis'} créé(e) avec succès !`);
+    try {
+      if (isEditing) {
+        await updateDocument(doc.id, doc);
+        toast.success(`${docType === 'invoice' ? 'Facture' : 'Devis'} mis(e) à jour !`);
+      } else {
+        await addDocument(doc);
+        toast.success(`${docType === 'invoice' ? 'Facture' : 'Devis'} créé(e) avec succès !`);
+      }
+      navigate(`/document/${doc.id}`);
+    } catch {
+      toast.error('Erreur lors de l\'enregistrement');
     }
-    navigate(`/document/${doc.id}`);
   };
 
   return (

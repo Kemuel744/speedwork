@@ -47,7 +47,7 @@ export default function Documents() {
     return docs.sort((a, b) => sortAsc ? a.date.localeCompare(b.date) : b.date.localeCompare(a.date));
   }, [documents, typeFilter, clientFilter, search, sortAsc]);
 
-  const handleDuplicate = (id: string) => {
+  const handleDuplicate = async (id: string) => {
     const doc = documents.find(d => d.id === id);
     if (!doc) return;
     const newDoc = {
@@ -57,13 +57,21 @@ export default function Documents() {
       status: 'draft' as const,
       date: new Date().toISOString().split('T')[0],
     };
-    addDocument(newDoc);
-    toast.success('Document dupliqué');
+    try {
+      await addDocument(newDoc);
+      toast.success('Document dupliqué');
+    } catch {
+      toast.error('Erreur lors de la duplication');
+    }
   };
 
-  const handleDelete = (id: string) => {
-    deleteDocument(id);
-    toast.success('Document supprimé');
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteDocument(id);
+      toast.success('Document supprimé');
+    } catch {
+      toast.error('Erreur lors de la suppression');
+    }
   };
 
   const title = typeFilter === 'invoice' ? 'Factures' : typeFilter === 'quote' ? 'Devis' : 'Tous les documents';
