@@ -130,5 +130,13 @@
     min-height: 297mm;
     padding: 20mm;
     margin: 0;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  /* Hide Lovable badge, sidebar, header, and any overlays */
+  aside, header, nav, [data-lovable], iframe, .print\\:hidden,
+  button, .fixed, [style*="position: fixed"] {
+    display: none !important;
+    visibility: hidden !important;
   }
 }
