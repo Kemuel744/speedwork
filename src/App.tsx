@@ -19,6 +19,7 @@ import ClientsPage from "@/pages/Clients";
 import ClientDetailPage from "@/pages/ClientDetail";
 import Profile from "@/pages/Profile";
 import SettingsPage from "@/pages/Settings";
+import AdminSubscriptions from "@/pages/AdminSubscriptions";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ const App = () => (
                 <Route path="/clients/:clientId" element={<ClientDetailPage />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
