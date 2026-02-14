@@ -41,6 +41,7 @@ export default function CreateDocument() {
   const [client, setClient] = useState({ name: '', email: '', phone: '', address: '' });
   const [status, setStatus] = useState<DocumentData['status']>('draft');
   const [dueDate, setDueDate] = useState('');
+  const [subject, setSubject] = useState('');
   const [taxRate, setTaxRate] = useState(savedCompany.defaultTaxRate);
   const [laborCost, setLaborCost] = useState(0);
   const [withholdingRate, setWithholdingRate] = useState(0);
@@ -106,6 +107,7 @@ export default function CreateDocument() {
       client,
       company,
       items,
+      subject: subject || undefined,
       subtotal,
       laborCost,
       taxRate,
@@ -279,6 +281,14 @@ export default function CreateDocument() {
             <Label className="text-xs">Main d'œuvre (€)</Label>
             <Input type="number" value={laborCost} onChange={e => setLaborCost(Number(e.target.value))} min={0} step={0.01} placeholder="0.00" />
             <p className="text-xs text-muted-foreground">Coût de la main d'œuvre ajouté au sous-total</p>
+          </div>
+        </div>
+
+        {/* Subject */}
+        <div className="stat-card">
+          <div className="space-y-1.5">
+            <Label className="text-xs">Objet</Label>
+            <Input value={subject} onChange={e => setSubject(e.target.value)} placeholder={`Objet du ${docType === 'invoice' ? 'de la facture' : 'devis'}...`} />
           </div>
         </div>
 

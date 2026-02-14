@@ -114,6 +114,14 @@ export default function DocumentDetail() {
             <p className="text-sm text-muted-foreground">{doc.client.phone}</p>
           </div>
 
+          {/* Subject */}
+          {doc.subject && (
+            <div className="mb-6">
+              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Objet</p>
+              <p className="text-sm font-medium text-foreground">{doc.subject}</p>
+            </div>
+          )}
+
           {/* Table */}
           <table className="w-full mb-8">
             <thead>

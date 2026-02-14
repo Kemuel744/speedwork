@@ -56,6 +56,7 @@ export interface DocumentData {
   withholdingRate: number;
   withholdingAmount: number;
   total: number;
+  subject?: string;
   createdBy: string;
   clientId: string;
 }
