@@ -136,6 +136,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_my_subscription: {
+        Args: never
+        Returns: {
+          amount: number
+          end_date: string
+          id: string
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          plan: Database["public"]["Enums"]["subscription_plan"]
+          start_date: string
+          status: Database["public"]["Enums"]["subscription_status"]
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
