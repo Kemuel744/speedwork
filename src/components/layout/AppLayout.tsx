@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, Navigate } from 'react-router-dom';
+import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import AppSidebar from './AppSidebar';
 import { Menu } from 'lucide-react';
@@ -17,7 +17,14 @@ export default function AppLayout() {
     );
   }
 
+  const location = useLocation();
+
   if (!user) return <Navigate to="/login" replace />;
+
+  // Block non-admin users from accessing admin routes
+  if (user.role !== 'admin' && location.pathname.startsWith('/admin')) {
+    return <Navigate to="/client" replace />;
+  }
 
   return (
     <div className="min-h-screen bg-background">
