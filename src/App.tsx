@@ -20,6 +20,7 @@ import ClientDetailPage from "@/pages/ClientDetail";
 import Profile from "@/pages/Profile";
 import SettingsPage from "@/pages/Settings";
 import AdminSubscriptions from "@/pages/AdminSubscriptions";
+import AnnualReview from "@/pages/AnnualReview";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ const App = () => (
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
+                <Route path="/annual-review" element={<AnnualReview />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>

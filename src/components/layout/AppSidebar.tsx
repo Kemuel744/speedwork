@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   LayoutDashboard, FileText, FilePlus, FileCheck, User, Settings,
-  LogOut, ChevronLeft, Users, CreditCard,
+  LogOut, ChevronLeft, Users, CreditCard, BarChart3,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -17,12 +17,14 @@ const adminNav = [
   { label: 'Nouvelle Facture', to: '/create/invoice', icon: FilePlus },
   { label: 'Nouveau Devis', to: '/create/quote', icon: FilePlus },
   { label: 'Abonnements', to: '/admin/subscriptions', icon: CreditCard },
+  { label: 'Bilan Annuel', to: '/annual-review', icon: BarChart3 },
 ];
 
 const clientNav = [
   { label: 'Mon espace', to: '/client', icon: LayoutDashboard },
   { label: 'Mes Factures', to: '/documents?type=invoice', icon: FileText },
   { label: 'Mes Devis', to: '/documents?type=quote', icon: FileCheck },
+  { label: 'Bilan Annuel', to: '/annual-review', icon: BarChart3 },
 ];
 
 const bottomNav = [
