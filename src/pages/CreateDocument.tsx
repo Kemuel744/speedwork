@@ -37,6 +37,7 @@ export default function CreateDocument() {
     bic: savedCompany.bic || '',
     bankName: savedCompany.bankName || '',
     currency: savedCompany.currency || 'EUR',
+    signatoryTitle: savedCompany.signatoryTitle || 'Le Directeur Général',
   });
   const [client, setClient] = useState({ name: '', email: '', phone: '', address: '' });
   const [status, setStatus] = useState<DocumentData['status']>('draft');
@@ -191,6 +192,20 @@ export default function CreateDocument() {
                 <Label className="text-xs">Adresse</Label>
                 <Input value={company.address} onChange={e => setCompany({ ...company, address: e.target.value })} />
               </div>
+            </div>
+            <h4 className="font-medium text-sm text-muted-foreground mt-2">Signataire</h4>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Titre du signataire</Label>
+              <Select value={company.signatoryTitle} onValueChange={v => setCompany(prev => ({ ...prev, signatoryTitle: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Le Directeur Général">Le Directeur Général</SelectItem>
+                  <SelectItem value="La Direction Générale">La Direction Générale</SelectItem>
+                  <SelectItem value="Le Responsable">Le Responsable</SelectItem>
+                  <SelectItem value="Le Gérant">Le Gérant</SelectItem>
+                  <SelectItem value="Le Chargé de projet">Le Chargé de projet</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <h4 className="font-medium text-sm text-muted-foreground mt-2">Informations bancaires</h4>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

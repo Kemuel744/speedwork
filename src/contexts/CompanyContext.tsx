@@ -21,6 +21,7 @@ const defaultCompany: CompanySettings = {
   bic: '',
   bankName: '',
   currency: 'XOF',
+  signatoryTitle: 'Le Directeur Général',
   defaultTaxRate: 20,
 };
 

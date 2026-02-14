@@ -162,6 +162,18 @@ export default function DocumentDetail() {
             </div>
           </div>
 
+          {/* Signature */}
+          <div className="mt-12 flex justify-end">
+            <div className="text-center w-64">
+              <p className="text-sm font-semibold text-foreground mb-16">
+                {doc.company.signatoryTitle || 'Le Directeur Général'}
+              </p>
+              <div className="border-t border-border pt-2">
+                <p className="text-xs text-muted-foreground">Signature et cachet</p>
+              </div>
+            </div>
+          </div>
+
           {/* Footer */}
           <div className="mt-10 pt-6 border-t border-border">
             <div className="flex flex-wrap justify-between gap-4 text-xs text-muted-foreground">
