@@ -91,14 +91,14 @@ export default function DocumentDetail() {
           )}
 
           {/* Header */}
-          <div className="flex justify-between items-start mb-5">
+          <div className="flex flex-col sm:flex-row sm:justify-between items-start gap-3 mb-5">
             <div>
               <h2 className="text-lg font-bold text-primary mb-0.5">{doc.company.name}</h2>
               <p className="text-xs text-muted-foreground leading-tight">{doc.company.address}</p>
               <p className="text-xs text-muted-foreground leading-tight">{doc.company.phone}</p>
               <p className="text-xs text-muted-foreground leading-tight">{doc.company.email}</p>
             </div>
-            <div className="text-right">
+            <div className="sm:text-right">
               <h3 className="text-base font-bold text-foreground uppercase">
                 {doc.type === 'invoice' ? 'Facture' : 'Devis'}
               </h3>
@@ -149,7 +149,7 @@ export default function DocumentDetail() {
 
           {/* Totals */}
           <div className="flex justify-end">
-            <div className="w-64 space-y-1">
+            <div className="w-full sm:w-64 space-y-1">
               {(doc.laborCost ?? 0) > 0 && (
                 <div className="flex justify-between text-xs"><span className="text-muted-foreground">Main d'œuvre</span><span className="text-foreground">{formatAmount(doc.laborCost, doc.company.currency || 'EUR')}</span></div>
               )}

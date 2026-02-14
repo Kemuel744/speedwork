@@ -95,7 +95,7 @@ export default function Documents() {
             {sortAsc ? 'Plus ancien' : 'Plus récent'}
           </Button>
           <Select value={clientFilter} onValueChange={v => setClientFilter(v === 'all' ? '' : v)}>
-            <SelectTrigger className="w-[180px]"><SelectValue placeholder="Tous les clients" /></SelectTrigger>
+            <SelectTrigger className="w-full sm:w-[180px]"><SelectValue placeholder="Tous les clients" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Tous les clients</SelectItem>
               {clientNames.map(name => (
@@ -110,13 +110,13 @@ export default function Documents() {
         {filtered.length === 0 ? (
           <p className="text-center py-8 text-muted-foreground">Aucun document trouvé</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <table className="w-full min-w-[600px]">
               <thead>
                 <tr className="border-b border-border">
                   <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Numéro</th>
-                  <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Client</th>
-                  <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Client</th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">Date</th>
                   <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Statut</th>
                   <th className="text-right py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Total</th>
                   <th className="text-right py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
@@ -129,12 +129,13 @@ export default function Documents() {
                     <tr key={doc.id} className="border-b border-border/50 hover:bg-secondary/30 transition-colors">
                       <td className="py-3 px-4">
                         <Link to={`/document/${doc.id}`} className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary">
-                          {doc.type === 'invoice' ? <FileText className="w-4 h-4 text-primary" /> : <FileCheck className="w-4 h-4 text-accent" />}
-                          {doc.number}
+                          {doc.type === 'invoice' ? <FileText className="w-4 h-4 text-primary shrink-0" /> : <FileCheck className="w-4 h-4 text-accent shrink-0" />}
+                          <span className="truncate">{doc.number}</span>
                         </Link>
+                        <p className="text-xs text-muted-foreground sm:hidden mt-0.5">{doc.client.name}</p>
                       </td>
-                      <td className="py-3 px-4 text-sm text-foreground">{doc.client.name}</td>
-                      <td className="py-3 px-4 text-sm text-muted-foreground">{doc.date}</td>
+                      <td className="py-3 px-4 text-sm text-foreground hidden sm:table-cell">{doc.client.name}</td>
+                      <td className="py-3 px-4 text-sm text-muted-foreground hidden md:table-cell">{doc.date}</td>
                       <td className="py-3 px-4"><Badge variant="outline" className={`text-xs ${st.class}`}>{st.label}</Badge></td>
                       <td className="py-3 px-4 text-sm font-semibold text-foreground text-right">{formatAmount(doc.total, company.currency)}</td>
                       <td className="py-3 px-4 text-right">
