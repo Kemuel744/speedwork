@@ -1,5 +1,7 @@
 import React from 'react';
 import { useDocuments } from '@/contexts/DocumentsContext';
+import { useCompany } from '@/contexts/CompanyContext';
+import { formatAmount } from '@/lib/currencies';
 import { Link } from 'react-router-dom';
 import { FileText, FileCheck, DollarSign, AlertCircle, Plus, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -31,6 +33,7 @@ const statusMap: Record<string, { label: string; class: string }> = {
 
 export default function Dashboard() {
   const { documents } = useDocuments();
+  const { company } = useCompany();
   const invoices = documents.filter(d => d.type === 'invoice');
   const quotes = documents.filter(d => d.type === 'quote');
   const totalRevenue = invoices.filter(d => d.status === 'paid').reduce((s, d) => s + d.total, 0);
@@ -58,8 +61,8 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatCard icon={FileText} label="Factures" value={String(invoices.length)} sub={`${unpaid.length} impayée(s)`} color="bg-primary/10 text-primary" />
         <StatCard icon={FileCheck} label="Devis" value={String(quotes.length)} color="bg-accent/10 text-accent" />
-        <StatCard icon={DollarSign} label="Revenus" value={`${totalRevenue.toLocaleString('fr-FR')} €`} sub="Total encaissé" color="bg-success/10 text-success" />
-        <StatCard icon={AlertCircle} label="Impayées" value={`${unpaid.reduce((s, d) => s + d.total, 0).toLocaleString('fr-FR')} €`} sub={`${unpaid.length} facture(s)`} color="bg-destructive/10 text-destructive" />
+        <StatCard icon={DollarSign} label="Revenus" value={formatAmount(totalRevenue, company.currency)} sub="Total encaissé" color="bg-success/10 text-success" />
+        <StatCard icon={AlertCircle} label="Impayées" value={formatAmount(unpaid.reduce((s, d) => s + d.total, 0), company.currency)} sub={`${unpaid.length} facture(s)`} color="bg-destructive/10 text-destructive" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -81,7 +84,7 @@ export default function Dashboard() {
                   borderRadius: '8px',
                   fontSize: '13px',
                 }}
-                formatter={(value: number) => [`${value.toLocaleString('fr-FR')} €`, 'Revenus']}
+                formatter={(value: number) => [formatAmount(value, company.currency), 'Revenus']}
               />
               <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
             </BarChart>
@@ -101,7 +104,7 @@ export default function Dashboard() {
                     <p className="text-xs text-muted-foreground">{doc.client.name}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-foreground">{doc.total.toLocaleString('fr-FR')} €</p>
+                    <p className="text-sm font-semibold text-foreground">{formatAmount(doc.total, company.currency)}</p>
                     <Badge variant="outline" className={`text-xs ${st.class}`}>{st.label}</Badge>
                   </div>
                 </Link>

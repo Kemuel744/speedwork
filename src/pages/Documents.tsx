@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useDocuments } from '@/contexts/DocumentsContext';
+import { useCompany } from '@/contexts/CompanyContext';
+import { formatAmount } from '@/lib/currencies';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { Search, Plus, FileText, FileCheck, Trash2, Copy, ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -20,6 +22,7 @@ const statusMap: Record<string, { label: string; class: string }> = {
 
 export default function Documents() {
   const { documents, deleteDocument, addDocument } = useDocuments();
+  const { company } = useCompany();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const typeFilter = searchParams.get('type') as 'invoice' | 'quote' | null;
@@ -116,7 +119,7 @@ export default function Documents() {
                       <td className="py-3 px-4 text-sm text-foreground">{doc.client.name}</td>
                       <td className="py-3 px-4 text-sm text-muted-foreground">{doc.date}</td>
                       <td className="py-3 px-4"><Badge variant="outline" className={`text-xs ${st.class}`}>{st.label}</Badge></td>
-                      <td className="py-3 px-4 text-sm font-semibold text-foreground text-right">{doc.total.toLocaleString('fr-FR')} €</td>
+                      <td className="py-3 px-4 text-sm font-semibold text-foreground text-right">{formatAmount(doc.total, company.currency)}</td>
                       <td className="py-3 px-4 text-right">
                         <div className="flex items-center justify-end gap-1">
                           <Button variant="ghost" size="sm" onClick={() => handleDuplicate(doc.id)} title="Dupliquer">
