@@ -8,7 +8,7 @@ import { Zap, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Login() {
-  const { login, register, user } = useAuth();
+  const { user, login, register, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
@@ -25,12 +25,23 @@ export default function Login() {
     setLoading(true);
     try {
       if (isRegister) {
-        await register(email, password, name);
+        const result = await register(email, password, name);
+        if (!result.success) {
+          toast.error(result.error || 'Erreur lors de l\'inscription');
+          setLoading(false);
+          return;
+        }
+        if (result.needsConfirmation) {
+          toast.success('Un email de confirmation vous a été envoyé. Vérifiez votre boîte de réception.');
+          setIsRegister(false);
+          setLoading(false);
+          return;
+        }
         toast.success('Compte créé avec succès !');
       } else {
-        const ok = await login(email, password);
-        if (!ok) {
-          toast.error('Email ou mot de passe incorrect');
+        const result = await login(email, password);
+        if (!result.success) {
+          toast.error(result.error || 'Email ou mot de passe incorrect');
           setLoading(false);
           return;
         }
@@ -41,6 +52,14 @@ export default function Login() {
     }
     setLoading(false);
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex">
@@ -59,7 +78,6 @@ export default function Login() {
             Une solution professionnelle pour créer, suivre et gérer tous vos documents commerciaux.
           </p>
         </div>
-        {/* Decorative circles */}
         <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-primary-foreground/5" />
         <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-primary-foreground/5" />
       </div>
@@ -84,8 +102,8 @@ export default function Login() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {isRegister && (
               <div className="space-y-2">
-                <Label htmlFor="name">Nom complet</Label>
-                <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Marie Dupont" required />
+                <Label htmlFor="name">Nom de l'entreprise</Label>
+                <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Mon Entreprise SARL" required />
               </div>
             )}
             <div className="space-y-2">
@@ -94,7 +112,7 @@ export default function Login() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Mot de passe</Label>
-              <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
+              <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required minLength={6} />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Chargement...' : isRegister ? "S'inscrire" : 'Se connecter'}
@@ -115,13 +133,6 @@ export default function Login() {
                 Voir les abonnements
               </Link>
             </div>
-          </div>
-
-          <div className="mt-8 p-4 rounded-lg bg-secondary border border-border">
-            <p className="text-xs text-muted-foreground mb-2 font-medium">Comptes de démo :</p>
-            <p className="text-xs text-muted-foreground">Admin : <span className="text-foreground font-medium">admin@speedwork.com</span></p>
-            <p className="text-xs text-muted-foreground">Client : <span className="text-foreground font-medium">client@example.com</span></p>
-            <p className="text-xs text-muted-foreground mt-1">Mot de passe : n'importe lequel</p>
           </div>
         </div>
       </div>
