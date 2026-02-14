@@ -14,16 +14,127 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          address: string | null
+          company_name: string
+          created_at: string
+          email: string
+          id: string
+          logo_url: string | null
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          company_name?: string
+          created_at?: string
+          email?: string
+          id?: string
+          logo_url?: string | null
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          company_name?: string
+          created_at?: string
+          email?: string
+          id?: string
+          logo_url?: string | null
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          access_code: string
+          amount: number
+          created_at: string
+          end_date: string
+          id: string
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          plan: Database["public"]["Enums"]["subscription_plan"]
+          start_date: string
+          status: Database["public"]["Enums"]["subscription_status"]
+          transaction_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_code: string
+          amount: number
+          created_at?: string
+          end_date: string
+          id?: string
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          plan: Database["public"]["Enums"]["subscription_plan"]
+          start_date?: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+          transaction_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_code?: string
+          amount?: number
+          created_at?: string
+          end_date?: string
+          id?: string
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          plan?: Database["public"]["Enums"]["subscription_plan"]
+          start_date?: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+          transaction_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "client"
+      payment_method:
+        | "mtn_mobile_money"
+        | "airtel_money"
+        | "orange_money"
+        | "bank_card"
+      subscription_plan: "monthly" | "annual"
+      subscription_status: "active" | "expired" | "suspended"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +261,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "client"],
+      payment_method: [
+        "mtn_mobile_money",
+        "airtel_money",
+        "orange_money",
+        "bank_card",
+      ],
+      subscription_plan: ["monthly", "annual"],
+      subscription_status: ["active", "expired", "suspended"],
+    },
   },
 } as const
