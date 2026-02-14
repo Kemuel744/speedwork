@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Printer, Download, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatAmount } from '@/lib/currencies';
 
 const statusMap: Record<string, { label: string; class: string }> = {
   paid: { label: 'Payée', class: 'bg-success/10 text-success border-success/20' },
@@ -128,8 +129,8 @@ export default function DocumentDetail() {
                 <tr key={item.id} className="border-b border-border/50">
                   <td className="py-3 text-sm text-foreground">{item.description}</td>
                   <td className="py-3 text-sm text-center text-foreground">{item.quantity}</td>
-                  <td className="py-3 text-sm text-right text-foreground">{item.unitPrice.toLocaleString('fr-FR')} €</td>
-                  <td className="py-3 text-sm text-right font-medium text-foreground">{item.total.toLocaleString('fr-FR')} €</td>
+                  <td className="py-3 text-sm text-right text-foreground">{formatAmount(item.unitPrice, doc.company.currency || 'EUR')}</td>
+                  <td className="py-3 text-sm text-right font-medium text-foreground">{formatAmount(item.total, doc.company.currency || 'EUR')}</td>
                 </tr>
               ))}
             </tbody>
@@ -139,16 +140,16 @@ export default function DocumentDetail() {
           <div className="flex justify-end">
             <div className="w-72 space-y-2">
               {(doc.laborCost ?? 0) > 0 && (
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Main d'œuvre</span><span className="text-foreground">{doc.laborCost.toLocaleString('fr-FR')} €</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Main d'œuvre</span><span className="text-foreground">{formatAmount(doc.laborCost, doc.company.currency || 'EUR')}</span></div>
               )}
-              <div className="flex justify-between text-sm"><span className="text-muted-foreground">Sous-total</span><span className="text-foreground">{doc.subtotal.toLocaleString('fr-FR')} €</span></div>
-              <div className="flex justify-between text-sm"><span className="text-muted-foreground">TVA ({doc.taxRate}%)</span><span className="text-foreground">{doc.taxAmount.toLocaleString('fr-FR')} €</span></div>
+              <div className="flex justify-between text-sm"><span className="text-muted-foreground">Sous-total</span><span className="text-foreground">{formatAmount(doc.subtotal, doc.company.currency || 'EUR')}</span></div>
+              <div className="flex justify-between text-sm"><span className="text-muted-foreground">TVA ({doc.taxRate}%)</span><span className="text-foreground">{formatAmount(doc.taxAmount, doc.company.currency || 'EUR')}</span></div>
               {(doc.withholdingRate ?? 0) > 0 && (
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Retenue à la source ({doc.withholdingRate}%)</span><span className="text-destructive">-{doc.withholdingAmount.toLocaleString('fr-FR')} €</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Retenue à la source ({doc.withholdingRate}%)</span><span className="text-destructive">-{formatAmount(doc.withholdingAmount, doc.company.currency || 'EUR')}</span></div>
               )}
               <div className="flex justify-between text-lg font-bold pt-3 border-t-2 border-primary/20">
                 <span className="text-foreground">Total</span>
-                <span className="text-primary">{doc.total.toLocaleString('fr-FR')} €</span>
+                <span className="text-primary">{formatAmount(doc.total, doc.company.currency || 'EUR')}</span>
               </div>
             </div>
           </div>
