@@ -6,47 +6,94 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Search, Building2, CreditCard, Users, TrendingUp, Ban, RefreshCw, Eye } from 'lucide-react';
+import { Search, Building2, CreditCard, Users, TrendingUp, Ban, RefreshCw, Eye, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import type { Tables } from '@/integrations/supabase/types';
 
-interface Subscription {
-  id: string;
-  company: string;
-  email: string;
-  plan: 'monthly' | 'annual';
-  status: 'active' | 'expired' | 'suspended';
-  paymentMethod: string;
-  startDate: string;
-  endDate: string;
-  amount: number;
-  accessCode: string;
+type SubscriptionRow = Tables<'subscriptions'>;
+
+interface SubscriptionWithProfile extends SubscriptionRow {
+  profiles: { company_name: string; email: string } | null;
 }
 
-const mockSubscriptions: Subscription[] = [
-  { id: '1', company: 'TechCorp SARL', email: 'admin@techcorp.cm', plan: 'annual', status: 'active', paymentMethod: 'MTN Mobile Money', startDate: '2026-01-15', endDate: '2027-01-15', amount: 36000, accessCode: 'A7X2K9' },
-  { id: '2', company: 'DigiServices', email: 'contact@digiservices.cm', plan: 'monthly', status: 'active', paymentMethod: 'Airtel Money', startDate: '2026-02-01', endDate: '2026-03-01', amount: 5000, accessCode: 'B3M8P1' },
-  { id: '3', company: 'AfriBuild SA', email: 'info@afribuild.cm', plan: 'annual', status: 'expired', paymentMethod: 'Orange Money', startDate: '2025-02-10', endDate: '2026-02-10', amount: 36000, accessCode: 'C5N4Q7' },
-  { id: '4', company: 'LogiTrans', email: 'admin@logitrans.cm', plan: 'monthly', status: 'suspended', paymentMethod: 'MTN Mobile Money', startDate: '2026-01-20', endDate: '2026-02-20', amount: 5000, accessCode: 'D9R1W6' },
-  { id: '5', company: 'MediPlus Clinic', email: 'finance@mediplus.cm', plan: 'annual', status: 'active', paymentMethod: 'Carte Bancaire', startDate: '2026-01-05', endDate: '2027-01-05', amount: 36000, accessCode: 'E2T5Y8' },
-  { id: '6', company: 'EduSmart Academy', email: 'dir@edusmart.cm', plan: 'monthly', status: 'active', paymentMethod: 'MTN Mobile Money', startDate: '2026-02-10', endDate: '2026-03-10', amount: 5000, accessCode: 'F6U3Z0' },
-];
+const paymentMethodLabels: Record<string, string> = {
+  mtn_mobile_money: 'MTN Mobile Money',
+  airtel_money: 'Airtel Money',
+  orange_money: 'Orange Money',
+  bank_card: 'Carte Bancaire',
+};
 
 const statusConfig = {
-  active: { label: 'Actif', variant: 'default' as const, className: 'bg-emerald-500/15 text-emerald-700 border-emerald-200 hover:bg-emerald-500/20' },
-  expired: { label: 'Expiré', variant: 'outline' as const, className: 'bg-amber-500/15 text-amber-700 border-amber-200 hover:bg-amber-500/20' },
-  suspended: { label: 'Suspendu', variant: 'destructive' as const, className: 'bg-destructive/15 text-destructive border-destructive/20 hover:bg-destructive/20' },
+  active: { label: 'Actif', className: 'bg-emerald-500/15 text-emerald-700 border-emerald-200 hover:bg-emerald-500/20' },
+  expired: { label: 'Expiré', className: 'bg-amber-500/15 text-amber-700 border-amber-200 hover:bg-amber-500/20' },
+  suspended: { label: 'Suspendu', className: 'bg-destructive/15 text-destructive border-destructive/20 hover:bg-destructive/20' },
 };
 
 export default function AdminSubscriptions() {
   const { toast } = useToast();
-  const [subscriptions, setSubscriptions] = useState(mockSubscriptions);
+  const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterPlan, setFilterPlan] = useState<string>('all');
-  const [selectedSub, setSelectedSub] = useState<Subscription | null>(null);
+  const [selectedSub, setSelectedSub] = useState<SubscriptionWithProfile | null>(null);
+
+  const { data: subscriptions = [], isLoading } = useQuery({
+    queryKey: ['admin-subscriptions'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('subscriptions')
+        .select('*, profiles!subscriptions_user_id_fkey(company_name, email)')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        // Fallback: join manually if FK doesn't exist
+        if (error.message.includes('relationship')) {
+          const { data: subs, error: subErr } = await supabase
+            .from('subscriptions')
+            .select('*')
+            .order('created_at', { ascending: false });
+          if (subErr) throw subErr;
+
+          const userIds = [...new Set((subs || []).map(s => s.user_id))];
+          const { data: profiles } = await supabase
+            .from('profiles')
+            .select('user_id, company_name, email')
+            .in('user_id', userIds);
+
+          const profileMap = new Map((profiles || []).map(p => [p.user_id, p]));
+          return (subs || []).map(s => ({
+            ...s,
+            profiles: profileMap.get(s.user_id) ? { company_name: profileMap.get(s.user_id)!.company_name, email: profileMap.get(s.user_id)!.email } : null,
+          })) as SubscriptionWithProfile[];
+        }
+        throw error;
+      }
+
+      return (data || []) as unknown as SubscriptionWithProfile[];
+    },
+  });
+
+  const updateStatus = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: 'active' | 'suspended' }) => {
+      const { error } = await supabase.from('subscriptions').update({ status }).eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: (_, { status }) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-subscriptions'] });
+      toast({
+        title: status === 'suspended' ? 'Abonnement suspendu' : 'Abonnement réactivé',
+        description: status === 'suspended' ? "L'abonnement a été suspendu." : "L'abonnement a été réactivé.",
+      });
+    },
+    onError: () => toast({ title: 'Erreur', description: 'Impossible de mettre à jour le statut.', variant: 'destructive' }),
+  });
 
   const filtered = subscriptions.filter(s => {
-    const matchSearch = s.company.toLowerCase().includes(search.toLowerCase()) || s.email.toLowerCase().includes(search.toLowerCase());
+    const company = s.profiles?.company_name || '';
+    const email = s.profiles?.email || '';
+    const matchSearch = company.toLowerCase().includes(search.toLowerCase()) || email.toLowerCase().includes(search.toLowerCase());
     const matchStatus = filterStatus === 'all' || s.status === filterStatus;
     const matchPlan = filterPlan === 'all' || s.plan === filterPlan;
     return matchSearch && matchStatus && matchPlan;
@@ -59,16 +106,6 @@ export default function AdminSubscriptions() {
     annual: subscriptions.filter(s => s.plan === 'annual' && s.status === 'active').length,
   };
 
-  const handleSuspend = (id: string) => {
-    setSubscriptions(prev => prev.map(s => s.id === id ? { ...s, status: 'suspended' as const } : s));
-    toast({ title: 'Abonnement suspendu', description: "L'abonnement a été suspendu avec succès." });
-  };
-
-  const handleReactivate = (id: string) => {
-    setSubscriptions(prev => prev.map(s => s.id === id ? { ...s, status: 'active' as const } : s));
-    toast({ title: 'Abonnement réactivé', description: "L'abonnement a été réactivé avec succès." });
-  };
-
   return (
     <div className="p-4 md:p-6 lg:p-8 space-y-6">
       <div>
@@ -76,7 +113,6 @@ export default function AdminSubscriptions() {
         <p className="text-muted-foreground text-sm mt-1">Suivez et gérez les abonnements de toutes les entreprises</p>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: 'Total entreprises', value: stats.total, icon: Building2, color: 'text-primary' },
@@ -98,7 +134,6 @@ export default function AdminSubscriptions() {
         ))}
       </div>
 
-      {/* Filters */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Abonnements</CardTitle>
@@ -129,7 +164,6 @@ export default function AdminSubscriptions() {
             </Select>
           </div>
 
-          {/* Table */}
           <div className="rounded-lg border border-border overflow-hidden">
             <Table>
               <TableHeader>
@@ -143,14 +177,22 @@ export default function AdminSubscriptions() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filtered.map(sub => {
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-8">
+                      <Loader2 className="w-5 h-5 animate-spin mx-auto text-muted-foreground" />
+                    </TableCell>
+                  </TableRow>
+                ) : filtered.length === 0 ? (
+                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Aucun abonnement trouvé</TableCell></TableRow>
+                ) : filtered.map(sub => {
                   const sc = statusConfig[sub.status];
                   return (
                     <TableRow key={sub.id}>
                       <TableCell>
                         <div>
-                          <p className="font-medium text-foreground">{sub.company}</p>
-                          <p className="text-xs text-muted-foreground">{sub.email}</p>
+                          <p className="font-medium text-foreground">{sub.profiles?.company_name || '—'}</p>
+                          <p className="text-xs text-muted-foreground">{sub.profiles?.email || '—'}</p>
                         </div>
                       </TableCell>
                       <TableCell className="hidden md:table-cell">
@@ -159,31 +201,27 @@ export default function AdminSubscriptions() {
                       <TableCell>
                         <Badge className={sc.className}>{sc.label}</Badge>
                       </TableCell>
-                      <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">{sub.paymentMethod}</TableCell>
-                      <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{new Date(sub.endDate).toLocaleDateString('fr-FR')}</TableCell>
+                      <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">{paymentMethodLabels[sub.payment_method] || sub.payment_method}</TableCell>
+                      <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{new Date(sub.end_date).toLocaleDateString('fr-FR')}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
                           <Button variant="ghost" size="icon" onClick={() => setSelectedSub(sub)}><Eye className="w-4 h-4" /></Button>
                           {sub.status === 'active' ? (
-                            <Button variant="ghost" size="icon" onClick={() => handleSuspend(sub.id)} className="text-destructive hover:text-destructive"><Ban className="w-4 h-4" /></Button>
+                            <Button variant="ghost" size="icon" onClick={() => updateStatus.mutate({ id: sub.id, status: 'suspended' })} className="text-destructive hover:text-destructive"><Ban className="w-4 h-4" /></Button>
                           ) : (
-                            <Button variant="ghost" size="icon" onClick={() => handleReactivate(sub.id)} className="text-emerald-600 hover:text-emerald-700"><RefreshCw className="w-4 h-4" /></Button>
+                            <Button variant="ghost" size="icon" onClick={() => updateStatus.mutate({ id: sub.id, status: 'active' })} className="text-emerald-600 hover:text-emerald-700"><RefreshCw className="w-4 h-4" /></Button>
                           )}
                         </div>
                       </TableCell>
                     </TableRow>
                   );
                 })}
-                {filtered.length === 0 && (
-                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Aucun abonnement trouvé</TableCell></TableRow>
-                )}
               </TableBody>
             </Table>
           </div>
         </CardContent>
       </Card>
 
-      {/* Detail Dialog */}
       <Dialog open={!!selectedSub} onOpenChange={() => setSelectedSub(null)}>
         <DialogContent>
           <DialogHeader>
@@ -192,14 +230,14 @@ export default function AdminSubscriptions() {
           {selectedSub && (
             <div className="space-y-3 text-sm">
               {[
-                ['Entreprise', selectedSub.company],
-                ['Email', selectedSub.email],
+                ['Entreprise', selectedSub.profiles?.company_name || '—'],
+                ['Email', selectedSub.profiles?.email || '—'],
                 ['Plan', selectedSub.plan === 'monthly' ? 'Mensuel — 5 000 FCFA/mois' : 'Annuel — 3 000 FCFA/mois'],
                 ['Montant', `${selectedSub.amount.toLocaleString()} FCFA`],
-                ['Paiement', selectedSub.paymentMethod],
-                ['Début', new Date(selectedSub.startDate).toLocaleDateString('fr-FR')],
-                ['Expiration', new Date(selectedSub.endDate).toLocaleDateString('fr-FR')],
-                ["Code d'accès", selectedSub.accessCode],
+                ['Paiement', paymentMethodLabels[selectedSub.payment_method] || selectedSub.payment_method],
+                ['Début', new Date(selectedSub.start_date).toLocaleDateString('fr-FR')],
+                ['Expiration', new Date(selectedSub.end_date).toLocaleDateString('fr-FR')],
+                ["Code d'accès", selectedSub.access_code],
               ].map(([label, value]) => (
                 <div key={label} className="flex justify-between py-1.5 border-b border-border last:border-0">
                   <span className="text-muted-foreground">{label}</span>
