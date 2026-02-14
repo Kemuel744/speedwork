@@ -33,12 +33,12 @@ export default function ClientDashboard() {
           {docs.map(doc => {
             const st = statusMap[doc.status];
             return (
-              <div key={doc.id} className="flex items-center justify-between py-3 border-b border-border last:border-0">
-                <Link to={`/document/${doc.id}`} className="flex-1">
-                  <p className="text-sm font-medium text-foreground">{doc.number}</p>
+              <div key={doc.id} className="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b border-border last:border-0 gap-2">
+                <Link to={`/document/${doc.id}`} className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">{doc.number}</p>
                   <p className="text-xs text-muted-foreground">{doc.date}</p>
                 </Link>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                   <Badge variant="outline" className={`text-xs ${st.class}`}>{st.label}</Badge>
                   <span className="text-sm font-semibold text-foreground">{formatAmount(doc.total, company.currency)}</span>
                   <Button variant="ghost" size="sm" asChild>
