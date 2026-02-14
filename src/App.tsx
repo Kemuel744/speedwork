@@ -13,6 +13,8 @@ import ClientDashboard from "@/pages/ClientDashboard";
 import Documents from "@/pages/Documents";
 import CreateDocument from "@/pages/CreateDocument";
 import DocumentDetail from "@/pages/DocumentDetail";
+import ClientsPage from "@/pages/Clients";
+import ClientDetailPage from "@/pages/ClientDetail";
 import Profile from "@/pages/Profile";
 import SettingsPage from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
@@ -37,6 +39,8 @@ const App = () => (
                 <Route path="/documents" element={<Documents />} />
                 <Route path="/create/:type" element={<CreateDocument />} />
                 <Route path="/document/:id" element={<DocumentDetail />} />
+                <Route path="/clients" element={<ClientsPage />} />
+                <Route path="/clients/:clientId" element={<ClientDetailPage />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<SettingsPage />} />
               </Route>

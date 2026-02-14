@@ -6,6 +6,7 @@ import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { Search, Plus, FileText, FileCheck, Trash2, Copy, ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -28,16 +29,23 @@ export default function Documents() {
   const typeFilter = searchParams.get('type') as 'invoice' | 'quote' | null;
   const [search, setSearch] = useState('');
   const [sortAsc, setSortAsc] = useState(false);
+  const [clientFilter, setClientFilter] = useState('');
+
+  const clientNames = useMemo(() => {
+    const names = new Set(documents.map(d => d.client.name));
+    return Array.from(names).sort();
+  }, [documents]);
 
   const filtered = useMemo(() => {
     let docs = documents;
     if (typeFilter) docs = docs.filter(d => d.type === typeFilter);
+    if (clientFilter) docs = docs.filter(d => d.client.name === clientFilter);
     if (search) {
       const q = search.toLowerCase();
       docs = docs.filter(d => d.number.toLowerCase().includes(q) || d.client.name.toLowerCase().includes(q));
     }
     return docs.sort((a, b) => sortAsc ? a.date.localeCompare(b.date) : b.date.localeCompare(a.date));
-  }, [documents, typeFilter, search, sortAsc]);
+  }, [documents, typeFilter, clientFilter, search, sortAsc]);
 
   const handleDuplicate = (id: string) => {
     const doc = documents.find(d => d.id === id);
@@ -86,6 +94,15 @@ export default function Documents() {
             <ArrowUpDown className="w-4 h-4 mr-2" />
             {sortAsc ? 'Plus ancien' : 'Plus récent'}
           </Button>
+          <Select value={clientFilter} onValueChange={v => setClientFilter(v === 'all' ? '' : v)}>
+            <SelectTrigger className="w-[180px]"><SelectValue placeholder="Tous les clients" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous les clients</SelectItem>
+              {clientNames.map(name => (
+                <SelectItem key={name} value={name}>{name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
