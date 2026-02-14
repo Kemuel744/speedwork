@@ -6,8 +6,16 @@ import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function AppLayout() {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    );
+  }
 
   if (!user) return <Navigate to="/login" replace />;
 
@@ -15,7 +23,6 @@ export default function AppLayout() {
     <div className="min-h-screen bg-background">
       <AppSidebar collapsed={collapsed} onToggle={() => setCollapsed(c => !c)} />
       
-      {/* Header */}
       <header className={cn(
         "fixed top-0 right-0 h-16 bg-card/80 backdrop-blur-md border-b border-border z-30 flex items-center px-4 lg:px-6 transition-all duration-300",
         collapsed ? "left-0 lg:left-16" : "left-0 lg:left-64"
@@ -37,7 +44,6 @@ export default function AppLayout() {
         </div>
       </header>
 
-      {/* Main content */}
       <main className={cn(
         "pt-16 min-h-screen transition-all duration-300",
         collapsed ? "lg:ml-16" : "lg:ml-64"
