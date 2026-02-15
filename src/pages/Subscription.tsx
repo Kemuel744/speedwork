@@ -3,11 +3,12 @@ import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, Crown, ArrowRight, Smartphone, Zap } from 'lucide-react';
+import { Check, Crown, ArrowRight, Smartphone, Zap, Copy, PartyPopper } from 'lucide-react';
 import speedworkLogo from '@/assets/logo.png';
 import { toast } from 'sonner';
 import SEO from '@/components/SEO';
 import PublicNavbar from '@/components/PublicNavbar';
+import { supabase } from '@/integrations/supabase/client';
 
 const plans = [
   {
@@ -59,12 +60,20 @@ export default function Subscription() {
   const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
 const [processing, setProcessing] = useState(false);
   const [phoneOrCard, setPhoneOrCard] = useState('');
+  const [generatedCode, setGeneratedCode] = useState<string | null>(null);
 
   const isCardPayment = selectedPayment === 'card';
   const phonePattern = /^(\+?\d{1,3})?\d{8,12}$/;
   const cardPattern = /^\d{13,19}$/;
 
-  const handlePayment = () => {
+  const paymentMethodMap: Record<string, string> = {
+    mtn: 'mtn_mobile_money',
+    airtel: 'airtel_money',
+    orange: 'orange_money',
+    card: 'bank_card',
+  };
+
+  const handlePayment = async () => {
     if (!selectedPlan || !selectedPayment) {
       toast.error('Veuillez sélectionner un plan et un moyen de paiement');
       return;
@@ -81,13 +90,43 @@ const [processing, setProcessing] = useState(false);
         return;
       }
     }
+
     setProcessing(true);
-    // Simulate CinetPay payment initiation
-    setTimeout(() => {
+    try {
+      // Get current user (or use a temporary ID for non-authenticated flow)
+      const { data: { user } } = await supabase.auth.getUser();
+      const userId = user?.id;
+
+      if (!userId) {
+        toast.error('Veuillez vous connecter avant de procéder au paiement.');
+        navigate('/login');
+        return;
+      }
+
+      const plan = plans.find(p => p.id === selectedPlan);
+      const amount = selectedPlan === 'annual' ? (plan?.totalPrice ?? 36000) : (plan?.price ?? 5000);
+
+      const { data, error } = await supabase.functions.invoke('generate-access-code', {
+        body: {
+          plan: selectedPlan,
+          payment_method: paymentMethodMap[selectedPayment],
+          amount,
+          user_id: userId,
+        },
+      });
+
+      if (error || !data?.success) {
+        toast.error(data?.error || 'Erreur lors du paiement. Réessayez.');
+        return;
+      }
+
+      setGeneratedCode(data.access_code);
+      toast.success('Paiement confirmé ! Votre code d\'accès a été généré.');
+    } catch {
+      toast.error('Erreur de connexion. Réessayez.');
+    } finally {
       setProcessing(false);
-      toast.success('Paiement initié ! Vous recevrez votre code d\'accès par SMS.');
-      navigate('/access-code');
-    }, 2000);
+    }
   };
 
   return (
@@ -129,6 +168,47 @@ const [processing, setProcessing] = useState(false);
           }
         ]
       }) }} />
+      {/* Success Screen */}
+      {generatedCode ? (
+        <div className="flex items-center justify-center min-h-[80vh] px-6">
+          <div className="max-w-md w-full text-center">
+            <div className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-6">
+              <PartyPopper className="w-10 h-10 text-accent" />
+            </div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">Paiement confirmé !</h2>
+            <p className="text-muted-foreground mb-6">
+              Votre abonnement est activé. Conservez votre code d'accès :
+            </p>
+            <div className="bg-card border-2 border-primary rounded-2xl p-6 mb-6">
+              <p className="text-xs text-muted-foreground mb-2">Votre code d'accès</p>
+              <p className="text-4xl font-mono font-bold tracking-[0.3em] text-foreground">{generatedCode}</p>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="mt-3 text-primary"
+                onClick={() => {
+                  navigator.clipboard.writeText(generatedCode);
+                  toast.success('Code copié !');
+                }}
+              >
+                <Copy className="w-4 h-4 mr-1" /> Copier le code
+              </Button>
+            </div>
+            <p className="text-sm text-muted-foreground mb-6">
+              Ce code a également été associé à votre compte. Vous pouvez l'utiliser pour activer votre accès.
+            </p>
+            <div className="flex flex-col gap-3">
+              <Button onClick={() => navigate('/access-code')} className="w-full h-11 font-semibold">
+                Activer mon compte <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+              <Button variant="outline" onClick={() => navigate('/login')} className="w-full">
+                Se connecter directement
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : (
+      <>
       {/* Header */}
       <div className="bg-primary text-primary-foreground py-12 px-6">
         <div className="max-w-4xl mx-auto text-center">
@@ -284,6 +364,8 @@ const [processing, setProcessing] = useState(false);
           </button>
         </div>
       </div>
+      </>
+      )}
     </main>
   );
 }
