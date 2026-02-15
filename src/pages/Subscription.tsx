@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -56,18 +57,35 @@ export default function Subscription() {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
-  const [processing, setProcessing] = useState(false);
+const [processing, setProcessing] = useState(false);
+  const [phoneOrCard, setPhoneOrCard] = useState('');
+
+  const isCardPayment = selectedPayment === 'card';
+  const phonePattern = /^(\+?\d{1,3})?\d{8,12}$/;
+  const cardPattern = /^\d{13,19}$/;
 
   const handlePayment = () => {
     if (!selectedPlan || !selectedPayment) {
       toast.error('Veuillez sélectionner un plan et un moyen de paiement');
       return;
     }
+    const trimmed = phoneOrCard.replace(/\s/g, '');
+    if (isCardPayment) {
+      if (!cardPattern.test(trimmed)) {
+        toast.error('Veuillez entrer un numéro de carte valide');
+        return;
+      }
+    } else {
+      if (!phonePattern.test(trimmed)) {
+        toast.error('Veuillez entrer un numéro de téléphone valide');
+        return;
+      }
+    }
     setProcessing(true);
     // Simulate CinetPay payment initiation
     setTimeout(() => {
       setProcessing(false);
-      toast.success('Paiement initié ! Vous recevrez votre code d\'accès par SMS/email.');
+      toast.success('Paiement initié ! Vous recevrez votre code d\'accès par SMS.');
       navigate('/access-code');
     }, 2000);
   };
@@ -213,9 +231,31 @@ export default function Subscription() {
               ))}
             </div>
 
+            {/* Phone or Card Number Input */}
+            {selectedPayment && (
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  {isCardPayment ? 'Numéro de carte bancaire' : 'Numéro de téléphone'}
+                </label>
+                <Input
+                  type="tel"
+                  placeholder={isCardPayment ? 'Ex: 4242 4242 4242 4242' : 'Ex: +242 06 XXX XX XX'}
+                  value={phoneOrCard}
+                  onChange={(e) => setPhoneOrCard(e.target.value)}
+                  className="h-12 text-base"
+                  maxLength={isCardPayment ? 22 : 16}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {isCardPayment
+                    ? 'Le paiement sera débité de cette carte.'
+                    : 'Un prompt de paiement sera envoyé à ce numéro.'}
+                </p>
+              </div>
+            )}
+
             <Button
               onClick={handlePayment}
-              disabled={!selectedPayment || processing}
+              disabled={!selectedPayment || !phoneOrCard.trim() || processing}
               className="w-full h-12 text-base font-semibold"
               size="lg"
             >
