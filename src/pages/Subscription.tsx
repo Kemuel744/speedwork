@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Check, Crown, ArrowRight, Smartphone, Zap } from 'lucide-react';
 import speedworkLogo from '@/assets/logo.png';
 import { toast } from 'sonner';
+import SEO from '@/components/SEO';
 
 const plans = [
   {
@@ -71,7 +72,12 @@ export default function Subscription() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background">
+      <SEO
+        title="Abonnement – Facturation en Ligne"
+        description="Choisissez votre abonnement SpeedWork : factures et devis illimités à partir de 3 000 FCFA/mois. Paiement par Mobile Money ou carte bancaire."
+        path="/subscription"
+      />
       {/* Header */}
       <div className="bg-primary text-primary-foreground py-12 px-6">
         <div className="max-w-4xl mx-auto text-center">
@@ -205,6 +211,6 @@ export default function Subscription() {
           </button>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
