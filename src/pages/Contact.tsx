@@ -54,8 +54,27 @@ export default function Contact() {
     <>
       <SEO
         title="Contact & Réclamations"
-        description="Contactez l'équipe SpeedWork pour toute question, réclamation ou suggestion. Nous sommes à votre écoute."
+        description="Contactez l'équipe SpeedWork pour toute question, réclamation ou suggestion. Téléphone : +242 06 444 6047. Email : speedwork033@gmail.com. Oyo, Congo-Brazzaville."
         path="/contact"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          "name": "Contact SpeedWork",
+          "description": "Page de contact et réclamations de SpeedWork",
+          "url": "https://speedwork.pro/contact",
+          "mainEntity": {
+            "@type": "Organization",
+            "name": "SpeedWork",
+            "email": "speedwork033@gmail.com",
+            "telephone": ["+242064446047", "+242053039818"],
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "29 Rue 650, Qtier Oyah",
+              "addressLocality": "Oyo",
+              "addressCountry": "CG"
+            }
+          }
+        }}
       />
       <PublicNavbar />
 

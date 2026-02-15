@@ -184,6 +184,7 @@ export default function Home() {
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
               <Link to="/fonctionnalites" className="hover:text-foreground transition-colors">Fonctionnalités</Link>
               <Link to="/tarifs" className="hover:text-foreground transition-colors">Tarifs</Link>
+              <Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link>
               <Link to="/login" className="hover:text-foreground transition-colors">Connexion</Link>
             </div>
             <p className="text-xs text-muted-foreground">© 2025 SpeedWork. Tous droits réservés.</p>
