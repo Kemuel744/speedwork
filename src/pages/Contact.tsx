@@ -75,9 +75,9 @@ export default function Contact() {
             {/* Info cards */}
             <div className="space-y-4 md:col-span-1">
               {[
-                { icon: Mail, label: 'Email', value: 'support@speedwork.pro' },
-                { icon: Phone, label: 'Téléphone', value: '+243 XXX XXX XXX' },
-                { icon: MapPin, label: 'Adresse', value: 'Lubumbashi, RDC' },
+                { icon: Mail, label: 'Email', value: 'speedwork033@gmail.com' },
+                { icon: Phone, label: 'Téléphone', value: '+242 06 444 6047 / +242 05 303 9818' },
+                { icon: MapPin, label: 'Adresse', value: '29 Rue 650, Qtier Oyah, Oyo' },
               ].map((item) => (
                 <Card key={item.label} className="border-border">
                   <CardContent className="flex items-start gap-3 p-4">
