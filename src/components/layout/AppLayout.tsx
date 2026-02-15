@@ -3,6 +3,7 @@ import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import AppSidebar from './AppSidebar';
 import ChatBot from '@/components/chat/ChatBot';
+import NotificationBell from '@/components/NotificationBell';
 import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -42,6 +43,7 @@ export default function AppLayout() {
           <Menu className="w-5 h-5 text-muted-foreground" />
         </button>
         <div className="ml-auto flex items-center gap-3">
+          <NotificationBell />
           <div className="text-right">
             <p className="text-sm font-medium text-foreground">{user.name}</p>
             <p className="text-xs text-muted-foreground capitalize">{user.role}</p>
