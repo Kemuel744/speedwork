@@ -8,6 +8,7 @@ const links = [
   { label: 'Accueil', to: '/' },
   { label: 'Fonctionnalités', to: '/fonctionnalites' },
   { label: 'Tarifs', to: '/tarifs' },
+  { label: 'Contact', to: '/contact' },
 ];
 
 export default function PublicNavbar() {

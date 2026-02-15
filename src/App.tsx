@@ -26,6 +26,7 @@ import AdminSubscriptions from "@/pages/AdminSubscriptions";
 import AdminClients from "@/pages/AdminClients";
 import AnnualReview from "@/pages/AnnualReview";
 import Reminders from "@/pages/Reminders";
+import Contact from "@/pages/Contact";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ const App = () => (
               <Route path="/tarifs" element={<Subscription />} />
               <Route path="/login" element={<Login />} />
               <Route path="/subscription" element={<Navigate to="/tarifs" replace />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/access-code" element={<AccessCode />} />
               <Route element={<AppLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
