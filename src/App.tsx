@@ -9,6 +9,8 @@ import { DocumentsProvider } from "@/contexts/DocumentsContext";
 import { CompanyProvider } from "@/contexts/CompanyContext";
 import AppLayout from "@/components/layout/AppLayout";
 import Login from "@/pages/Login";
+import Home from "@/pages/Home";
+import Features from "@/pages/Features";
 import Subscription from "@/pages/Subscription";
 import AccessCode from "@/pages/AccessCode";
 import Dashboard from "@/pages/Dashboard";
@@ -39,10 +41,12 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/fonctionnalites" element={<Features />} />
+              <Route path="/tarifs" element={<Subscription />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/subscription" element={<Subscription />} />
+              <Route path="/subscription" element={<Navigate to="/tarifs" replace />} />
               <Route path="/access-code" element={<AccessCode />} />
-              <Route path="/" element={<Navigate to="/subscription" replace />} />
               <Route element={<AppLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/client" element={<ClientDashboard />} />

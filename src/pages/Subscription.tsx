@@ -6,6 +6,7 @@ import { Check, Crown, ArrowRight, Smartphone, Zap } from 'lucide-react';
 import speedworkLogo from '@/assets/logo.png';
 import { toast } from 'sonner';
 import SEO from '@/components/SEO';
+import PublicNavbar from '@/components/PublicNavbar';
 
 const plans = [
   {
@@ -73,10 +74,11 @@ export default function Subscription() {
 
   return (
     <main className="min-h-screen bg-background">
+      <PublicNavbar />
       <SEO
-        title="Abonnement – Facturation en Ligne"
+        title="Tarifs – Abonnement Facturation"
         description="Choisissez votre abonnement SpeedWork : factures et devis illimités à partir de 3 000 FCFA/mois. Paiement par Mobile Money ou carte bancaire."
-        path="/subscription"
+        path="/tarifs"
       />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org",
