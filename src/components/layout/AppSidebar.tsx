@@ -16,6 +16,7 @@ const adminNav = [
   { label: 'Devis', to: '/documents?type=quote', icon: FileCheck },
   { label: 'Nouvelle Facture', to: '/create/invoice', icon: FilePlus },
   { label: 'Nouveau Devis', to: '/create/quote', icon: FilePlus },
+  { label: 'Gestion Clients', to: '/admin/clients', icon: Users },
   { label: 'Abonnements', to: '/admin/subscriptions', icon: CreditCard },
   { label: 'Relances', to: '/reminders', icon: Bell },
   { label: 'Bilan Annuel', to: '/annual-review', icon: BarChart3 },
