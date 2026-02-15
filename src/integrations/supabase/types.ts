@@ -187,6 +187,8 @@ export type Database = {
           id: string
           logo_url: string | null
           phone: string | null
+          trial_docs_used: number | null
+          trial_start: string | null
           updated_at: string
           user_id: string
         }
@@ -198,6 +200,8 @@ export type Database = {
           id?: string
           logo_url?: string | null
           phone?: string | null
+          trial_docs_used?: number | null
+          trial_start?: string | null
           updated_at?: string
           user_id: string
         }
@@ -209,6 +213,8 @@ export type Database = {
           id?: string
           logo_url?: string | null
           phone?: string | null
+          trial_docs_used?: number | null
+          trial_start?: string | null
           updated_at?: string
           user_id?: string
         }
