@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, Trash2, Save, Upload, Image } from 'lucide-react';
 import { toast } from 'sonner';
 import { currencies, formatAmount } from '@/lib/currencies';
+import { useTrialStatus } from '@/hooks/useTrialStatus';
 
 function generateNumber(type: DocumentType) {
   const prefix = type === 'invoice' ? 'FAC' : 'DEV';
@@ -90,8 +91,17 @@ export default function CreateDocument() {
   const withholdingAmount = Math.round(subtotal * withholdingRate / 100 * 100) / 100;
   const total = Math.round((subtotal + taxAmount - withholdingAmount) * 100) / 100;
 
+  const { canCreateDocument, trialExpired, docsUsed, docsLimit } = useTrialStatus();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Block new document creation if trial expired (allow edits)
+    if (!isEditing && !canCreateDocument) {
+      toast.error(`Essai terminé. Vous avez atteint la limite de ${docsLimit} documents ou les 3 jours d'essai sont écoulés. Souscrivez un abonnement pour continuer.`);
+      return;
+    }
+
     if (!client.name || !client.email) {
       toast.error('Veuillez remplir les informations client');
       return;

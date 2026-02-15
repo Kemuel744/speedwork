@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { monthlyRevenue } from '@/lib/mockData';
 import CurrencyConverter from '@/components/CurrencyConverter';
+import TrialBanner from '@/components/TrialBanner';
 
 function StatCard({ icon: Icon, label, value, sub, color }: { icon: any; label: string; value: string; sub?: string; color: string }) {
   return (
@@ -57,6 +58,8 @@ export default function Dashboard() {
           </Button>
         </div>
       </div>
+
+      <TrialBanner />
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

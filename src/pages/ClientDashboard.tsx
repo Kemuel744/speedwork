@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { FileText, Download, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import TrialBanner from '@/components/TrialBanner';
 
 const statusMap: Record<string, { label: string; class: string }> = {
   paid: { label: 'Payée', class: 'bg-success/10 text-success border-success/20' },
@@ -59,6 +60,8 @@ export default function ClientDashboard() {
         <h1 className="section-title">Mon espace</h1>
         <p className="text-muted-foreground text-sm mt-1">Bienvenue, {user?.name}</p>
       </div>
+
+      <TrialBanner />
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div className="stat-card">
