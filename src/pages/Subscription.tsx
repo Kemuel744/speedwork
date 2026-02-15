@@ -78,6 +78,37 @@ export default function Subscription() {
         description="Choisissez votre abonnement SpeedWork : factures et devis illimités à partir de 3 000 FCFA/mois. Paiement par Mobile Money ou carte bancaire."
         path="/subscription"
       />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Combien coûte SpeedWork ?",
+            "acceptedAnswer": { "@type": "Answer", "text": "SpeedWork propose deux formules : un abonnement mensuel à 5 000 FCFA/mois et un abonnement annuel à 3 000 FCFA/mois (soit 36 000 FCFA/an), vous permettant d'économiser 40%." }
+          },
+          {
+            "@type": "Question",
+            "name": "Quels moyens de paiement sont acceptés ?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Nous acceptons MTN Mobile Money, Airtel Money, Orange Money et les cartes bancaires (Visa, Mastercard). Le paiement est sécurisé via CinetPay." }
+          },
+          {
+            "@type": "Question",
+            "name": "Puis-je créer des factures et devis illimités ?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Oui, tous les abonnements SpeedWork incluent la création illimitée de factures et devis professionnels avec export PDF et signature électronique." }
+          },
+          {
+            "@type": "Question",
+            "name": "SpeedWork est-il adapté aux entreprises en Afrique ?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Absolument. SpeedWork est conçu pour les entreprises africaines avec le support du FCFA, des paiements Mobile Money et une interface en français." }
+          },
+          {
+            "@type": "Question",
+            "name": "Comment accéder à mon compte après le paiement ?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Après votre paiement, vous recevez un code d'accès par SMS ou email. Saisissez ce code pour activer votre compte et commencer à utiliser SpeedWork immédiatement." }
+          }
+        ]
+      }) }} />
       {/* Header */}
       <div className="bg-primary text-primary-foreground py-12 px-6">
         <div className="max-w-4xl mx-auto text-center">
