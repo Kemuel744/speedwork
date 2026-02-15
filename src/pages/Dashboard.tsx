@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { monthlyRevenue } from '@/lib/mockData';
+import CurrencyConverter from '@/components/CurrencyConverter';
 
 function StatCard({ icon: Icon, label, value, sub, color }: { icon: any; label: string; value: string; sub?: string; color: string }) {
   return (
@@ -112,6 +113,11 @@ export default function Dashboard() {
             })}
           </div>
         </div>
+      </div>
+
+      {/* Currency Converter */}
+      <div className="mt-6">
+        <CurrencyConverter />
       </div>
     </div>
   );
