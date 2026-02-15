@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Search, UserPlus, Trash2, Building2, Loader2, Users } from 'lucide-react';
+import { Search, UserPlus, Trash2, Building2, Loader2, Users, KeyRound, Copy, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -30,6 +30,9 @@ export default function AdminClients() {
   const [showAdd, setShowAdd] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<ClientProfile | null>(null);
   const [form, setForm] = useState({ email: '', password: '', company_name: '', phone: '', address: '' });
+  const [activateTarget, setActivateTarget] = useState<ClientProfile | null>(null);
+  const [generatedCode, setGeneratedCode] = useState('');
+  const [activatingPlan, setActivatingPlan] = useState<string | null>(null);
 
   const { data: clients = [], isLoading } = useQuery({
     queryKey: ['admin-clients'],
@@ -72,6 +75,28 @@ export default function AdminClients() {
     },
     onError: (err: Error) => toast({ title: 'Erreur', description: err.message, variant: 'destructive' }),
   });
+
+  const handleManualActivation = async (client: ClientProfile, plan: 'monthly' | 'annual') => {
+    setActivatingPlan(plan);
+    try {
+      const res = await supabase.functions.invoke('generate-access-code', {
+        body: {
+          user_id: client.user_id,
+          plan,
+          payment_method: 'mtn_mobile_money',
+          amount: plan === 'annual' ? 36000 : 5000,
+        },
+      });
+      if (res.error || res.data?.error) throw new Error(res.data?.error || res.error?.message);
+      setGeneratedCode(res.data.access_code);
+      queryClient.invalidateQueries({ queryKey: ['admin-clients'] });
+      toast({ title: 'Abonnement activé', description: `Code d'accès généré pour ${client.company_name || client.email}` });
+    } catch (err: any) {
+      toast({ title: 'Erreur', description: err.message, variant: 'destructive' });
+    } finally {
+      setActivatingPlan(null);
+    }
+  };
 
   const filtered = clients.filter(c =>
     c.company_name.toLowerCase().includes(search.toLowerCase()) ||
@@ -166,7 +191,16 @@ export default function AdminClients() {
                     <TableCell className="hidden md:table-cell">
                       <Badge variant="outline">{client.trial_docs_used ?? 0}</Badge>
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right flex items-center justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => { setActivateTarget(client); setGeneratedCode(''); }}
+                        className="text-primary hover:text-primary"
+                        title="Activer abonnement"
+                      >
+                        <KeyRound className="w-4 h-4" />
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -220,6 +254,64 @@ export default function AdminClients() {
             >
               {createClient.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
               Créer le compte
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Manual activation dialog */}
+      <Dialog open={!!activateTarget} onOpenChange={() => setActivateTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Activer l'abonnement manuellement</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="p-3 rounded-lg bg-muted text-sm space-y-1">
+              <p className="font-medium text-foreground">Client : {activateTarget?.company_name || activateTarget?.email}</p>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Phone className="w-3.5 h-3.5" />
+                <span>Paiement via : +242 06 444 6047 / 05 303 9818</span>
+              </div>
+            </div>
+
+            {generatedCode ? (
+              <div className="text-center space-y-3 py-4">
+                <p className="text-sm text-muted-foreground">Code d'accès généré :</p>
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-3xl font-bold tracking-widest text-primary">{generatedCode}</span>
+                  <Button variant="ghost" size="icon" onClick={() => { navigator.clipboard.writeText(generatedCode); toast({ title: 'Copié !' }); }}>
+                    <Copy className="w-4 h-4" />
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">Communiquez ce code au client pour qu'il active son compte.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 flex flex-col gap-1"
+                  disabled={!!activatingPlan}
+                  onClick={() => activateTarget && handleManualActivation(activateTarget, 'monthly')}
+                >
+                  {activatingPlan === 'monthly' ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                  <span className="font-semibold">Mensuel</span>
+                  <span className="text-xs text-muted-foreground">5 000 FCFA</span>
+                </Button>
+                <Button
+                  className="h-auto py-4 flex flex-col gap-1"
+                  disabled={!!activatingPlan}
+                  onClick={() => activateTarget && handleManualActivation(activateTarget, 'annual')}
+                >
+                  {activatingPlan === 'annual' ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                  <span className="font-semibold">Annuel</span>
+                  <span className="text-xs text-muted-foreground">36 000 FCFA</span>
+                </Button>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setActivateTarget(null)}>
+              {generatedCode ? 'Fermer' : 'Annuler'}
             </Button>
           </DialogFooter>
         </DialogContent>
