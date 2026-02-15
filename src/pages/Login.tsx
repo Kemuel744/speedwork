@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { ArrowRight } from 'lucide-react';
 import speedworkLogo from '@/assets/logo.png';
 import { toast } from 'sonner';
+import SEO from '@/components/SEO';
 
 export default function Login() {
   const { user, login, register, isLoading: authLoading } = useAuth();
@@ -63,7 +64,12 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <main className="min-h-screen flex">
+      <SEO
+        title="Connexion"
+        description="Connectez-vous à votre espace SpeedWork pour gérer vos factures et devis professionnels."
+        path="/login"
+      />
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-1/2 bg-primary relative overflow-hidden items-center justify-center p-12">
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-accent opacity-90" />
@@ -133,6 +139,6 @@ export default function Login() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
