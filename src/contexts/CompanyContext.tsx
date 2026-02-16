@@ -24,6 +24,7 @@ const defaultCompany: CompanySettings = {
   currency: 'XOF',
   signatoryTitle: 'Le Directeur Général',
   defaultTaxRate: 20,
+  customNote: '',
 };
 
 const STORAGE_KEY = 'speedwork_company';

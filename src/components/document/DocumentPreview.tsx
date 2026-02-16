@@ -155,6 +155,12 @@ export default function DocumentPreview({ doc }: Props) {
     </div>
   );
 
+  const renderCustomNote = () => doc.company.customNote ? (
+    <div className="mt-5 p-3 rounded-lg text-[10px] text-gray-500 italic leading-relaxed" style={{ backgroundColor: primarySoft }}>
+      {doc.company.customNote}
+    </div>
+  ) : null;
+
   const renderSignature = () => (
     <div className="mt-10 flex justify-end">
       <div className="text-center w-56">
@@ -238,6 +244,7 @@ export default function DocumentPreview({ doc }: Props) {
         {renderDateSubject()}
         {renderItemsTable('filled')}
         {renderTotals()}
+        {renderCustomNote()}
         {renderSignature()}
         {renderFooter()}
       </div>
@@ -321,6 +328,7 @@ export default function DocumentPreview({ doc }: Props) {
 
       {renderItemsTable('bordered')}
       {renderTotals()}
+      {renderCustomNote()}
       {renderSignature()}
       {renderFooter()}
     </div>
@@ -381,6 +389,7 @@ export default function DocumentPreview({ doc }: Props) {
 
       {renderItemsTable('minimal')}
       {renderTotals()}
+      {renderCustomNote()}
       {renderSignature()}
       {renderFooter()}
     </div>
@@ -487,6 +496,7 @@ export default function DocumentPreview({ doc }: Props) {
 
         {renderItemsTable('corporate')}
         {renderTotals()}
+        {renderCustomNote()}
         {renderSignature()}
         {renderFooter()}
       </div>
