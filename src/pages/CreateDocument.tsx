@@ -45,6 +45,7 @@ export default function CreateDocument() {
     address: editingDoc?.company.address ?? savedCompany.address,
     phone: editingDoc?.company.phone ?? savedCompany.phone,
     email: editingDoc?.company.email ?? savedCompany.email,
+    description: editingDoc?.company.description ?? savedCompany.description ?? '',
     logo: editingDoc?.company.logo ?? savedCompany.logo,
     logoPosition: (editingDoc?.company.logoPosition ?? savedCompany.logoPosition ?? 'left') as 'left' | 'center' | 'right',
     iban: editingDoc?.company.iban ?? savedCompany.iban ?? '',
@@ -409,6 +410,10 @@ export default function CreateDocument() {
               <div className="space-y-1.5">
                 <Label className="text-xs">Adresse</Label>
                 <Input value={company.address} onChange={e => setCompany({ ...company, address: e.target.value })} />
+              </div>
+              <div className="sm:col-span-2 space-y-1.5">
+                <Label className="text-xs">Description <span className="text-muted-foreground">(facultatif)</span></Label>
+                <Input value={company.description || ''} onChange={e => setCompany({ ...company, description: e.target.value })} placeholder="Brève description de votre activité" />
               </div>
             </div>
             <h4 className="font-medium text-sm text-muted-foreground mt-2">Signataire</h4>

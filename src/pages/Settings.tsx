@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { Save, Upload, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCompany } from '@/contexts/CompanyContext';
@@ -83,6 +84,15 @@ export default function SettingsPage() {
               <Label>Adresse</Label>
               <Input value={company.address} onChange={e => updateCompany({ address: e.target.value })} />
             </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label>Description de l'entreprise <span className="text-muted-foreground text-xs">(facultatif)</span></Label>
+            <Textarea
+              value={company.description || ''}
+              onChange={e => updateCompany({ description: e.target.value })}
+              placeholder="Brève description de votre activité (apparaît sur vos factures et devis)"
+              rows={2}
+            />
           </div>
         </div>
 

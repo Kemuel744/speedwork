@@ -34,6 +34,7 @@ export interface CompanyInfo {
   address: string;
   phone: string;
   email: string;
+  description?: string;
   logo?: string;
   logoPosition?: 'left' | 'center' | 'right';
   iban?: string;

@@ -15,6 +15,7 @@ const defaultCompany: CompanySettings = {
   address: '12 Rue de la Paix, 75002 Paris',
   phone: '+33 1 23 45 67 89',
   email: 'contact@speedwork.com',
+  description: '',
   logo: undefined,
   logoPosition: 'left',
   iban: '',
