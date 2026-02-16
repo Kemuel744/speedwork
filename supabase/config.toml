@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.extract-document]
 verify_jwt = false
+
+[functions.notify-subscription-request]
+verify_jwt = false
