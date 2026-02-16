@@ -27,6 +27,7 @@ export default function DocumentPreview({ doc }: Props) {
     <div className="flex justify-between gap-6 mt-5">
       <div className="text-xs text-gray-600 leading-relaxed">
         <p className="font-medium text-gray-800">{doc.company.address}</p>
+        {doc.company.description && <p className="text-[10px] text-gray-500 italic mt-0.5">{doc.company.description}</p>}
         {doc.company.phone && <p>{doc.company.phone}</p>}
       </div>
       <div
@@ -175,6 +176,7 @@ export default function DocumentPreview({ doc }: Props) {
       <div className="flex flex-wrap justify-between gap-4 text-[9px] text-gray-500 leading-relaxed">
         <div>
           <p className="font-semibold text-gray-700 mb-0.5">{doc.company.name}</p>
+          {doc.company.description && <p className="italic">{doc.company.description}</p>}
           <p>{doc.company.address}</p>
           <p>
             {doc.company.email}
@@ -213,6 +215,7 @@ export default function DocumentPreview({ doc }: Props) {
           )}
           <div style={{ color: textOnPrimary }}>
             <h2 className="text-lg font-bold leading-tight">{doc.company.name}</h2>
+            {doc.company.description && <p className="text-[10px] opacity-70 italic">{doc.company.description}</p>}
             <p className="text-xs opacity-80">{doc.company.email}</p>
           </div>
         </div>
@@ -267,6 +270,9 @@ export default function DocumentPreview({ doc }: Props) {
             <h2 className="text-xl font-bold" style={{ color: primary }}>
               {doc.company.name}
             </h2>
+            {doc.company.description && (
+              <p className="text-[10px] text-gray-500 italic mt-0.5">{doc.company.description}</p>
+            )}
             <p className="text-xs text-gray-600 mt-1">{doc.company.address}</p>
             <p className="text-xs text-gray-600">
               {doc.company.phone}
@@ -332,6 +338,7 @@ export default function DocumentPreview({ doc }: Props) {
             />
           )}
           <h2 className="text-sm font-semibold text-gray-800">{doc.company.name}</h2>
+          {doc.company.description && <p className="text-[10px] text-gray-400 italic">{doc.company.description}</p>}
         </div>
         <div className="text-right">
           <h3
@@ -400,6 +407,9 @@ export default function DocumentPreview({ doc }: Props) {
               <h2 className="text-lg font-bold" style={{ color: primary }}>
                 {doc.company.name}
               </h2>
+              {doc.company.description && (
+                <p className="text-[10px] text-gray-500 italic">{doc.company.description}</p>
+              )}
               <p className="text-xs text-gray-600">{doc.company.address}</p>
               <p className="text-xs text-gray-600">
                 {doc.company.phone}
