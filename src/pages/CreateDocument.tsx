@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDocuments } from '@/contexts/DocumentsContext';
 import { useCompany } from '@/contexts/CompanyContext';
@@ -7,12 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Trash2, Save, Upload, Image, Camera, Loader2, Palette } from 'lucide-react';
+import { Plus, Trash2, Save, Upload, Image, Camera, Loader2, Palette, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { currencies, formatAmount } from '@/lib/currencies';
 import { useTrialStatus } from '@/hooks/useTrialStatus';
 import { supabase } from '@/integrations/supabase/client';
 import { extractColorsFromImage, ExtractedColors } from '@/lib/colorExtractor';
+import DocumentPreview from '@/components/document/DocumentPreview';
 
 function generateNumber(type: DocumentType) {
   const prefix = type === 'invoice' ? 'FAC' : 'DEV';
@@ -196,6 +197,30 @@ export default function CreateDocument() {
   const total = Math.round((subtotal + taxAmount - withholdingAmount) * 100) / 100;
 
   const { canCreateDocument, trialExpired, docsUsed, docsLimit } = useTrialStatus();
+  const [showPreview, setShowPreview] = useState(false);
+
+  // Live preview document object
+  const previewDoc = useMemo<DocumentData>(() => ({
+    id: editingDoc?.id ?? 'preview',
+    number: editingDoc?.number ?? generateNumber(docType),
+    type: docType,
+    status,
+    date: editingDoc?.date ?? new Date().toISOString().split('T')[0],
+    dueDate: dueDate || undefined,
+    client,
+    company,
+    items,
+    subject: subject || undefined,
+    subtotal,
+    laborCost,
+    taxRate,
+    taxAmount,
+    withholdingRate,
+    withholdingAmount,
+    total,
+    createdBy: editingDoc?.createdBy ?? '1',
+    clientId: editingDoc?.clientId ?? '',
+  }), [company, client, items, status, dueDate, subject, subtotal, laborCost, taxRate, taxAmount, withholdingRate, withholdingAmount, total, docType, editingDoc]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -258,32 +283,46 @@ export default function CreateDocument() {
             ? `Modifier ${docType === 'invoice' ? 'la facture' : 'le devis'} ${editingDoc?.number}`
             : docType === 'invoice' ? 'Nouvelle Facture' : 'Nouveau Devis'}
         </h1>
-        {!isEditing && (
-          <div className="flex gap-2">
-            <input
-              ref={cameraInputRef}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              className="hidden"
-              onChange={handlePhotoCapture}
-            />
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => cameraInputRef.current?.click()}
-              disabled={isExtracting}
-            >
-              {isExtracting ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Camera className="w-4 h-4 mr-2" />
-              )}
-              {isExtracting ? 'Analyse...' : 'Scanner un document'}
-            </Button>
-          </div>
-        )}
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant={showPreview ? 'default' : 'outline'}
+            onClick={() => setShowPreview(prev => !prev)}
+            className="gap-2"
+          >
+            {showPreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            {showPreview ? 'Masquer' : 'Aperçu'}
+          </Button>
+          {!isEditing && (
+            <>
+              <input
+                ref={cameraInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                className="hidden"
+                onChange={handlePhotoCapture}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => cameraInputRef.current?.click()}
+                disabled={isExtracting}
+              >
+                {isExtracting ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Camera className="w-4 h-4 mr-2" />
+                )}
+                {isExtracting ? 'Analyse...' : 'Scanner'}
+              </Button>
+            </>
+          )}
+        </div>
       </div>
+
+      <div className={showPreview ? 'flex gap-6 items-start' : ''}>
+        <div className={showPreview ? 'flex-1 min-w-0' : ''}>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Company & Client info */}
@@ -586,6 +625,20 @@ export default function CreateDocument() {
           <Button type="submit"><Save className="w-4 h-4 mr-2" />{isEditing ? 'Mettre à jour' : 'Enregistrer'}</Button>
         </div>
       </form>
+        </div>
+
+        {/* Live Preview Panel */}
+        {showPreview && (
+          <div className="hidden lg:block w-[400px] shrink-0 sticky top-4 max-h-[calc(100vh-2rem)] overflow-auto">
+            <div className="rounded-lg border border-border bg-muted/30 p-2">
+              <p className="text-xs font-medium text-muted-foreground mb-2 text-center">Aperçu en direct</p>
+              <div className="overflow-hidden rounded" style={{ transform: 'scale(0.5)', transformOrigin: 'top left', width: '200%' }}>
+                <DocumentPreview doc={previewDoc} />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
