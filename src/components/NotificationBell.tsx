@@ -143,7 +143,7 @@ export default function NotificationBell() {
                       <p className={cn("text-sm", !notif.is_read ? "font-semibold text-foreground" : "text-muted-foreground")}>
                         {notif.title}
                       </p>
-                      <p className="text-xs text-muted-foreground truncate">{notif.message}</p>
+                      <p className="text-xs text-muted-foreground whitespace-normal break-words">{notif.message}</p>
                       <p className="text-[10px] text-muted-foreground mt-1">{timeAgo(notif.created_at)}</p>
                     </div>
                     {!notif.is_read && (
