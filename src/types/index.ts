@@ -44,6 +44,7 @@ export interface CompanyInfo {
   signatoryTitle?: string;
   brandColors?: BrandColors;
   documentTemplate?: DocumentTemplate;
+  customNote?: string;
 }
 
 export interface DocumentData {

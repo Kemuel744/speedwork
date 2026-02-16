@@ -55,6 +55,7 @@ export default function CreateDocument() {
     signatoryTitle: editingDoc?.company.signatoryTitle ?? savedCompany.signatoryTitle ?? 'Le Directeur Général',
     brandColors: editingDoc?.company.brandColors ?? savedCompany.brandColors ?? undefined,
     documentTemplate: editingDoc?.company.documentTemplate ?? savedCompany.documentTemplate ?? 'moderne' as DocumentTemplate,
+    customNote: editingDoc?.company.customNote ?? savedCompany.customNote ?? '',
   });
 
   const [client, setClient] = useState(editingDoc?.client ?? { name: '', email: '', phone: '', address: '' });
@@ -329,6 +330,7 @@ export default function CreateDocument() {
             </div>
 
             {/* Brand Colors */}
+            {/* Brand Colors - improved UX */}
             {company.logo && (
               <div className="space-y-2 p-3 rounded-lg border border-border bg-secondary/30">
                 <div className="flex items-center justify-between">
@@ -342,55 +344,30 @@ export default function CreateDocument() {
                   </Button>
                 </div>
                 {extractedColors && (
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-md border border-border shadow-sm" style={{ backgroundColor: extractedColors.primary }} />
-                      <input
-                        type="color"
-                        value={extractedColors.primary}
-                        onChange={e => {
-                          const c = { ...extractedColors, primary: e.target.value };
-                          setExtractedColors(c);
-                          setCompany(prev => ({ ...prev, brandColors: c }));
-                        }}
-                        className="w-0 h-0 opacity-0 absolute"
-                        id="color-primary"
-                      />
-                      <label htmlFor="color-primary" className="text-[10px] text-muted-foreground cursor-pointer hover:text-foreground">Primaire</label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-md border border-border shadow-sm" style={{ backgroundColor: extractedColors.secondary }} />
-                      <input
-                        type="color"
-                        value={extractedColors.secondary}
-                        onChange={e => {
-                          const c = { ...extractedColors, secondary: e.target.value };
-                          setExtractedColors(c);
-                          setCompany(prev => ({ ...prev, brandColors: c }));
-                        }}
-                        className="w-0 h-0 opacity-0 absolute"
-                        id="color-secondary"
-                      />
-                      <label htmlFor="color-secondary" className="text-[10px] text-muted-foreground cursor-pointer hover:text-foreground">Secondaire</label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-md border border-border shadow-sm" style={{ backgroundColor: extractedColors.accent }} />
-                      <input
-                        type="color"
-                        value={extractedColors.accent}
-                        onChange={e => {
-                          const c = { ...extractedColors, accent: e.target.value };
-                          setExtractedColors(c);
-                          setCompany(prev => ({ ...prev, brandColors: c }));
-                        }}
-                        className="w-0 h-0 opacity-0 absolute"
-                        id="color-accent"
-                      />
-                      <label htmlFor="color-accent" className="text-[10px] text-muted-foreground cursor-pointer hover:text-foreground">Accent</label>
-                    </div>
+                  <div className="flex items-center gap-4">
+                    {(['primary', 'secondary', 'accent'] as const).map((key) => (
+                      <label key={key} className="flex items-center gap-2 cursor-pointer group">
+                        <div className="relative">
+                          <div className="w-8 h-8 rounded-lg border-2 border-border shadow-sm group-hover:scale-110 transition-transform" style={{ backgroundColor: extractedColors[key] }} />
+                          <input
+                            type="color"
+                            value={extractedColors[key]}
+                            onChange={e => {
+                              const c = { ...extractedColors, [key]: e.target.value };
+                              setExtractedColors(c);
+                              setCompany(prev => ({ ...prev, brandColors: c }));
+                            }}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          />
+                        </div>
+                        <span className="text-[10px] text-muted-foreground group-hover:text-foreground transition-colors">
+                          {key === 'primary' ? 'Primaire' : key === 'secondary' ? 'Secondaire' : 'Accent'}
+                        </span>
+                      </label>
+                    ))}
                   </div>
                 )}
-                <p className="text-[10px] text-muted-foreground">Couleurs détectées automatiquement. Cliquez sur les carrés pour ajuster.</p>
+                <p className="text-[10px] text-muted-foreground">Couleurs détectées depuis votre logo. Cliquez pour modifier.</p>
               </div>
             )}
 
@@ -544,11 +521,15 @@ export default function CreateDocument() {
           </div>
         </div>
 
-        {/* Subject */}
-        <div className="stat-card">
+        {/* Subject & Custom Note */}
+        <div className="stat-card space-y-4">
           <div className="space-y-1.5">
             <Label className="text-xs">Objet</Label>
             <Input value={subject} onChange={e => setSubject(e.target.value)} placeholder={`Objet du ${docType === 'invoice' ? 'de la facture' : 'devis'}...`} />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Notes / Conditions <span className="text-muted-foreground">(facultatif)</span></Label>
+            <Input value={company.customNote || ''} onChange={e => setCompany(prev => ({ ...prev, customNote: e.target.value }))} placeholder="Ex: Conditions de paiement, mentions légales..." />
           </div>
         </div>
 
