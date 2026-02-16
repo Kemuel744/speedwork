@@ -6,6 +6,9 @@ import {
 } from 'lucide-react';
 import SEO from '@/components/SEO';
 import PublicNavbar from '@/components/PublicNavbar';
+import promoRevolution from '@/assets/promo-revolution.png';
+import mockupInvoice from '@/assets/mockup-invoice.png';
+import mockupQuote from '@/assets/mockup-quote.png';
 
 const categories = [
   {
@@ -102,15 +105,53 @@ export default function Features() {
       />
       <PublicNavbar />
 
-      {/* Hero */}
+      {/* Hero with promo image */}
       <section className="bg-gradient-to-br from-primary/5 via-transparent to-accent/5 py-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-foreground tracking-tight">
-            Des outils <span className="text-primary">puissants</span> et simples
-          </h1>
-          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-            Tout ce qu'il faut pour gérer votre facturation, vos devis et vos clients de manière professionnelle.
-          </p>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="text-center lg:text-left">
+              <h1 className="text-4xl sm:text-5xl font-extrabold text-foreground tracking-tight">
+                Des outils <span className="text-primary">puissants</span> et simples
+              </h1>
+              <p className="mt-4 text-lg text-muted-foreground max-w-2xl">
+                Tout ce qu'il faut pour gérer votre facturation, vos devis et vos clients de manière professionnelle.
+              </p>
+              <Button size="lg" asChild className="mt-8 h-13 px-8 text-base font-semibold">
+                <Link to="/tarifs">
+                  Essayer gratuitement
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
+              </Button>
+            </div>
+            <div className="hidden lg:block">
+              <img 
+                src={promoRevolution} 
+                alt="SpeedWork - La révolution de la facturation" 
+                className="w-full rounded-2xl shadow-2xl"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Document showcase */}
+      <section className="py-16 border-b border-border/50 bg-secondary/30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Aperçu de vos documents</h2>
+            <p className="mt-2 text-muted-foreground">Factures et devis au rendu professionnel, prêts à envoyer à vos clients</p>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-8 max-w-3xl mx-auto">
+            <div className="rounded-2xl overflow-hidden border border-border/60 bg-card p-3 shadow-lg">
+              <img src={mockupInvoice} alt="Aperçu facture SpeedWork" className="w-full rounded-lg" loading="lazy" />
+              <p className="text-center text-sm font-medium text-foreground mt-3 mb-1">Facture</p>
+            </div>
+            <div className="rounded-2xl overflow-hidden border border-border/60 bg-card p-3 shadow-lg">
+              <img src={mockupQuote} alt="Aperçu devis SpeedWork" className="w-full rounded-lg" loading="lazy" />
+              <p className="text-center text-sm font-medium text-foreground mt-3 mb-1">Devis</p>
+            </div>
+          </div>
         </div>
       </section>
 

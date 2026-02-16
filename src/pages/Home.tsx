@@ -4,6 +4,10 @@ import { FileText, Users, BarChart3, Download, Shield, Zap, ArrowRight, Check } 
 import SEO from '@/components/SEO';
 import PublicNavbar from '@/components/PublicNavbar';
 import speedworkLogo from '@/assets/logo.png';
+import promoHero from '@/assets/promo-hero.png';
+import promoComparison from '@/assets/promo-comparison.png';
+import mockupInvoice from '@/assets/mockup-invoice.png';
+import mockupQuote from '@/assets/mockup-quote.png';
 
 const features = [
   { icon: FileText, title: 'Factures & Devis', desc: 'Créez des documents professionnels en quelques clics avec numérotation automatique.' },
@@ -33,34 +37,44 @@ export default function Home() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-32 relative">
-          <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-1.5 text-sm font-medium mb-6">
-              <Zap className="w-4 h-4" />
-              Simple • Rapide • Professionnel
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 relative">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-1.5 text-sm font-medium mb-6">
+                <Zap className="w-4 h-4" />
+                Simple • Rapide • Professionnel
+              </div>
+              <h1 className="text-4xl sm:text-5xl font-extrabold text-foreground leading-tight tracking-tight">
+                Créez vos factures et devis{' '}
+                <span className="text-primary">en moins de 2 minutes</span>
+              </h1>
+              <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
+                La solution simple et professionnelle pour gérer vos factures, devis et clients. 
+                Conçu pour les entrepreneurs, PME et freelancers en Afrique.
+              </p>
+              <div className="mt-8 flex flex-col sm:flex-row items-start gap-4">
+                <Button size="lg" asChild className="h-13 px-8 text-base font-semibold">
+                  <Link to="/tarifs">
+                    Créer un compte gratuit
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Link>
+                </Button>
+                <Button size="lg" variant="outline" asChild className="h-13 px-8 text-base">
+                  <Link to="/fonctionnalites">Voir les fonctionnalités</Link>
+                </Button>
+              </div>
+              <p className="mt-4 text-sm text-muted-foreground">
+                Essai gratuit de 3 jours • Aucune carte requise
+              </p>
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-foreground leading-tight tracking-tight">
-              Créez vos factures et devis{' '}
-              <span className="text-primary">en moins de 2 minutes</span>
-            </h1>
-            <p className="mt-6 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              La solution simple et professionnelle pour gérer vos factures, devis et clients. 
-              Conçu pour les entrepreneurs, PME et freelancers en Afrique.
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" asChild className="h-13 px-8 text-base font-semibold">
-                <Link to="/tarifs">
-                  Créer un compte gratuit
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild className="h-13 px-8 text-base">
-                <Link to="/fonctionnalites">Voir les fonctionnalités</Link>
-              </Button>
+            <div className="relative hidden lg:block">
+              <img 
+                src={promoHero} 
+                alt="SpeedWork - Modernisez votre gestion de facturation" 
+                className="w-full rounded-2xl shadow-2xl"
+                loading="lazy"
+              />
             </div>
-            <p className="mt-4 text-sm text-muted-foreground">
-              Essai gratuit de 3 jours • Aucune carte requise
-            </p>
           </div>
         </div>
       </section>
@@ -79,8 +93,46 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features grid */}
+      {/* Document mockups showcase */}
       <section className="py-20 sm:py-28">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">Des documents qui inspirent confiance</h2>
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+              Factures et devis au design professionnel, personnalisés avec votre identité de marque.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="group relative rounded-2xl overflow-hidden border border-border/60 bg-card p-4 hover:shadow-xl transition-all duration-300">
+              <img 
+                src={mockupInvoice} 
+                alt="Exemple de facture professionnelle SpeedWork" 
+                className="w-full rounded-lg group-hover:scale-[1.02] transition-transform duration-300"
+                loading="lazy"
+              />
+              <div className="mt-4 text-center">
+                <h3 className="font-semibold text-foreground text-lg">Facture professionnelle</h3>
+                <p className="text-sm text-muted-foreground mt-1">Design moderne avec vos couleurs de marque</p>
+              </div>
+            </div>
+            <div className="group relative rounded-2xl overflow-hidden border border-border/60 bg-card p-4 hover:shadow-xl transition-all duration-300">
+              <img 
+                src={mockupQuote} 
+                alt="Exemple de devis professionnel SpeedWork" 
+                className="w-full rounded-lg group-hover:scale-[1.02] transition-transform duration-300"
+                loading="lazy"
+              />
+              <div className="mt-4 text-center">
+                <h3 className="font-semibold text-foreground text-lg">Devis élégant</h3>
+                <p className="text-sm text-muted-foreground mt-1">Convertible en facture en un clic</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features grid */}
+      <section className="py-20 sm:py-28 bg-secondary/30 border-y border-border/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground">Tout ce qu'il vous faut</h2>
@@ -106,6 +158,51 @@ export default function Home() {
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Comparison section */}
+      <section className="py-20 sm:py-28">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
+                Passez au niveau <span className="text-primary">supérieur</span>
+              </h2>
+              <p className="mt-4 text-lg text-muted-foreground">
+                Fini les factures manuscrites et les documents non professionnels. SpeedWork transforme votre image de marque.
+              </p>
+              <ul className="mt-8 space-y-4">
+                {[
+                  'Factures professionnelles prêtes à envoyer',
+                  'Image sérieuse auprès de vos clients',
+                  'Numérotation et calculs automatiques',
+                  'Export PDF haute qualité au format A4',
+                ].map((item) => (
+                  <li key={item} className="flex items-center gap-3 text-foreground">
+                    <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                      <Check className="w-4 h-4" />
+                    </div>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <Button size="lg" asChild className="mt-8 h-13 px-8 text-base font-semibold">
+                <Link to="/tarifs">
+                  Essayer gratuitement
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
+              </Button>
+            </div>
+            <div>
+              <img 
+                src={promoComparison} 
+                alt="Comparaison avant/après - Ancienne méthode vs SpeedWork" 
+                className="w-full rounded-2xl shadow-xl"
+                loading="lazy"
+              />
+            </div>
           </div>
         </div>
       </section>
