@@ -53,7 +53,12 @@ export default function DocumentDetail() {
   };
 
   const st = statusMap[doc.status];
-  const handlePrint = () => window.print();
+  const handlePrint = () => {
+    const originalTitle = document.title;
+    document.title = doc.number;
+    window.print();
+    document.title = originalTitle;
+  };
 
   const handleConvertToInvoice = async () => {
     if (doc.type !== 'quote') return;
