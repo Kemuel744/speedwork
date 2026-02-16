@@ -1,17 +1,18 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDocuments } from '@/contexts/DocumentsContext';
 import { useCompany } from '@/contexts/CompanyContext';
-import { DocumentType, LineItem, DocumentData } from '@/types';
+import { DocumentType, LineItem, DocumentData, DocumentTemplate } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Trash2, Save, Upload, Image, Camera, Loader2 } from 'lucide-react';
+import { Plus, Trash2, Save, Upload, Image, Camera, Loader2, Palette } from 'lucide-react';
 import { toast } from 'sonner';
 import { currencies, formatAmount } from '@/lib/currencies';
 import { useTrialStatus } from '@/hooks/useTrialStatus';
 import { supabase } from '@/integrations/supabase/client';
+import { extractColorsFromImage, ExtractedColors } from '@/lib/colorExtractor';
 
 function generateNumber(type: DocumentType) {
   const prefix = type === 'invoice' ? 'FAC' : 'DEV';
@@ -19,6 +20,13 @@ function generateNumber(type: DocumentType) {
   const rand = String(Math.floor(Math.random() * 999)).padStart(3, '0');
   return `${prefix}-${year}-${rand}`;
 }
+
+const templateOptions: { value: DocumentTemplate; label: string; desc: string }[] = [
+  { value: 'moderne', label: 'Moderne', desc: 'Design épuré avec accents colorés' },
+  { value: 'classique', label: 'Classique', desc: 'Mise en page traditionnelle' },
+  { value: 'minimaliste', label: 'Minimaliste', desc: 'Sobre et élégant' },
+  { value: 'corporate', label: 'Corporate', desc: 'Professionnel et structuré' },
+];
 
 export default function CreateDocument() {
   const { type, id: editId } = useParams<{ type?: string; id?: string }>();
@@ -44,7 +52,10 @@ export default function CreateDocument() {
     bankName: editingDoc?.company.bankName ?? savedCompany.bankName ?? '',
     currency: editingDoc?.company.currency ?? savedCompany.currency ?? 'EUR',
     signatoryTitle: editingDoc?.company.signatoryTitle ?? savedCompany.signatoryTitle ?? 'Le Directeur Général',
+    brandColors: editingDoc?.company.brandColors ?? savedCompany.brandColors ?? undefined,
+    documentTemplate: editingDoc?.company.documentTemplate ?? savedCompany.documentTemplate ?? 'moderne' as DocumentTemplate,
   });
+
   const [client, setClient] = useState(editingDoc?.client ?? { name: '', email: '', phone: '', address: '' });
   const [status, setStatus] = useState<DocumentData['status']>(editingDoc?.status ?? 'draft');
   const [dueDate, setDueDate] = useState(editingDoc?.dueDate ?? '');
@@ -55,8 +66,22 @@ export default function CreateDocument() {
   const [items, setItems] = useState<LineItem[]>(
     editingDoc?.items ?? [{ id: crypto.randomUUID(), description: '', quantity: 1, unitPrice: 0, total: 0 }],
   );
+  const [extractedColors, setExtractedColors] = useState<ExtractedColors | null>(company.brandColors ?? null);
+  const [isExtractingColors, setIsExtractingColors] = useState(false);
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Auto-extract colors when logo changes
+  useEffect(() => {
+    if (company.logo && !company.brandColors) {
+      setIsExtractingColors(true);
+      extractColorsFromImage(company.logo).then(colors => {
+        setExtractedColors(colors);
+        setCompany(prev => ({ ...prev, brandColors: colors }));
+        setIsExtractingColors(false);
+      });
+    }
+  }, [company.logo]);
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) {
@@ -64,10 +89,22 @@ export default function CreateDocument() {
       return;
     }
     const reader = new FileReader();
-    reader.onload = (ev) => {
-      setCompany(prev => ({ ...prev, logo: ev.target?.result as string }));
+    reader.onload = async (ev) => {
+      const logoData = ev.target?.result as string;
+      setCompany(prev => ({ ...prev, logo: logoData, brandColors: undefined }));
+      // Colors will be extracted by the useEffect
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleReExtractColors = async () => {
+    if (!company.logo) return;
+    setIsExtractingColors(true);
+    const colors = await extractColorsFromImage(company.logo);
+    setExtractedColors(colors);
+    setCompany(prev => ({ ...prev, brandColors: colors }));
+    setIsExtractingColors(false);
+    toast.success('Couleurs extraites du logo !');
   };
 
   const handlePhotoCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,7 +136,6 @@ export default function CreateDocument() {
       const extracted = data?.data;
       if (!extracted) throw new Error('Aucune donnée extraite');
 
-      // Fill client info (keep company header untouched)
       if (extracted.client) {
         setClient(prev => ({
           name: extracted.client.name || prev.name,
@@ -109,7 +145,6 @@ export default function CreateDocument() {
         }));
       }
 
-      // Fill line items
       if (extracted.items?.length) {
         setItems(extracted.items.map((item: any) => ({
           id: crypto.randomUUID(),
@@ -163,7 +198,6 @@ export default function CreateDocument() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Block new document creation if trial expired (allow edits)
     if (!isEditing && !canCreateDocument) {
       toast.error(`Essai terminé. Vous avez atteint la limite de ${docsLimit} documents ou les 3 jours d'essai sont écoulés. Souscrivez un abonnement pour continuer.`);
       return;
@@ -263,7 +297,7 @@ export default function CreateDocument() {
                 {company.logo ? (
                   <div className="relative">
                     <img src={company.logo} alt="Logo" className="h-16 w-auto max-w-[160px] object-contain rounded border border-border" />
-                    <button type="button" className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full w-5 h-5 text-xs flex items-center justify-center" onClick={() => setCompany(prev => ({ ...prev, logo: undefined }))}>×</button>
+                    <button type="button" className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full w-5 h-5 text-xs flex items-center justify-center" onClick={() => setCompany(prev => ({ ...prev, logo: undefined, brandColors: undefined }))}>×</button>
                   </div>
                 ) : (
                   <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
@@ -292,6 +326,72 @@ export default function CreateDocument() {
                 </div>
               )}
             </div>
+
+            {/* Brand Colors */}
+            {company.logo && (
+              <div className="space-y-2 p-3 rounded-lg border border-border bg-secondary/30">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs font-medium flex items-center gap-1.5">
+                    <Palette className="w-3.5 h-3.5" />
+                    Couleurs de marque
+                  </Label>
+                  <Button type="button" variant="ghost" size="sm" onClick={handleReExtractColors} disabled={isExtractingColors} className="h-7 text-xs">
+                    {isExtractingColors ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : null}
+                    Ré-extraire
+                  </Button>
+                </div>
+                {extractedColors && (
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-md border border-border shadow-sm" style={{ backgroundColor: extractedColors.primary }} />
+                      <input
+                        type="color"
+                        value={extractedColors.primary}
+                        onChange={e => {
+                          const c = { ...extractedColors, primary: e.target.value };
+                          setExtractedColors(c);
+                          setCompany(prev => ({ ...prev, brandColors: c }));
+                        }}
+                        className="w-0 h-0 opacity-0 absolute"
+                        id="color-primary"
+                      />
+                      <label htmlFor="color-primary" className="text-[10px] text-muted-foreground cursor-pointer hover:text-foreground">Primaire</label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-md border border-border shadow-sm" style={{ backgroundColor: extractedColors.secondary }} />
+                      <input
+                        type="color"
+                        value={extractedColors.secondary}
+                        onChange={e => {
+                          const c = { ...extractedColors, secondary: e.target.value };
+                          setExtractedColors(c);
+                          setCompany(prev => ({ ...prev, brandColors: c }));
+                        }}
+                        className="w-0 h-0 opacity-0 absolute"
+                        id="color-secondary"
+                      />
+                      <label htmlFor="color-secondary" className="text-[10px] text-muted-foreground cursor-pointer hover:text-foreground">Secondaire</label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-md border border-border shadow-sm" style={{ backgroundColor: extractedColors.accent }} />
+                      <input
+                        type="color"
+                        value={extractedColors.accent}
+                        onChange={e => {
+                          const c = { ...extractedColors, accent: e.target.value };
+                          setExtractedColors(c);
+                          setCompany(prev => ({ ...prev, brandColors: c }));
+                        }}
+                        className="w-0 h-0 opacity-0 absolute"
+                        id="color-accent"
+                      />
+                      <label htmlFor="color-accent" className="text-[10px] text-muted-foreground cursor-pointer hover:text-foreground">Accent</label>
+                    </div>
+                  </div>
+                )}
+                <p className="text-[10px] text-muted-foreground">Couleurs détectées automatiquement. Cliquez sur les carrés pour ajuster.</p>
+              </div>
+            )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
@@ -367,7 +467,7 @@ export default function CreateDocument() {
 
         {/* Document meta */}
         <div className="stat-card">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <div className="space-y-1.5">
               <Label className="text-xs">Statut</Label>
               <Select value={status} onValueChange={(v: DocumentData['status']) => setStatus(v)}>
@@ -405,6 +505,28 @@ export default function CreateDocument() {
                 </SelectContent>
               </Select>
             </div>
+          </div>
+        </div>
+
+        {/* Template selection */}
+        <div className="stat-card">
+          <Label className="text-xs font-medium mb-3 block">Modèle de document</Label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {templateOptions.map(t => (
+              <button
+                key={t.value}
+                type="button"
+                onClick={() => setCompany(prev => ({ ...prev, documentTemplate: t.value }))}
+                className={`p-3 rounded-lg border-2 text-left transition-all ${
+                  company.documentTemplate === t.value
+                    ? 'border-primary bg-primary/5 shadow-sm'
+                    : 'border-border hover:border-primary/40'
+                }`}
+              >
+                <p className="text-sm font-medium text-foreground">{t.label}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{t.desc}</p>
+              </button>
+            ))}
           </div>
         </div>
 
