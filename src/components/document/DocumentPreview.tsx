@@ -375,7 +375,7 @@ export default function DocumentPreview({ doc }: Props) {
   };
 
   return (
-    <div className="bg-white text-gray-900 rounded-lg shadow-lg border border-gray-200 w-full max-w-[210mm] overflow-hidden print:shadow-none print:border-none print:rounded-none">
+    <div className="a4-preview bg-white text-gray-900 rounded-lg shadow-lg border border-gray-200 w-full max-w-[210mm] overflow-hidden print:shadow-none print:border-none print:rounded-none">
       {templateRenderers[template]()}
     </div>
   );
