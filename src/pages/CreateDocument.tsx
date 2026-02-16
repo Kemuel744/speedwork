@@ -7,10 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Trash2, Save, Upload, Image } from 'lucide-react';
+import { Plus, Trash2, Save, Upload, Image, Camera, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { currencies, formatAmount } from '@/lib/currencies';
 import { useTrialStatus } from '@/hooks/useTrialStatus';
+import { supabase } from '@/integrations/supabase/client';
 
 function generateNumber(type: DocumentType) {
   const prefix = type === 'invoice' ? 'FAC' : 'DEV';
@@ -25,7 +26,8 @@ export default function CreateDocument() {
   const { addDocument, updateDocument, getDocument } = useDocuments();
   const { company: savedCompany } = useCompany();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const [isExtracting, setIsExtracting] = useState(false);
   const editingDoc = editId ? getDocument(editId) : null;
   const isEditing = !!editingDoc;
   const docType: DocumentType = editingDoc ? editingDoc.type : (type === 'quote' ? 'quote' : 'invoice');
@@ -66,6 +68,71 @@ export default function CreateDocument() {
       setCompany(prev => ({ ...prev, logo: ev.target?.result as string }));
     };
     reader.readAsDataURL(file);
+  };
+
+  const handlePhotoCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast.error('Veuillez prendre ou sélectionner une image');
+      return;
+    }
+
+    setIsExtracting(true);
+    toast.info('Analyse de la photo en cours...');
+
+    try {
+      const reader = new FileReader();
+      const base64 = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      const { data, error } = await supabase.functions.invoke('extract-document', {
+        body: { imageBase64: base64 },
+      });
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      const extracted = data?.data;
+      if (!extracted) throw new Error('Aucune donnée extraite');
+
+      // Fill client info (keep company header untouched)
+      if (extracted.client) {
+        setClient(prev => ({
+          name: extracted.client.name || prev.name,
+          email: extracted.client.email || prev.email,
+          phone: extracted.client.phone || prev.phone,
+          address: extracted.client.address || prev.address,
+        }));
+      }
+
+      // Fill line items
+      if (extracted.items?.length) {
+        setItems(extracted.items.map((item: any) => ({
+          id: crypto.randomUUID(),
+          description: item.description || '',
+          quantity: item.quantity || 1,
+          unitPrice: item.unitPrice || 0,
+          total: Math.round((item.quantity || 1) * (item.unitPrice || 0) * 100) / 100,
+        })));
+      }
+
+      if (extracted.subject) setSubject(extracted.subject);
+      if (extracted.taxRate) setTaxRate(extracted.taxRate);
+      if (extracted.laborCost) setLaborCost(extracted.laborCost);
+      if (extracted.dueDate) setDueDate(extracted.dueDate);
+
+      toast.success('Données extraites avec succès !');
+    } catch (err: any) {
+      console.error('Extraction error:', err);
+      toast.error(err.message || 'Erreur lors de l\'extraction des données');
+    } finally {
+      setIsExtracting(false);
+      if (cameraInputRef.current) cameraInputRef.current.value = '';
+    }
   };
 
   const addLine = () => {
@@ -149,11 +216,38 @@ export default function CreateDocument() {
 
   return (
     <div className="page-container">
-      <h1 className="section-title mb-6">
-        {isEditing
-          ? `Modifier ${docType === 'invoice' ? 'la facture' : 'le devis'} ${editingDoc?.number}`
-          : docType === 'invoice' ? 'Nouvelle Facture' : 'Nouveau Devis'}
-      </h1>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <h1 className="section-title">
+          {isEditing
+            ? `Modifier ${docType === 'invoice' ? 'la facture' : 'le devis'} ${editingDoc?.number}`
+            : docType === 'invoice' ? 'Nouvelle Facture' : 'Nouveau Devis'}
+        </h1>
+        {!isEditing && (
+          <div className="flex gap-2">
+            <input
+              ref={cameraInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="hidden"
+              onChange={handlePhotoCapture}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => cameraInputRef.current?.click()}
+              disabled={isExtracting}
+            >
+              {isExtracting ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Camera className="w-4 h-4 mr-2" />
+              )}
+              {isExtracting ? 'Analyse...' : 'Scanner un document'}
+            </Button>
+          </div>
+        )}
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Company & Client info */}
