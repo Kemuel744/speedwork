@@ -116,27 +116,53 @@
 }
 
 @media print {
+  /* Force print background colors */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
   body * {
     visibility: hidden;
   }
+
   .a4-preview, .a4-preview * {
-    visibility: visible;
+    visibility: visible !important;
   }
+
   .a4-preview {
     position: absolute;
     left: 0;
     top: 0;
     width: 210mm;
     min-height: 297mm;
-    padding: 20mm;
+    padding: 15mm 18mm;
     margin: 0;
     box-shadow: none !important;
     border: none !important;
+    border-radius: 0 !important;
+    background: white !important;
   }
+
+  .a4-preview table {
+    page-break-inside: auto;
+  }
+
+  .a4-preview tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
   /* Hide Lovable badge, sidebar, header, and any overlays */
   aside, header, nav, [data-lovable], iframe, .print\\:hidden,
-  button, .fixed, [style*="position: fixed"] {
+  .fixed, [style*="position: fixed"] {
     display: none !important;
     visibility: hidden !important;
+  }
+
+  @page {
+    size: A4;
+    margin: 0;
   }
 }
