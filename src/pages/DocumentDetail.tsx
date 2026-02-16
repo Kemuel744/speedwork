@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Printer, Download, RefreshCw, Pencil, Bell, Clock } from 'lucide-react';
 import { toast } from 'sonner';
-import { formatAmount } from '@/lib/currencies';
+import DocumentPreview from '@/components/document/DocumentPreview';
 
 const statusMap: Record<string, { label: string; class: string }> = {
   paid: { label: 'Payée', class: 'bg-success/10 text-success border-success/20' },
@@ -54,7 +54,6 @@ export default function DocumentDetail() {
 
   const st = statusMap[doc.status];
   const handlePrint = () => window.print();
-  const logoPos = doc.company.logoPosition || 'left';
 
   const handleConvertToInvoice = async () => {
     if (doc.type !== 'quote') return;
@@ -112,122 +111,9 @@ export default function DocumentDetail() {
         </div>
       </div>
 
-      {/* A4 Preview */}
+      {/* Document Preview */}
       <div className="flex justify-center">
-        <div className="a4-preview bg-card rounded-lg shadow-lg border border-border w-full max-w-[210mm] p-6 sm:p-8 print:p-[15mm]">
-          {/* Logo */}
-          {doc.company.logo && (
-            <div className={`mb-3 flex ${logoPos === 'center' ? 'justify-center' : logoPos === 'right' ? 'justify-end' : 'justify-start'}`}>
-              <img src={doc.company.logo} alt="Logo" className="h-12 w-auto max-w-[160px] object-contain" />
-            </div>
-          )}
-
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:justify-between items-start gap-3 mb-5">
-            <div>
-              <h2 className="text-lg font-bold text-primary mb-0.5">{doc.company.name}</h2>
-              <p className="text-xs text-muted-foreground leading-tight">{doc.company.address}</p>
-              <p className="text-xs text-muted-foreground leading-tight">{doc.company.phone}</p>
-              <p className="text-xs text-muted-foreground leading-tight">{doc.company.email}</p>
-            </div>
-            <div className="sm:text-right">
-              <h3 className="text-base font-bold text-foreground uppercase">
-                {doc.type === 'invoice' ? 'Facture' : 'Devis'}
-              </h3>
-              <p className="text-xs font-medium text-foreground mt-0.5">{doc.number}</p>
-              <p className="text-xs text-muted-foreground mt-1">Date : {doc.date}</p>
-              {doc.dueDate && <p className="text-xs text-muted-foreground">Échéance : {doc.dueDate}</p>}
-            </div>
-          </div>
-
-          {/* Client */}
-          <div className="mb-4 p-3 bg-secondary/50 rounded-lg">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Facturer à</p>
-            <p className="font-semibold text-sm text-foreground">{doc.client.name}</p>
-            <p className="text-xs text-muted-foreground leading-tight">{doc.client.address}</p>
-            <p className="text-xs text-muted-foreground leading-tight">{doc.client.email}</p>
-            <p className="text-xs text-muted-foreground leading-tight">{doc.client.phone}</p>
-          </div>
-
-          {/* Subject */}
-          {doc.subject && (
-            <div className="mb-3">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">Objet</p>
-              <p className="text-xs font-medium text-foreground">{doc.subject}</p>
-            </div>
-          )}
-
-          {/* Table */}
-          <table className="w-full mb-4">
-            <thead>
-              <tr className="border-b-2 border-primary/20">
-                <th className="text-left py-1.5 text-[10px] font-semibold text-muted-foreground uppercase">Description</th>
-                <th className="text-center py-1.5 text-[10px] font-semibold text-muted-foreground uppercase">Qté</th>
-                <th className="text-right py-1.5 text-[10px] font-semibold text-muted-foreground uppercase">P.U.</th>
-                <th className="text-right py-1.5 text-[10px] font-semibold text-muted-foreground uppercase">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {doc.items.map(item => (
-                <tr key={item.id} className="border-b border-border/50">
-                  <td className="py-1.5 text-xs text-foreground">{item.description}</td>
-                  <td className="py-1.5 text-xs text-center text-foreground">{item.quantity}</td>
-                  <td className="py-1.5 text-xs text-right text-foreground">{formatAmount(item.unitPrice, doc.company.currency || 'EUR')}</td>
-                  <td className="py-1.5 text-xs text-right font-medium text-foreground">{formatAmount(item.total, doc.company.currency || 'EUR')}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {/* Totals */}
-          <div className="flex justify-end">
-            <div className="w-full sm:w-64 space-y-1">
-              {(doc.laborCost ?? 0) > 0 && (
-                <div className="flex justify-between text-xs"><span className="text-muted-foreground">Main d'œuvre</span><span className="text-foreground">{formatAmount(doc.laborCost, doc.company.currency || 'EUR')}</span></div>
-              )}
-              <div className="flex justify-between text-xs"><span className="text-muted-foreground">Sous-total</span><span className="text-foreground">{formatAmount(doc.subtotal, doc.company.currency || 'EUR')}</span></div>
-              <div className="flex justify-between text-xs"><span className="text-muted-foreground">TVA ({doc.taxRate}%)</span><span className="text-foreground">{formatAmount(doc.taxAmount, doc.company.currency || 'EUR')}</span></div>
-              {(doc.withholdingRate ?? 0) > 0 && (
-                <div className="flex justify-between text-xs"><span className="text-muted-foreground">Retenue à la source ({doc.withholdingRate}%)</span><span className="text-destructive">-{formatAmount(doc.withholdingAmount, doc.company.currency || 'EUR')}</span></div>
-              )}
-              <div className="flex justify-between text-sm font-bold pt-2 border-t-2 border-primary/20">
-                <span className="text-foreground">Total</span>
-                <span className="text-primary">{formatAmount(doc.total, doc.company.currency || 'EUR')}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Signature */}
-          <div className="mt-6 flex justify-end">
-            <div className="text-center w-56">
-              <p className="text-xs font-semibold text-foreground mb-10">
-                {doc.company.signatoryTitle || 'Le Directeur Général'}
-              </p>
-              <div className="border-t border-border pt-1">
-                <p className="text-[10px] text-muted-foreground">Signature et cachet</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="mt-4 pt-3 border-t border-border">
-            <div className="flex flex-wrap justify-between gap-3 text-[10px] text-muted-foreground">
-              <div>
-                <p className="font-semibold text-foreground mb-0.5">{doc.company.name}</p>
-                <p>{doc.company.address}</p>
-                <p>{doc.company.email} — {doc.company.phone}</p>
-              </div>
-              {(doc.company.iban || doc.company.bic || doc.company.bankName) && (
-                <div className="text-right">
-                  <p className="font-semibold text-foreground mb-0.5">Coordonnées bancaires</p>
-                  {doc.company.bankName && <p>Banque : {doc.company.bankName}</p>}
-                  {doc.company.iban && <p>IBAN : {doc.company.iban}</p>}
-                  {doc.company.bic && <p>BIC : {doc.company.bic}</p>}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        <DocumentPreview doc={doc} />
       </div>
 
       {/* Reminders history */}

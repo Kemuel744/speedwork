@@ -21,6 +21,14 @@ export interface LineItem {
 export type DocumentStatus = 'paid' | 'unpaid' | 'pending' | 'draft';
 export type DocumentType = 'invoice' | 'quote';
 
+export interface BrandColors {
+  primary: string;
+  secondary: string;
+  accent: string;
+}
+
+export type DocumentTemplate = 'moderne' | 'classique' | 'minimaliste' | 'corporate';
+
 export interface CompanyInfo {
   name: string;
   address: string;
@@ -33,6 +41,8 @@ export interface CompanyInfo {
   bankName?: string;
   currency?: string;
   signatoryTitle?: string;
+  brandColors?: BrandColors;
+  documentTemplate?: DocumentTemplate;
 }
 
 export interface DocumentData {
