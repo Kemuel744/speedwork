@@ -26,6 +26,7 @@ import AdminSubscriptions from "@/pages/AdminSubscriptions";
 import AdminClients from "@/pages/AdminClients";
 import AnnualReview from "@/pages/AnnualReview";
 import Reminders from "@/pages/Reminders";
+import Reports from "@/pages/Reports";
 import Contact from "@/pages/Contact";
 import NotFound from "@/pages/NotFound";
 
@@ -64,6 +65,7 @@ const App = () => (
                 <Route path="/admin/clients" element={<AdminClients />} />
                 <Route path="/annual-review" element={<AnnualReview />} />
                 <Route path="/reminders" element={<Reminders />} />
+                <Route path="/reports" element={<Reports />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
