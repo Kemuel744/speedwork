@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   LayoutDashboard, FileText, FilePlus, FileCheck, User, Settings,
-  LogOut, ChevronLeft, Users, CreditCard, BarChart3, Bell,
+  LogOut, ChevronLeft, Users, CreditCard, BarChart3, Bell, PieChart,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,7 @@ const adminNav = [
   { label: 'Gestion Clients', to: '/admin/clients', icon: Users },
   { label: 'Abonnements', to: '/admin/subscriptions', icon: CreditCard },
   { label: 'Relances', to: '/reminders', icon: Bell },
+  { label: 'Rapports', to: '/reports', icon: PieChart },
   { label: 'Bilan Annuel', to: '/annual-review', icon: BarChart3 },
 ];
 
