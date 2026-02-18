@@ -87,13 +87,37 @@ const categories = [
     ],
   },
   {
-    title: 'Système intelligent de reporting',
+    title: 'Rapports & Analyse Financière',
+    icon: BarChart3,
+    features: [
+      'Dashboard analytique avec CA brut, montants encaissés et impayés',
+      'Suivi du bénéfice net et taux de conversion en temps réel',
+      'Graphiques interactifs : évolution revenus vs charges',
+      'Gestion des dépenses catégorisées (loyer, transport, fournitures…)',
+      'Export CSV et impression directe des rapports',
+      'Système intelligent de reporting pour l\'optimisation des revenus',
+    ],
+  },
+  {
+    title: 'Bilan annuel automatique par IA',
     icon: Calculator,
     features: [
-      'Bilan annuel automatique généré par IA',
-      'Analyse des revenus et tendances',
-      'Optimisation des revenus et performance financière',
-      'Export et consultation rapide',
+      'Génération d\'un bilan complet par intelligence artificielle',
+      'Analyse des tendances de revenus et performance financière',
+      'Détail mensuel : factures émises, encaissées, taux de recouvrement',
+      'Recommandations IA pour l\'optimisation des revenus',
+      'Consultation et export rapide du bilan',
+    ],
+  },
+  {
+    title: 'Rapports d\'intervention terrain',
+    icon: FileText,
+    features: [
+      'Documentation complète des activités de terrain',
+      'Champs détaillés : objet, lieu, poste du rapporteur, travailleurs',
+      'Capture de photos avec légendes individuelles (caméra/galerie)',
+      'Génération PDF professionnelle avec identité visuelle de l\'entreprise',
+      'Suivi des observations et recommandations par intervention',
     ],
   },
 ];
