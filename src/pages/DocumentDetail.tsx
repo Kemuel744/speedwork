@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useDocuments } from '@/contexts/DocumentsContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Printer, Download, RefreshCw, Pencil, Bell, Clock } from 'lucide-react';
+import { ArrowLeft, Printer, Download, RefreshCw, Pencil, Bell, Clock, Mail } from 'lucide-react';
+import { sendDocumentByEmail } from '@/lib/emailHelper';
 import { toast } from 'sonner';
 import DocumentPreview from '@/components/document/DocumentPreview';
 
@@ -107,6 +108,15 @@ export default function DocumentDetail() {
               <Bell className="w-4 h-4 mr-2" />{sendingReminder ? 'Envoi...' : 'Relancer'}
             </Button>
           )}
+          <Button variant="outline" size="sm" onClick={() => sendDocumentByEmail({
+            recipientEmail: doc.client.email,
+            recipientName: doc.client.name,
+            documentType: doc.type,
+            documentNumber: doc.number,
+            companyName: doc.company.name,
+          })}>
+            <Mail className="w-4 h-4 mr-2" />Envoyer par email
+          </Button>
           <Button variant="outline" size="sm" onClick={handlePrint}>
             <Printer className="w-4 h-4 mr-2" />Imprimer
           </Button>
