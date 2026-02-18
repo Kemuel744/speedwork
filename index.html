@@ -76,20 +76,27 @@
     <link rel="dns-prefetch" href="https://iucogpdjtilkjpyxfgdb.supabase.co" />
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-NGF68TWL');</script>
-    <!-- End Google Tag Manager -->
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R5Y3Z1Y3J8"></script>
+    <!-- Google Tag Manager & gtag – deferred to improve Speed Index -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-R5Y3Z1Y3J8');
+      function __loadAnalytics(){
+        // GTM
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(w,document,'script','dataLayer','GTM-NGF68TWL');
+        // gtag
+        var g=document.createElement('script');g.async=true;
+        g.src='https://www.googletagmanager.com/gtag/js?id=G-R5Y3Z1Y3J8';
+        document.head.appendChild(g);
+        gtag('js', new Date());
+        gtag('config', 'G-R5Y3Z1Y3J8');
+      }
+      var w=window;
+      if('requestIdleCallback' in w){w.requestIdleCallback(__loadAnalytics);}
+      else{w.addEventListener('load',__loadAnalytics);}
     </script>
   </head>
 
