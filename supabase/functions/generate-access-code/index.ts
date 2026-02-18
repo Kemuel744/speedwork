@@ -21,7 +21,7 @@ Deno.serve(async (req) => {
     const { plan, payment_method, amount, user_id } = await req.json();
 
     // Validate inputs
-    if (!plan || !["monthly", "annual"].includes(plan)) {
+    if (!plan || !["monthly", "annual", "enterprise"].includes(plan)) {
       return new Response(
         JSON.stringify({ error: "Plan invalide." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
