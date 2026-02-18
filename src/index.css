@@ -136,8 +136,10 @@
     left: 0;
     top: 0;
     width: 210mm;
-    min-height: 297mm;
-    padding: 15mm 18mm;
+    height: 297mm;
+    max-height: 297mm;
+    overflow: hidden;
+    padding: 0;
     margin: 0;
     box-shadow: none !important;
     border: none !important;
@@ -145,8 +147,14 @@
     background: white !important;
   }
 
+  /* Ensure all colored elements print with background colors */
+  .a4-preview [style*="background"] {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
   .a4-preview table {
-    page-break-inside: auto;
+    page-break-inside: avoid;
   }
 
   .a4-preview tr {
