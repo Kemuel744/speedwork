@@ -42,6 +42,7 @@ export type Database = {
           company_bank_name: string | null
           company_bic: string | null
           company_currency: string | null
+          company_description: string | null
           company_email: string
           company_iban: string | null
           company_logo: string | null
@@ -78,6 +79,7 @@ export type Database = {
           company_bank_name?: string | null
           company_bic?: string | null
           company_currency?: string | null
+          company_description?: string | null
           company_email: string
           company_iban?: string | null
           company_logo?: string | null
@@ -114,6 +116,7 @@ export type Database = {
           company_bank_name?: string | null
           company_bic?: string | null
           company_currency?: string | null
+          company_description?: string | null
           company_email?: string
           company_iban?: string | null
           company_logo?: string | null
