@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useDocuments } from '@/contexts/DocumentsContext';
-import { useCompany } from '@/contexts/CompanyContext';
-import { formatAmount } from '@/lib/currencies';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { ArrowLeft, FileText, FileCheck, Plus, DollarSign, AlertCircle, Mail, Phone, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,7 +16,7 @@ const statusMap: Record<string, { label: string; class: string }> = {
 export default function ClientDetailPage() {
   const { clientId } = useParams<{ clientId: string }>();
   const { documents } = useDocuments();
-  const { company } = useCompany();
+  const { displayAmount, convertAmount, displayCurrency } = useCurrency();
   const navigate = useNavigate();
   const decodedId = decodeURIComponent(clientId || '');
 
@@ -28,9 +27,9 @@ export default function ClientDetailPage() {
   const client = clientDocs[0]?.client;
   const invoices = clientDocs.filter(d => d.type === 'invoice');
   const quotes = clientDocs.filter(d => d.type === 'quote');
-  const totalPaid = invoices.filter(d => d.status === 'paid').reduce((s, d) => s + d.total, 0);
-  const totalUnpaid = invoices.filter(d => d.status === 'unpaid').reduce((s, d) => s + d.total, 0);
-  const totalAmount = clientDocs.reduce((s, d) => s + d.total, 0);
+  const totalPaid = invoices.filter(d => d.status === 'paid').reduce((s, d) => s + convertAmount(d.total, d.company.currency || 'XOF'), 0);
+  const totalUnpaid = invoices.filter(d => d.status === 'unpaid').reduce((s, d) => s + convertAmount(d.total, d.company.currency || 'XOF'), 0);
+  const totalAmount = clientDocs.reduce((s, d) => s + convertAmount(d.total, d.company.currency || 'XOF'), 0);
 
   if (!client) {
     return (
@@ -82,7 +81,7 @@ export default function ClientDetailPage() {
         </div>
         <div className="stat-card">
           <p className="text-sm text-muted-foreground">Volume total</p>
-          <p className="text-2xl font-bold text-foreground">{formatAmount(totalAmount, company.currency)}</p>
+          <p className="text-2xl font-bold text-foreground">{displayAmount(totalAmount, displayCurrency)}</p>
           <p className="text-xs text-muted-foreground mt-1">{clientDocs.length} document(s)</p>
         </div>
         <div className="stat-card">
@@ -90,14 +89,14 @@ export default function ClientDetailPage() {
             <DollarSign className="w-4 h-4 text-success" />
             <p className="text-sm text-muted-foreground">Encaissé</p>
           </div>
-          <p className="text-2xl font-bold text-success">{formatAmount(totalPaid, company.currency)}</p>
+          <p className="text-2xl font-bold text-success">{displayAmount(totalPaid, displayCurrency)}</p>
         </div>
         <div className="stat-card">
           <div className="flex items-center gap-2 mb-1">
             <AlertCircle className="w-4 h-4 text-destructive" />
             <p className="text-sm text-muted-foreground">Impayé</p>
           </div>
-          <p className="text-2xl font-bold text-destructive">{formatAmount(totalUnpaid, company.currency)}</p>
+          <p className="text-2xl font-bold text-destructive">{displayAmount(totalUnpaid, displayCurrency)}</p>
         </div>
       </div>
 
@@ -132,7 +131,7 @@ export default function ClientDetailPage() {
                       <td className="py-3 px-4 text-sm text-muted-foreground">{doc.type === 'invoice' ? 'Facture' : 'Devis'}</td>
                       <td className="py-3 px-4 text-sm text-muted-foreground">{doc.date}</td>
                       <td className="py-3 px-4"><Badge variant="outline" className={`text-xs ${st.class}`}>{st.label}</Badge></td>
-                      <td className="py-3 px-4 text-sm font-semibold text-foreground text-right">{formatAmount(doc.total, company.currency)}</td>
+                      <td className="py-3 px-4 text-sm font-semibold text-foreground text-right">{displayAmount(doc.total, doc.company.currency)}</td>
                     </tr>
                   );
                 })}

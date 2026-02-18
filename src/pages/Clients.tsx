@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { useDocuments } from '@/contexts/DocumentsContext';
-import { useCompany } from '@/contexts/CompanyContext';
-import { formatAmount } from '@/lib/currencies';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { Link } from 'react-router-dom';
 import { Users, FileText, FileCheck, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -21,12 +20,13 @@ interface ClientSummary {
 
 export default function ClientsPage() {
   const { documents } = useDocuments();
-  const { company } = useCompany();
+  const { displayAmount, convertAmount, displayCurrency } = useCurrency();
 
   const clients = useMemo(() => {
     const map = new Map<string, ClientSummary>();
     documents.forEach(doc => {
       const key = doc.client.email || doc.client.name;
+      const docCurrency = doc.company.currency || 'XOF';
       if (!map.has(key)) {
         map.set(key, {
           id: key,
@@ -42,17 +42,18 @@ export default function ClientsPage() {
         });
       }
       const c = map.get(key)!;
+      const convertedTotal = convertAmount(doc.total, docCurrency);
       if (doc.type === 'invoice') {
         c.invoiceCount++;
-        if (doc.status === 'paid') c.totalPaid += doc.total;
-        else c.totalUnpaid += doc.total;
+        if (doc.status === 'paid') c.totalPaid += convertedTotal;
+        else c.totalUnpaid += convertedTotal;
       } else {
         c.quoteCount++;
       }
-      c.totalAmount += doc.total;
+      c.totalAmount += convertedTotal;
     });
     return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
-  }, [documents]);
+  }, [documents, convertAmount]);
 
   return (
     <div className="page-container">
@@ -96,11 +97,11 @@ export default function ClientsPage() {
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div>
                   <p className="text-muted-foreground">Total encaissé</p>
-                  <p className="font-semibold text-success">{formatAmount(client.totalPaid, company.currency)}</p>
+                  <p className="font-semibold text-success">{displayAmount(client.totalPaid, displayCurrency)}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Total dû</p>
-                  <p className="font-semibold text-destructive">{formatAmount(client.totalUnpaid, company.currency)}</p>
+                  <p className="font-semibold text-destructive">{displayAmount(client.totalUnpaid, displayCurrency)}</p>
                 </div>
               </div>
             </Link>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useCurrencyConverter } from '@/hooks/useCurrencyConverter';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { currencies, formatAmount } from '@/lib/currencies';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
@@ -8,49 +8,37 @@ import { Button } from '@/components/ui/button';
 import { ArrowRightLeft, RefreshCw, Loader2 } from 'lucide-react';
 
 export default function CurrencyConverter() {
-  const { rates, loading, error, fetchRates, convert } = useCurrencyConverter();
+  const { rates, loading, refreshRates, convertAmount, displayCurrency } = useCurrency();
   const [amount, setAmount] = useState(1000);
-  const [from, setFrom] = useState('XAF');
-  const [to, setTo] = useState('EUR');
+  const [from, setFrom] = useState(displayCurrency || 'XAF');
+  const [to, setTo] = useState(displayCurrency === 'EUR' ? 'XAF' : 'EUR');
   const [result, setResult] = useState<number | null>(null);
 
   useEffect(() => {
-    fetchRates(from);
-  }, []);
-
-  useEffect(() => {
     if (rates) {
-      setResult(convert(amount, from, to));
+      setResult(convertAmount(amount, from, to));
     }
-  }, [amount, from, to, rates, convert]);
+  }, [amount, from, to, rates, convertAmount]);
 
   const handleSwap = () => {
     setFrom(to);
     setTo(from);
-    fetchRates(to);
-  };
-
-  const handleFromChange = (code: string) => {
-    setFrom(code);
-    fetchRates(code);
   };
 
   return (
     <div className="stat-card space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-foreground">Convertisseur de devises</h3>
-        <Button variant="ghost" size="sm" onClick={() => fetchRates(from)} disabled={loading}>
+        <Button variant="ghost" size="sm" onClick={refreshRates} disabled={loading}>
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
         </Button>
       </div>
-
-      {error && <p className="text-sm text-destructive">{error}</p>}
 
       <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] gap-3 items-end">
         {/* From */}
         <div className="space-y-2">
           <Label className="text-xs">De</Label>
-          <Select value={from} onValueChange={handleFromChange}>
+          <Select value={from} onValueChange={setFrom}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
               {currencies.map(c => (

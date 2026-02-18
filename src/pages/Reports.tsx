@@ -1,10 +1,9 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useDocuments } from '@/contexts/DocumentsContext';
-import { useCompany } from '@/contexts/CompanyContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTrialStatus } from '@/hooks/useTrialStatus';
 import { supabase } from '@/integrations/supabase/client';
-import { formatAmount } from '@/lib/currencies';
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isWithinInterval, parseISO, subMonths } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import {
@@ -99,11 +98,11 @@ function ProGate({ children, hasAccess, label }: { children: React.ReactNode; ha
 
 export default function Reports() {
   const { documents } = useDocuments();
-  const { company } = useCompany();
   const { user } = useAuth();
   const { toast } = useToast();
   const trialStatus = useTrialStatus();
-  const currency = company.currency || 'XOF';
+  const { displayAmount, displayCurrency } = useCurrency();
+  const currency = displayCurrency;
 
   const isAdmin = user?.role === 'admin';
   const hasProAccess = isAdmin || (!trialStatus.trialExpired && !trialStatus.isLoading);
@@ -314,16 +313,16 @@ export default function Reports() {
 
       {/* KPIs - always visible */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4">
-        <StatCard icon={DollarSign} label="Chiffre d'affaires" value={formatAmount(stats.totalRevenue, currency)} trend={stats.revenueTrend} color="bg-primary/10 text-primary" />
-        <StatCard icon={TrendingUp} label="Encaissé" value={formatAmount(stats.totalPaid, currency)} sub={`${stats.paidCount} facture(s)`} color="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" />
-        <StatCard icon={TrendingDown} label="Impayées" value={formatAmount(stats.totalUnpaid, currency)} sub={`${stats.unpaidCount} facture(s)`} color="bg-destructive/10 text-destructive" />
-        <StatCard icon={Wallet} label="Bénéfice net" value={formatAmount(stats.netProfit, currency)} sub={`Marge: ${stats.grossMargin.toFixed(1)}%`} color="bg-amber-500/10 text-amber-600 dark:text-amber-400" />
+        <StatCard icon={DollarSign} label="Chiffre d'affaires" value={displayAmount(stats.totalRevenue, currency)} trend={stats.revenueTrend} color="bg-primary/10 text-primary" />
+        <StatCard icon={TrendingUp} label="Encaissé" value={displayAmount(stats.totalPaid, currency)} sub={`${stats.paidCount} facture(s)`} color="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" />
+        <StatCard icon={TrendingDown} label="Impayées" value={displayAmount(stats.totalUnpaid, currency)} sub={`${stats.unpaidCount} facture(s)`} color="bg-destructive/10 text-destructive" />
+        <StatCard icon={Wallet} label="Bénéfice net" value={displayAmount(stats.netProfit, currency)} sub={`Marge: ${stats.grossMargin.toFixed(1)}%`} color="bg-amber-500/10 text-amber-600 dark:text-amber-400" />
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
         <StatCard icon={FileText} label="Factures émises" value={String(stats.invoiceCount)} color="bg-primary/10 text-primary" />
-        <StatCard icon={FileCheck} label="Devis créés" value={String(stats.quoteCount)} sub={formatAmount(stats.totalQuotes, currency)} color="bg-blue-500/10 text-blue-600 dark:text-blue-400" />
+        <StatCard icon={FileCheck} label="Devis créés" value={String(stats.quoteCount)} sub={displayAmount(stats.totalQuotes, currency)} color="bg-blue-500/10 text-blue-600 dark:text-blue-400" />
         <StatCard icon={Target} label="Conversion" value={`${stats.conversionRate.toFixed(0)}%`} sub="Devis → Facture" color="bg-violet-500/10 text-violet-600 dark:text-violet-400" />
-        <StatCard icon={Package} label="Valeur du stock" value={formatAmount(stats.totalStockValue, currency)} sub={`${products.length} produit(s)`} color="bg-cyan-500/10 text-cyan-600 dark:text-cyan-400" />
+        <StatCard icon={Package} label="Valeur du stock" value={displayAmount(stats.totalStockValue, currency)} sub={`${products.length} produit(s)`} color="bg-cyan-500/10 text-cyan-600 dark:text-cyan-400" />
       </div>
 
       {/* Low stock alert */}
@@ -379,7 +378,7 @@ export default function Reports() {
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis dataKey="month" tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} />
                     <YAxis tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
-                    <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => formatAmount(v, currency)} />
+                    <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => displayAmount(v, currency)} />
                     <Area type="monotone" dataKey="revenus" stroke="hsl(var(--chart-1))" fill="url(#revGrad)" strokeWidth={2} name="Revenus" />
                     <Area type="monotone" dataKey="depenses" stroke="hsl(var(--destructive))" fill="url(#depGrad)" strokeWidth={2} name="Dépenses" />
                     <Legend />
@@ -396,7 +395,7 @@ export default function Reports() {
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis dataKey="month" tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} />
                     <YAxis tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
-                    <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => formatAmount(v, currency)} />
+                    <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => displayAmount(v, currency)} />
                     <Bar dataKey="factures" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} name="Montant facturé" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -413,7 +412,7 @@ export default function Reports() {
                       <Pie data={stats.expenseByCategory} cx="50%" cy="50%" outerRadius={100} innerRadius={55} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
                         {stats.expenseByCategory.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                       </Pie>
-                      <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => formatAmount(v, currency)} />
+                      <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => displayAmount(v, currency)} />
                     </PieChart>
                   </ResponsiveContainer>
                 ) : (
@@ -428,16 +427,16 @@ export default function Reports() {
               <CardContent className="space-y-3">
                 <div className="flex justify-between items-center p-3 rounded-lg bg-emerald-500/5 border border-emerald-500/10">
                   <span className="text-sm font-medium">Chiffre d'affaires brut</span>
-                  <span className="font-bold text-emerald-600 dark:text-emerald-400">{formatAmount(stats.totalRevenue, currency)}</span>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400">{displayAmount(stats.totalRevenue, currency)}</span>
                 </div>
                 <div className="flex justify-between items-center p-3 rounded-lg bg-destructive/5 border border-destructive/10">
                   <span className="text-sm font-medium">Total dépenses</span>
-                  <span className="font-bold text-destructive">- {formatAmount(stats.totalExpenses, currency)}</span>
+                  <span className="font-bold text-destructive">- {displayAmount(stats.totalExpenses, currency)}</span>
                 </div>
                 <div className="border-t border-border pt-3">
                   <div className="flex justify-between items-center p-3 rounded-lg bg-primary/5 border border-primary/10">
                     <span className="text-sm font-bold">Bénéfice net</span>
-                    <span className={`font-bold text-lg ${stats.netProfit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-destructive'}`}>{formatAmount(stats.netProfit, currency)}</span>
+                    <span className={`font-bold text-lg ${stats.netProfit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-destructive'}`}>{displayAmount(stats.netProfit, currency)}</span>
                   </div>
                 </div>
                 <div className="flex justify-between items-center p-3 rounded-lg bg-amber-500/5 border border-amber-500/10">
@@ -496,14 +495,14 @@ export default function Reports() {
                           <td className="p-3">{format(parseISO(e.expense_date), 'dd/MM/yyyy')}</td>
                           <td className="p-3"><Badge variant="secondary" className="text-xs">{cat?.label || e.category}</Badge></td>
                           <td className="p-3">{e.description}</td>
-                          <td className="p-3 text-right font-semibold text-destructive">{formatAmount(e.amount, currency)}</td>
+                          <td className="p-3 text-right font-semibold text-destructive">{displayAmount(e.amount, currency)}</td>
                           <td className="p-3 text-right"><Button variant="ghost" size="sm" onClick={() => deleteExpense(e.id)}><Trash2 className="w-3.5 h-3.5 text-muted-foreground hover:text-destructive" /></Button></td>
                         </tr>
                       );
                     })}
                   </tbody>
                   {stats.periodExpenses.length > 0 && (
-                    <tfoot><tr className="bg-muted/30"><td colSpan={3} className="p-3 font-semibold">Total</td><td className="p-3 text-right font-bold text-destructive">{formatAmount(stats.totalExpenses, currency)}</td><td></td></tr></tfoot>
+                    <tfoot><tr className="bg-muted/30"><td colSpan={3} className="p-3 font-semibold">Total</td><td className="p-3 text-right font-bold text-destructive">{displayAmount(stats.totalExpenses, currency)}</td><td></td></tr></tfoot>
                   )}
                 </table>
               </div>
@@ -561,7 +560,7 @@ export default function Reports() {
                         <div className="flex items-center justify-between mt-3">
                           <div>
                             <p className="text-xs text-muted-foreground">Prix unitaire</p>
-                            <p className="font-bold text-sm">{formatAmount(p.unit_price, currency)}</p>
+                            <p className="font-bold text-sm">{displayAmount(p.unit_price, currency)}</p>
                           </div>
                           <div className="text-right">
                             <p className="text-xs text-muted-foreground">En stock</p>
@@ -676,7 +675,7 @@ export default function Reports() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm font-bold">{formatAmount(client.total, currency)}</p>
+                          <p className="text-sm font-bold">{displayAmount(client.total, currency)}</p>
                           <p className="text-xs text-muted-foreground">{client.count} facture(s)</p>
                         </div>
                       </div>

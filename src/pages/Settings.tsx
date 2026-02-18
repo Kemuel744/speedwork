@@ -7,10 +7,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Save, Upload, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCompany } from '@/contexts/CompanyContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { currencies } from '@/lib/currencies';
 
 export default function SettingsPage() {
   const { company, updateCompany } = useCompany();
+  const { refreshRates } = useCurrency();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,7 +125,7 @@ export default function SettingsPage() {
             </div>
             <div className="space-y-1.5">
               <Label>Devise</Label>
-              <Select value={company.currency || 'EUR'} onValueChange={v => updateCompany({ currency: v })}>
+              <Select value={company.currency || 'EUR'} onValueChange={v => { updateCompany({ currency: v }); refreshRates(); }}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {currencies.map(c => (

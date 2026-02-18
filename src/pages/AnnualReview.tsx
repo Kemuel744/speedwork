@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useDocuments } from '@/contexts/DocumentsContext';
 import { useCompany } from '@/contexts/CompanyContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { formatAmount } from '@/lib/currencies';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BarChart3, TrendingUp, AlertTriangle, Lightbulb, Rocket, Loader2, FileText } from 'lucide-react';
@@ -15,6 +15,7 @@ export default function AnnualReview() {
   const { documents } = useDocuments();
   const { company } = useCompany();
   const { user } = useAuth();
+  const { displayAmount, convertAmount, displayCurrency } = useCurrency();
   const isClient = user?.role === 'client';
 
   const allDocs = isClient
@@ -34,10 +35,10 @@ export default function AnnualReview() {
   const paid = invoices.filter(d => d.status === 'paid');
   const unpaid = invoices.filter(d => d.status === 'unpaid');
 
-  const totalInvoiced = invoices.reduce((s, d) => s + d.total, 0);
-  const totalPaid = paid.reduce((s, d) => s + d.total, 0);
-  const totalUnpaid = unpaid.reduce((s, d) => s + d.total, 0);
-  const totalQuoted = quotes.reduce((s, d) => s + d.total, 0);
+  const totalInvoiced = invoices.reduce((s, d) => s + convertAmount(d.total, d.company.currency || 'XOF'), 0);
+  const totalPaid = paid.reduce((s, d) => s + convertAmount(d.total, d.company.currency || 'XOF'), 0);
+  const totalUnpaid = unpaid.reduce((s, d) => s + convertAmount(d.total, d.company.currency || 'XOF'), 0);
+  const totalQuoted = quotes.reduce((s, d) => s + convertAmount(d.total, d.company.currency || 'XOF'), 0);
 
   const buildSummary = useCallback(() => {
     const monthlyData: Record<string, { invoiced: number; paid: number; count: number }> = {};
@@ -53,20 +54,20 @@ export default function AnnualReview() {
 
     const monthlyBreakdown = months
       .filter(m => monthlyData[m])
-      .map(m => `- ${m}: ${monthlyData[m].count} facture(s), ${formatAmount(monthlyData[m].invoiced, company.currency)} facturé, ${formatAmount(monthlyData[m].paid, company.currency)} payé`)
+      .map(m => `- ${m}: ${monthlyData[m].count} facture(s), ${displayAmount(monthlyData[m].invoiced, displayCurrency)} facturé, ${displayAmount(monthlyData[m].paid, displayCurrency)} payé`)
       .join('\n');
 
     return `Résumé de l'année ${selectedYear} :
-- Total facturé : ${formatAmount(totalInvoiced, company.currency)}
-- Total encaissé (payé) : ${formatAmount(totalPaid, company.currency)}
-- Total impayé : ${formatAmount(totalUnpaid, company.currency)}
+- Total facturé : ${displayAmount(totalInvoiced, displayCurrency)}
+- Total encaissé (payé) : ${displayAmount(totalPaid, displayCurrency)}
+- Total impayé : ${displayAmount(totalUnpaid, displayCurrency)}
 - Nombre de factures : ${invoices.length} (dont ${paid.length} payées, ${unpaid.length} impayées)
-- Nombre de devis : ${quotes.length} (total : ${formatAmount(totalQuoted, company.currency)})
+- Nombre de devis : ${quotes.length} (total : ${displayAmount(totalQuoted, displayCurrency)})
 - Taux de recouvrement : ${totalInvoiced > 0 ? Math.round((totalPaid / totalInvoiced) * 100) : 0}%
 
 Détail mensuel :
 ${monthlyBreakdown || 'Aucune donnée mensuelle disponible.'}`;
-  }, [invoices, quotes, paid, unpaid, selectedYear, totalInvoiced, totalPaid, totalUnpaid, totalQuoted, company.currency]);
+  }, [invoices, quotes, paid, unpaid, selectedYear, totalInvoiced, totalPaid, totalUnpaid, totalQuoted, displayAmount, displayCurrency]);
 
   const generateReview = async () => {
     setIsLoading(true);
@@ -171,14 +172,14 @@ ${monthlyBreakdown || 'Aucune donnée mensuelle disponible.'}`;
             <span className="text-xs font-medium text-muted-foreground">Factures</span>
           </div>
           <p className="text-xl font-bold text-foreground">{invoices.length}</p>
-          <p className="text-xs text-muted-foreground">{formatAmount(totalInvoiced, company.currency)}</p>
+          <p className="text-xs text-muted-foreground">{displayAmount(totalInvoiced, displayCurrency)}</p>
         </div>
         <div className="stat-card">
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp className="w-4 h-4 text-success" />
             <span className="text-xs font-medium text-muted-foreground">Encaissé</span>
           </div>
-          <p className="text-xl font-bold text-success">{formatAmount(totalPaid, company.currency)}</p>
+          <p className="text-xl font-bold text-success">{displayAmount(totalPaid, displayCurrency)}</p>
           <p className="text-xs text-muted-foreground">{paid.length} facture(s) payée(s)</p>
         </div>
         <div className="stat-card">
@@ -186,7 +187,7 @@ ${monthlyBreakdown || 'Aucune donnée mensuelle disponible.'}`;
             <AlertTriangle className="w-4 h-4 text-destructive" />
             <span className="text-xs font-medium text-muted-foreground">Impayé</span>
           </div>
-          <p className="text-xl font-bold text-destructive">{formatAmount(totalUnpaid, company.currency)}</p>
+          <p className="text-xl font-bold text-destructive">{displayAmount(totalUnpaid, displayCurrency)}</p>
           <p className="text-xs text-muted-foreground">{unpaid.length} facture(s)</p>
         </div>
         <div className="stat-card">
@@ -195,7 +196,7 @@ ${monthlyBreakdown || 'Aucune donnée mensuelle disponible.'}`;
             <span className="text-xs font-medium text-muted-foreground">Devis</span>
           </div>
           <p className="text-xl font-bold text-foreground">{quotes.length}</p>
-          <p className="text-xs text-muted-foreground">{formatAmount(totalQuoted, company.currency)}</p>
+          <p className="text-xs text-muted-foreground">{displayAmount(totalQuoted, displayCurrency)}</p>
         </div>
       </div>
 

@@ -7,6 +7,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { DocumentsProvider } from "@/contexts/DocumentsContext";
 import { CompanyProvider } from "@/contexts/CompanyContext";
+import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import AppLayout from "@/components/layout/AppLayout";
 import Login from "@/pages/Login";
 import Home from "@/pages/Home";
@@ -39,6 +40,7 @@ const App = () => (
     <TooltipProvider>
       <AuthProvider>
         <CompanyProvider>
+        <CurrencyProvider>
         <DocumentsProvider>
           <Toaster />
           <Sonner />
@@ -73,6 +75,7 @@ const App = () => (
             </Routes>
           </BrowserRouter>
         </DocumentsProvider>
+        </CurrencyProvider>
         </CompanyProvider>
       </AuthProvider>
     </TooltipProvider>
