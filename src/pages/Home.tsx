@@ -50,6 +50,60 @@ export default function Home() {
         title="Logiciel de Facturation en Ligne – Factures & Devis Pro"
         description="SpeedWork : logiciel de facturation en ligne et application de gestion de devis pour PME et freelances en Afrique. Générateur de factures professionnel, dashboard financier intelligent, facturation en Franc CFA. Essai gratuit."
         path="/"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Qu'est-ce que SpeedWork ?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "SpeedWork est un logiciel de facturation en ligne conçu pour les PME, freelances et entrepreneurs en Afrique. Il permet de créer des factures et devis professionnels en PDF, de gérer ses clients et de suivre ses revenus via un dashboard financier intelligent."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "SpeedWork supporte-t-il le Franc CFA (XAF) ?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Oui, SpeedWork offre un support natif du Franc CFA (XAF) avec un convertisseur de devises intégré et des taux de change actualisés, idéal pour les entreprises en Afrique centrale."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Comment créer une facture avec SpeedWork ?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Créez votre compte gratuitement, ajoutez vos clients, puis générez vos factures en quelques clics avec numérotation automatique, calcul de TVA et export PDF au format A4."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Peut-on convertir un devis en facture ?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Oui, SpeedWork permet de convertir un devis en facture en un seul clic, conservant toutes les informations du document original."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "SpeedWork est-il gratuit ?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "SpeedWork propose un essai gratuit de 3 jours sans carte bancaire requise. Des abonnements mensuels et annuels sont ensuite disponibles à partir de 3 000 FCFA."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "SpeedWork fonctionne-t-il sur mobile ?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Oui, SpeedWork est une application web responsive qui fonctionne sur tous les appareils : ordinateur, tablette et smartphone, sans installation requise."
+              }
+            }
+          ]
+        }}
       />
       <PublicNavbar />
 
