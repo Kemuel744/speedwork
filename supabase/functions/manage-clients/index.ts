@@ -51,7 +51,16 @@ Deno.serve(async (req) => {
 
       const clients = (profiles || []).filter(p => roleMap.get(p.user_id) !== 'admin')
 
-      return new Response(JSON.stringify({ clients }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      // Fetch active subscriptions to tag enterprise clients
+      const { data: subs } = await adminClient
+        .from('subscriptions')
+        .select('user_id, plan, status')
+        .eq('status', 'active')
+
+      const subMap = new Map((subs || []).map(s => [s.user_id, s.plan]))
+      const enriched = clients.map(c => ({ ...c, active_plan: subMap.get(c.user_id) || null }))
+
+      return new Response(JSON.stringify({ clients: enriched }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
     if (action === 'create') {

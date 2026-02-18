@@ -21,6 +21,7 @@ interface ClientProfile {
   created_at: string;
   trial_start: string | null;
   trial_docs_used: number | null;
+  active_plan: string | null;
 }
 
 export default function AdminClients() {
@@ -184,8 +185,21 @@ export default function AdminClients() {
                 ) : filtered.map(client => (
                   <TableRow key={client.user_id}>
                     <TableCell>
-                      <p className="font-medium text-foreground">{client.company_name || '—'}</p>
-                      <p className="text-xs text-muted-foreground">{client.email}</p>
+                      <div className="flex items-center gap-2">
+                        <div>
+                          <p className="font-medium text-foreground">{client.company_name || '—'}</p>
+                          <p className="text-xs text-muted-foreground">{client.email}</p>
+                        </div>
+                        {client.active_plan === 'enterprise' && (
+                          <Badge className="bg-amber-500/15 text-amber-700 border-amber-300 hover:bg-amber-500/20 text-[10px] px-1.5 py-0">Entreprise</Badge>
+                        )}
+                        {client.active_plan === 'annual' && (
+                          <Badge className="bg-emerald-500/15 text-emerald-700 border-emerald-300 hover:bg-emerald-500/20 text-[10px] px-1.5 py-0">Annuel</Badge>
+                        )}
+                        {client.active_plan === 'monthly' && (
+                          <Badge variant="outline" className="text-[10px] px-1.5 py-0">Mensuel</Badge>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{client.phone || '—'}</TableCell>
                     <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">{new Date(client.created_at).toLocaleDateString('fr-FR')}</TableCell>
