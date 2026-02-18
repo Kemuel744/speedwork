@@ -30,6 +30,7 @@ import AnnualReview from "@/pages/AnnualReview";
 import Reminders from "@/pages/Reminders";
 import Reports from "@/pages/Reports";
 import Contact from "@/pages/Contact";
+import Messages from "@/pages/Messages";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -70,6 +71,7 @@ const App = () => (
                 <Route path="/annual-review" element={<AnnualReview />} />
                 <Route path="/reminders" element={<Reminders />} />
                 <Route path="/reports" element={<Reports />} />
+                <Route path="/messages" element={<Messages />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
