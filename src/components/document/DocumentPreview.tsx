@@ -204,7 +204,7 @@ export default function DocumentPreview({ doc }: Props) {
   // ========== TEMPLATES ==========
 
   const renderModerne = () => (
-    <div className="w-full">
+    <div className="w-full flex flex-col" style={{ minHeight: '297mm' }}>
       {/* Header band */}
       <div
         className="px-7 py-5 flex items-center justify-between"
@@ -239,20 +239,23 @@ export default function DocumentPreview({ doc }: Props) {
         )}
       </div>
 
-      <div className="px-7 py-6">
-        {renderCompanyClientBlock()}
-        {renderDateSubject()}
-        {renderItemsTable('filled')}
-        {renderTotals()}
-        {renderCustomNote()}
-        {renderSignature()}
+      <div className="px-7 py-6 flex-1 flex flex-col">
+        <div className="flex-1">
+          {renderCompanyClientBlock()}
+          {renderDateSubject()}
+          {renderItemsTable('filled')}
+          {renderTotals()}
+          {renderCustomNote()}
+          {renderSignature()}
+        </div>
         {renderFooter()}
       </div>
     </div>
   );
 
   const renderClassique = () => (
-    <div className="w-full px-7 py-6 space-y-5">
+    <div className="w-full px-7 py-6 flex flex-col" style={{ minHeight: '297mm' }}>
+      <div className="flex-1 space-y-5">
       {/* Classic header */}
       <div className="pb-4" style={{ borderBottom: `3px solid ${primary}` }}>
         <div className="flex justify-between items-start">
@@ -330,12 +333,14 @@ export default function DocumentPreview({ doc }: Props) {
       {renderTotals()}
       {renderCustomNote()}
       {renderSignature()}
+      </div>
       {renderFooter()}
     </div>
   );
 
   const renderMinimaliste = () => (
-    <div className="w-full px-8 py-7 space-y-6">
+    <div className="w-full px-8 py-7 flex flex-col" style={{ minHeight: '297mm' }}>
+      <div className="flex-1 space-y-6">
       <div className="flex justify-between items-start">
         <div>
           {doc.company.logo && (
@@ -391,12 +396,13 @@ export default function DocumentPreview({ doc }: Props) {
       {renderTotals()}
       {renderCustomNote()}
       {renderSignature()}
+      </div>
       {renderFooter()}
     </div>
   );
 
   const renderCorporate = () => (
-    <div className="w-full">
+    <div className="w-full flex flex-col" style={{ minHeight: '297mm' }}>
       {/* Corporate header: side color bar */}
       <div className="flex">
         <div className="w-2 shrink-0" style={{ backgroundColor: primary }} />
@@ -449,7 +455,8 @@ export default function DocumentPreview({ doc }: Props) {
         </div>
       </div>
 
-      <div className="px-7 py-6">
+      <div className="px-7 py-6 flex-1 flex flex-col">
+        <div className="flex-1">
         <div className="flex justify-between gap-6">
           <div className="flex gap-8 text-xs text-gray-500">
             <div>
@@ -498,6 +505,7 @@ export default function DocumentPreview({ doc }: Props) {
         {renderTotals()}
         {renderCustomNote()}
         {renderSignature()}
+        </div>
         {renderFooter()}
       </div>
     </div>
