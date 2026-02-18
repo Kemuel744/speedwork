@@ -56,6 +56,7 @@ export type Database = {
           items: Json
           labor_cost: number
           number: string
+          share_token: string | null
           status: string
           subject: string | null
           subtotal: number
@@ -91,6 +92,7 @@ export type Database = {
           items?: Json
           labor_cost?: number
           number: string
+          share_token?: string | null
           status?: string
           subject?: string | null
           subtotal?: number
@@ -126,6 +128,7 @@ export type Database = {
           items?: Json
           labor_cost?: number
           number?: string
+          share_token?: string | null
           status?: string
           subject?: string | null
           subtotal?: number

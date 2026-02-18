@@ -18,6 +18,7 @@ import ClientDashboard from "@/pages/ClientDashboard";
 import Documents from "@/pages/Documents";
 import CreateDocument from "@/pages/CreateDocument";
 import DocumentDetail from "@/pages/DocumentDetail";
+import SharedDocument from "@/pages/SharedDocument";
 import ClientsPage from "@/pages/Clients";
 import ClientDetailPage from "@/pages/ClientDetail";
 import Profile from "@/pages/Profile";
@@ -48,6 +49,7 @@ const App = () => (
               <Route path="/tarifs" element={<Subscription />} />
               <Route path="/login" element={<Login />} />
               <Route path="/subscription" element={<Navigate to="/tarifs" replace />} />
+              <Route path="/share/:token" element={<SharedDocument />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/access-code" element={<AccessCode />} />
               <Route element={<AppLayout />}>

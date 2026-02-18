@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Printer, Download, RefreshCw, Pencil, Bell, Clock, Mail, MessageCircle } from 'lucide-react';
 import { sendDocumentByEmail, sendDocumentByWhatsApp } from '@/lib/emailHelper';
+import { getOrCreateShareUrl } from '@/lib/shareHelper';
 import { toast } from 'sonner';
 import DocumentPreview from '@/components/document/DocumentPreview';
 
@@ -108,22 +109,34 @@ export default function DocumentDetail() {
               <Bell className="w-4 h-4 mr-2" />{sendingReminder ? 'Envoi...' : 'Relancer'}
             </Button>
           )}
-          <Button variant="outline" size="sm" onClick={() => sendDocumentByEmail({
-            recipientEmail: doc.client.email,
-            recipientName: doc.client.name,
-            documentType: doc.type,
-            documentNumber: doc.number,
-            companyName: doc.company.name,
-          })}>
+          <Button variant="outline" size="sm" onClick={async () => {
+            try {
+              const shareUrl = await getOrCreateShareUrl(doc.id);
+              sendDocumentByEmail({
+                recipientEmail: doc.client.email,
+                recipientName: doc.client.name,
+                documentType: doc.type,
+                documentNumber: doc.number,
+                companyName: doc.company.name,
+                shareUrl,
+              });
+            } catch { toast.error('Erreur lors de la génération du lien'); }
+          }}>
             <Mail className="w-4 h-4 mr-2" />Email
           </Button>
-          <Button variant="outline" size="sm" onClick={() => sendDocumentByWhatsApp({
-            recipientPhone: doc.client.phone,
-            recipientName: doc.client.name,
-            documentType: doc.type,
-            documentNumber: doc.number,
-            companyName: doc.company.name,
-          })}>
+          <Button variant="outline" size="sm" onClick={async () => {
+            try {
+              const shareUrl = await getOrCreateShareUrl(doc.id);
+              sendDocumentByWhatsApp({
+                recipientPhone: doc.client.phone,
+                recipientName: doc.client.name,
+                documentType: doc.type,
+                documentNumber: doc.number,
+                companyName: doc.company.name,
+                shareUrl,
+              });
+            } catch { toast.error('Erreur lors de la génération du lien'); }
+          }}>
             <MessageCircle className="w-4 h-4 mr-2 text-green-600" />WhatsApp
           </Button>
           <Button variant="outline" size="sm" onClick={handlePrint}>
