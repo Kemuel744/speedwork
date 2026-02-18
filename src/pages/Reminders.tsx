@@ -156,58 +156,63 @@ export default function Reminders() {
             <p className="text-sm text-muted-foreground mt-1">Toutes vos factures sont à jour !</p>
           </div>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Facture</TableHead>
-                <TableHead>Client</TableHead>
-                <TableHead>Montant</TableHead>
-                <TableHead>Échéance</TableHead>
-                <TableHead>Retard</TableHead>
-                <TableHead>Relances</TableHead>
-                <TableHead>Dernière relance</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {invoices.map(inv => (
-                <TableRow key={inv.document_id}>
-                  <TableCell className="font-medium">{inv.number}</TableCell>
-                  <TableCell>
-                    <div>
-                      <p className="text-sm font-medium">{inv.client_name}</p>
-                      <p className="text-xs text-muted-foreground">{inv.client_email}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell className="font-semibold">
-                    {displayAmount(inv.total, inv.company_currency)}
-                  </TableCell>
-                  <TableCell className="text-sm">{inv.due_date}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {severityBadge(inv.days_overdue)}
-                      <span className="text-sm text-muted-foreground">{inv.days_overdue}j</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary">{inv.reminder_count}</Badge>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {inv.last_reminder
-                      ? new Date(inv.last_reminder).toLocaleDateString('fr-FR')
-                      : 'Aucune'}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link to={`/document/${inv.document_id}`}>
-                        <FileText className="w-4 h-4" />
-                      </Link>
-                    </Button>
-                  </TableCell>
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Facture</TableHead>
+                  <TableHead className="hidden sm:table-cell">Client</TableHead>
+                  <TableHead>Montant</TableHead>
+                  <TableHead className="hidden md:table-cell">Échéance</TableHead>
+                  <TableHead>Retard</TableHead>
+                  <TableHead className="hidden lg:table-cell">Relances</TableHead>
+                  <TableHead className="hidden lg:table-cell">Dernière relance</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {invoices.map(inv => (
+                  <TableRow key={inv.document_id}>
+                    <TableCell>
+                      <span className="font-medium">{inv.number}</span>
+                      <p className="text-xs text-muted-foreground sm:hidden">{inv.client_name}</p>
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      <div>
+                        <p className="text-sm font-medium">{inv.client_name}</p>
+                        <p className="text-xs text-muted-foreground">{inv.client_email}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-semibold">
+                      {displayAmount(inv.total, inv.company_currency)}
+                    </TableCell>
+                    <TableCell className="text-sm hidden md:table-cell">{inv.due_date}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {severityBadge(inv.days_overdue)}
+                        <span className="text-sm text-muted-foreground hidden sm:inline">{inv.days_overdue}j</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="hidden lg:table-cell">
+                      <Badge variant="secondary">{inv.reminder_count}</Badge>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground hidden lg:table-cell">
+                      {inv.last_reminder
+                        ? new Date(inv.last_reminder).toLocaleDateString('fr-FR')
+                        : 'Aucune'}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link to={`/document/${inv.document_id}`}>
+                          <FileText className="w-4 h-4" />
+                        </Link>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </div>
     </div>
