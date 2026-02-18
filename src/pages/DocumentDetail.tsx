@@ -95,7 +95,7 @@ export default function DocumentDetail() {
             <Badge variant="outline" className={st.class}>{st.label}</Badge>
           </div>
         </div>
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-2 flex-wrap justify-start sm:justify-end">
           <Button variant="outline" size="sm" onClick={() => navigate(`/edit/${doc.id}`)}>
             <Pencil className="w-4 h-4 mr-2" />Modifier
           </Button>

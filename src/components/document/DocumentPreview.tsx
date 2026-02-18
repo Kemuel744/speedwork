@@ -162,9 +162,9 @@ export default function DocumentPreview({ doc }: Props) {
   ) : null;
 
   const renderSignature = () => (
-    <div className="mt-10 flex justify-end">
+    <div className="mt-6 flex justify-end">
       <div className="text-center w-56">
-        <p className="text-xs font-semibold text-gray-800 mb-12">
+        <p className="text-xs font-semibold text-gray-800 mb-8">
           {doc.company.signatoryTitle || 'Le Directeur Général'}
         </p>
         <div style={{ borderTop: '1px solid #9ca3af' }} className="pt-1.5">
@@ -176,7 +176,7 @@ export default function DocumentPreview({ doc }: Props) {
 
   const renderFooter = () => (
     <div
-      className="mt-6 pt-3"
+      className="mt-auto pt-3"
       style={{ borderTop: `1px solid ${lightenColor(primary, 0.7)}` }}
     >
       <div className="flex flex-wrap justify-between gap-4 text-[9px] text-gray-500 leading-relaxed">
@@ -204,7 +204,7 @@ export default function DocumentPreview({ doc }: Props) {
   // ========== TEMPLATES ==========
 
   const renderModerne = () => (
-    <div className="w-full flex flex-col" style={{ minHeight: '297mm' }}>
+    <div className="w-full flex flex-col" style={{ minHeight: '297mm', maxHeight: '297mm', overflow: 'hidden' }}>
       {/* Header band */}
       <div
         className="px-7 py-5 flex items-center justify-between"
@@ -254,7 +254,7 @@ export default function DocumentPreview({ doc }: Props) {
   );
 
   const renderClassique = () => (
-    <div className="w-full px-7 py-6 flex flex-col" style={{ minHeight: '297mm' }}>
+    <div className="w-full px-7 py-6 flex flex-col" style={{ minHeight: '297mm', maxHeight: '297mm', overflow: 'hidden' }}>
       <div className="flex-1 space-y-5">
       {/* Classic header */}
       <div className="pb-4" style={{ borderBottom: `3px solid ${primary}` }}>
@@ -339,7 +339,7 @@ export default function DocumentPreview({ doc }: Props) {
   );
 
   const renderMinimaliste = () => (
-    <div className="w-full px-8 py-7 flex flex-col" style={{ minHeight: '297mm' }}>
+    <div className="w-full px-8 py-7 flex flex-col" style={{ minHeight: '297mm', maxHeight: '297mm', overflow: 'hidden' }}>
       <div className="flex-1 space-y-6">
       <div className="flex justify-between items-start">
         <div>
@@ -402,7 +402,7 @@ export default function DocumentPreview({ doc }: Props) {
   );
 
   const renderCorporate = () => (
-    <div className="w-full flex flex-col" style={{ minHeight: '297mm' }}>
+    <div className="w-full flex flex-col" style={{ minHeight: '297mm', maxHeight: '297mm', overflow: 'hidden' }}>
       {/* Corporate header: side color bar */}
       <div className="flex">
         <div className="w-2 shrink-0" style={{ backgroundColor: primary }} />
@@ -519,15 +519,20 @@ export default function DocumentPreview({ doc }: Props) {
   };
 
   return (
-    <div
-      className="a4-preview bg-white text-gray-900 shadow-lg border border-gray-200 w-full max-w-[210mm] overflow-hidden print:shadow-none print:border-none print:rounded-none"
-      style={{
-        minHeight: '297mm',
-        borderRadius: '0.5rem',
-        fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif",
-      }}
-    >
-      {templateRenderers[template]()}
+    <div className="w-full max-w-[210mm] print:max-w-none overflow-x-auto">
+      <div
+        className="a4-preview bg-white text-gray-900 shadow-lg border border-gray-200 w-[210mm] min-w-[210mm] overflow-hidden print:shadow-none print:border-none print:rounded-none print:w-[210mm]"
+        style={{
+          minHeight: '297mm',
+          maxHeight: '297mm',
+          borderRadius: '0.5rem',
+          fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif",
+          WebkitPrintColorAdjust: 'exact',
+          printColorAdjust: 'exact' as any,
+        }}
+      >
+        {templateRenderers[template]()}
+      </div>
     </div>
   );
 }

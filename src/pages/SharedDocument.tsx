@@ -97,10 +97,10 @@ export default function SharedDocument() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-8 px-2 sm:px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-6 print:hidden">
-          <h1 className="text-lg font-semibold text-gray-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6 print:hidden">
+          <h1 className="text-base sm:text-lg font-semibold text-gray-800">
             {doc.type === 'invoice' ? 'Facture' : 'Devis'} {doc.number}
           </h1>
           <div className="flex gap-2">
