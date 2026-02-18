@@ -76,15 +76,16 @@ export default function AdminClients() {
     onError: (err: Error) => toast({ title: 'Erreur', description: err.message, variant: 'destructive' }),
   });
 
-  const handleManualActivation = async (client: ClientProfile, plan: 'monthly' | 'annual') => {
+  const handleManualActivation = async (client: ClientProfile, plan: 'monthly' | 'annual' | 'enterprise') => {
     setActivatingPlan(plan);
     try {
+      const amounts: Record<string, number> = { monthly: 5000, annual: 36000, enterprise: 15000 };
       const res = await supabase.functions.invoke('generate-access-code', {
         body: {
           user_id: client.user_id,
           plan,
           payment_method: 'mtn_mobile_money',
-          amount: plan === 'annual' ? 36000 : 5000,
+          amount: amounts[plan],
         },
       });
       if (res.error || res.data?.error) throw new Error(res.data?.error || res.error?.message);
@@ -286,7 +287,7 @@ export default function AdminClients() {
                 <p className="text-xs text-muted-foreground">Communiquez ce code au client pour qu'il active son compte.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <Button
                   variant="outline"
                   className="h-auto py-4 flex flex-col gap-1"
@@ -298,6 +299,7 @@ export default function AdminClients() {
                   <span className="text-xs text-muted-foreground">5 000 FCFA</span>
                 </Button>
                 <Button
+                  variant="outline"
                   className="h-auto py-4 flex flex-col gap-1"
                   disabled={!!activatingPlan}
                   onClick={() => activateTarget && handleManualActivation(activateTarget, 'annual')}
@@ -305,6 +307,15 @@ export default function AdminClients() {
                   {activatingPlan === 'annual' ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                   <span className="font-semibold">Annuel</span>
                   <span className="text-xs text-muted-foreground">36 000 FCFA</span>
+                </Button>
+                <Button
+                  className="h-auto py-4 flex flex-col gap-1"
+                  disabled={!!activatingPlan}
+                  onClick={() => activateTarget && handleManualActivation(activateTarget, 'enterprise')}
+                >
+                  {activatingPlan === 'enterprise' ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                  <span className="font-semibold">Entreprise</span>
+                  <span className="text-xs text-muted-foreground">15 000 FCFA/mois</span>
                 </Button>
               </div>
             )}

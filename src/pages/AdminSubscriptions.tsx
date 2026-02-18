@@ -160,6 +160,7 @@ export default function AdminSubscriptions() {
                 <SelectItem value="all">Tous les plans</SelectItem>
                 <SelectItem value="monthly">Mensuel</SelectItem>
                 <SelectItem value="annual">Annuel</SelectItem>
+                <SelectItem value="enterprise">Entreprise</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -196,7 +197,7 @@ export default function AdminSubscriptions() {
                         </div>
                       </TableCell>
                       <TableCell className="hidden md:table-cell">
-                        <Badge variant="outline" className="capitalize">{sub.plan === 'monthly' ? 'Mensuel' : 'Annuel'}</Badge>
+                        <Badge variant="outline" className="capitalize">{sub.plan === 'monthly' ? 'Mensuel' : sub.plan === 'enterprise' ? 'Entreprise' : 'Annuel'}</Badge>
                       </TableCell>
                       <TableCell>
                         <Badge className={sc.className}>{sc.label}</Badge>
@@ -232,7 +233,7 @@ export default function AdminSubscriptions() {
               {[
                 ['Entreprise', selectedSub.profiles?.company_name || '—'],
                 ['Email', selectedSub.profiles?.email || '—'],
-                ['Plan', selectedSub.plan === 'monthly' ? 'Mensuel — 5 000 FCFA/mois' : 'Annuel — 3 000 FCFA/mois'],
+                ['Plan', selectedSub.plan === 'monthly' ? 'Mensuel — 5 000 FCFA/mois' : selectedSub.plan === 'enterprise' ? 'Entreprise — 15 000 FCFA/mois' : 'Annuel — 3 000 FCFA/mois'],
                 ['Montant', `${selectedSub.amount.toLocaleString()} FCFA`],
                 ['Paiement', paymentMethodLabels[selectedSub.payment_method] || selectedSub.payment_method],
                 ['Début', new Date(selectedSub.start_date).toLocaleDateString('fr-FR')],
