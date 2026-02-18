@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, UserPlus, CreditCard, Info, Check } from 'lucide-react';
+import { Bell, UserPlus, CreditCard, Info, Check, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -20,6 +20,7 @@ interface Notification {
 const typeIcon: Record<string, React.ElementType> = {
   new_client: UserPlus,
   new_subscription: CreditCard,
+  new_message: MessageCircle,
   info: Info,
 };
 
