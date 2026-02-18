@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import SEO from '@/components/SEO';
 import PublicNavbar from '@/components/PublicNavbar';
-import speedworkLogo from '@/assets/logo.png';
+import PublicFooter from '@/components/PublicFooter';
 import promoHero from '@/assets/promo-hero.png';
 import promoComparison from '@/assets/promo-comparison.png';
 import mockupInvoice from '@/assets/mockup-invoice.png';
@@ -293,24 +293,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-12 bg-background">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <img src={speedworkLogo} alt="SpeedWork – Logiciel de facturation au Congo" className="h-6 w-auto" />
-              <span className="font-semibold text-foreground">SpeedWork</span>
-            </div>
-            <div className="flex items-center gap-6 text-sm text-muted-foreground">
-              <Link to="/fonctionnalites" className="hover:text-foreground transition-colors">Fonctionnalités</Link>
-              <Link to="/tarifs" className="hover:text-foreground transition-colors">Tarifs</Link>
-              <Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link>
-              <Link to="/login" className="hover:text-foreground transition-colors">Connexion</Link>
-            </div>
-            <p className="text-xs text-muted-foreground">© 2025 SpeedWork. Startup technologique congolaise.</p>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }

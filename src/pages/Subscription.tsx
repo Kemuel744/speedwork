@@ -10,6 +10,7 @@ import airtelLogo from '@/assets/airtel-money.png';
 import { toast } from 'sonner';
 import SEO from '@/components/SEO';
 import PublicNavbar from '@/components/PublicNavbar';
+import PublicFooter from '@/components/PublicFooter';
 import { supabase } from '@/integrations/supabase/client';
 
 const plans = [
@@ -443,6 +444,7 @@ export default function Subscription() {
       </div>
       </>
       )}
+      <PublicFooter />
     </main>
   );
 }
