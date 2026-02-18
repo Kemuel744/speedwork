@@ -49,10 +49,15 @@ export default function PublicNavbar() {
           </Button>
         </div>
 
-        {/* Mobile toggle */}
-        <button className="md:hidden p-2" onClick={() => setOpen(!open)}>
-          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        {/* Mobile actions */}
+        <div className="flex md:hidden items-center gap-2">
+          <Button size="sm" variant="ghost" asChild>
+            <Link to="/login">Connexion</Link>
+          </Button>
+          <button className="p-2" onClick={() => setOpen(!open)}>
+            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu */}

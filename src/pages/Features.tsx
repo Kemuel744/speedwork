@@ -8,6 +8,7 @@ import {
 import SEO from '@/components/SEO';
 import PublicNavbar from '@/components/PublicNavbar';
 import promoRevolution from '@/assets/promo-revolution.png';
+import PublicFooter from '@/components/PublicFooter';
 import mockupInvoice from '@/assets/mockup-invoice.png';
 import mockupQuote from '@/assets/mockup-quote.png';
 
@@ -267,6 +268,8 @@ export default function Features() {
           </Button>
         </div>
       </section>
+
+      <PublicFooter />
     </div>
   );
 }
