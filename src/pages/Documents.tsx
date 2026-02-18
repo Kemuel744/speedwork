@@ -3,7 +3,8 @@ import { useDocuments } from '@/contexts/DocumentsContext';
 import { useCompany } from '@/contexts/CompanyContext';
 import { formatAmount } from '@/lib/currencies';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
-import { Search, Plus, FileText, FileCheck, Trash2, Copy, ArrowUpDown } from 'lucide-react';
+import { Search, Plus, FileText, FileCheck, Trash2, Copy, ArrowUpDown, Mail } from 'lucide-react';
+import { sendDocumentByEmail } from '@/lib/emailHelper';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -148,6 +149,15 @@ export default function Documents() {
                       <td className="py-3 px-4 text-sm font-semibold text-foreground text-right">{formatAmount(doc.total, company.currency)}</td>
                       <td className="py-3 px-4 text-right">
                         <div className="flex items-center justify-end gap-1">
+                          <Button variant="ghost" size="sm" title="Envoyer par email" onClick={() => sendDocumentByEmail({
+                            recipientEmail: doc.client.email,
+                            recipientName: doc.client.name,
+                            documentType: doc.type,
+                            documentNumber: doc.number,
+                            companyName: company.name,
+                          })}>
+                            <Mail className="w-3.5 h-3.5" />
+                          </Button>
                           <Button variant="ghost" size="sm" onClick={() => handleDuplicate(doc.id)} title="Dupliquer">
                             <Copy className="w-3.5 h-3.5" />
                           </Button>
