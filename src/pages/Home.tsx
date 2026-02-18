@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { FileText, Users, BarChart3, Download, Shield, Zap, ArrowRight, Check } from 'lucide-react';
+import {
+  FileText, Users, BarChart3, Download, Shield, Zap, ArrowRight, Check,
+  Globe, Bell, Calculator, TrendingUp, Smartphone, Lock, Cloud, Repeat
+} from 'lucide-react';
 import SEO from '@/components/SEO';
 import PublicNavbar from '@/components/PublicNavbar';
 import speedworkLogo from '@/assets/logo.png';
@@ -10,31 +13,47 @@ import mockupInvoice from '@/assets/mockup-invoice.png';
 import mockupQuote from '@/assets/mockup-quote.png';
 
 const features = [
-  { icon: FileText, title: 'Factures & Devis', desc: 'Créez des documents professionnels en quelques clics avec numérotation automatique.' },
-  { icon: Users, title: 'Gestion Clients', desc: 'Centralisez vos contacts, suivez l\'historique et les montants facturés.' },
-  { icon: Download, title: 'Export PDF', desc: 'Téléchargez vos documents au format PDF A4, prêts à envoyer.' },
-  { icon: BarChart3, title: 'Tableau de bord', desc: 'Suivez vos revenus, factures impayées et statistiques en temps réel.' },
-  { icon: Shield, title: 'Signature numérique', desc: 'Ajoutez votre signature et le titre du signataire sur chaque document.' },
-  { icon: Zap, title: 'Rapide & Simple', desc: 'Interface intuitive conçue pour les entrepreneurs africains.' },
+  { icon: FileText, title: 'Générateur de factures professionnel', desc: 'Créez des factures personnalisées PDF au format A4 avec numérotation automatique et calcul TVA intégré.' },
+  { icon: Repeat, title: 'Création de devis automatique', desc: 'Générez vos devis en quelques clics et convertissez-les en facture instantanément.' },
+  { icon: Users, title: 'Gestion clients simplifiée', desc: 'Centralisez vos contacts, suivez l\'historique et les montants facturés par client.' },
+  { icon: BarChart3, title: 'Dashboard financier intelligent', desc: 'Tableau de bord analytique avec suivi des revenus, factures impayées et statistiques en temps réel.' },
+  { icon: Bell, title: 'Automatisation des relances', desc: 'Détection automatique des factures en retard avec relances email paramétrables et assistant IA.' },
+  { icon: Globe, title: 'Facturation en Franc CFA (XAF)', desc: 'Support natif du FCFA avec convertisseur de devises et taux de change actualisés.' },
+  { icon: Calculator, title: 'Bilan annuel automatique', desc: 'Système intelligent de reporting avec analyse IA des revenus, tendances et synthèse clients.' },
+  { icon: Shield, title: 'SaaS sécurisé', desc: 'Authentification sécurisée, base de données cloud et protection avancée de vos données.' },
+];
+
+const premiumBenefits = [
+  'Automatisation avancée de la facturation',
+  'Optimisation des revenus et performance financière',
+  'Gestion digitale premium de vos documents',
+  'Plateforme innovante nouvelle génération',
+  'Application web responsive sur tous vos appareils',
+  'Interface moderne UI/UX intuitive',
 ];
 
 const testimonials = [
-  { name: 'Aminata D.', role: 'Gérante, Boutique Mode', text: 'SpeedWork m\'a fait gagner un temps fou. Mes factures sont professionnelles et prêtes en 2 minutes.' },
-  { name: 'Patrick M.', role: 'Directeur, BTP Services', text: 'Enfin un outil adapté à nos réalités. Le paiement Mobile Money et l\'export PDF sont parfaits.' },
-  { name: 'Chantal K.', role: 'Freelance IT', text: 'Simple, efficace, abordable. Je recommande à tous les indépendants.' },
+  { name: 'Aminata D.', role: 'Gérante, Boutique Mode – Brazzaville', text: 'SpeedWork m\'a fait gagner un temps fou. Mes factures sont professionnelles et prêtes en 2 minutes. Un vrai outil de pilotage financier !' },
+  { name: 'Patrick M.', role: 'Directeur, BTP Services – Congo', text: 'Enfin une solution digitale adaptée aux entreprises africaines. La facturation en Franc CFA et l\'export PDF sont parfaits.' },
+  { name: 'Chantal K.', role: 'Freelance IT – Afrique centrale', text: 'Simple, efficace, abordable. L\'outil idéal pour la facturation freelance. Je recommande à tous les indépendants.' },
+];
+
+const sectors = [
+  'BTP & Construction', 'Commerce & Retail', 'Informatique & Tech',
+  'Freelances & Consultants', 'Services & Prestations', 'Micro-entreprises'
 ];
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title="Facturation & Devis pour Entreprises Africaines"
-        description="Créez vos factures et devis professionnels en moins de 2 minutes. Solution simple et abordable pour entrepreneurs, PME et freelancers en Afrique."
+        title="Logiciel de Facturation en Ligne – Factures & Devis Pro"
+        description="SpeedWork : logiciel de facturation en ligne et application de gestion de devis pour PME et freelances en Afrique. Générateur de factures professionnel, dashboard financier intelligent, facturation en Franc CFA. Essai gratuit."
         path="/"
       />
       <PublicNavbar />
 
-      {/* Hero */}
+      {/* Hero – Core Keywords */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 relative">
@@ -42,35 +61,34 @@ export default function Home() {
             <div>
               <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-1.5 text-sm font-medium mb-6">
                 <Zap className="w-4 h-4" />
-                Simple • Rapide • Professionnel
+                Plateforme de facturation cloud • SaaS B2B
               </div>
               <h1 className="text-4xl sm:text-5xl font-extrabold text-foreground leading-tight tracking-tight">
-                Créez vos factures et devis{' '}
-                <span className="text-primary">en moins de 2 minutes</span>
+                Le logiciel de facturation en ligne{' '}
+                <span className="text-primary">nouvelle génération</span>
               </h1>
               <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-                La solution simple et professionnelle pour gérer vos factures, devis et clients. 
-                Conçu pour les entrepreneurs, PME et freelancers en Afrique.
+                Solution professionnelle de gestion de factures, devis et clients. Générateur de factures professionnel avec dashboard financier intelligent. Conçu pour les entrepreneurs, PME et freelances en Afrique.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row items-start gap-4">
                 <Button size="lg" asChild className="h-13 px-8 text-base font-semibold">
                   <Link to="/tarifs">
-                    Créer un compte gratuit
+                    Essayer gratuitement
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild className="h-13 px-8 text-base">
-                  <Link to="/fonctionnalites">Voir les fonctionnalités</Link>
+                  <Link to="/fonctionnalites">Découvrir les fonctionnalités</Link>
                 </Button>
               </div>
               <p className="mt-4 text-sm text-muted-foreground">
-                Essai gratuit de 3 jours • Aucune carte requise
+                Essai gratuit 3 jours • Aucune carte requise • Facturation en Franc CFA
               </p>
             </div>
             <div className="relative hidden lg:block">
-              <img 
-                src={promoHero} 
-                alt="SpeedWork - Modernisez votre gestion de facturation" 
+              <img
+                src={promoHero}
+                alt="SpeedWork – Logiciel de facturation en ligne pour PME et freelances en Afrique"
                 className="w-full rounded-2xl shadow-2xl"
                 loading="lazy"
               />
@@ -79,74 +97,78 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Trusted by */}
+      {/* Trusted by – Geo Keywords */}
       <section className="border-y border-border/50 bg-secondary/30 py-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
           <p className="text-sm font-medium text-muted-foreground mb-4">
-            Utilisé par des entrepreneurs et PME à travers l'Afrique
+            Solution digitale utilisée par des entrepreneurs et PME à travers l'Afrique centrale
           </p>
           <div className="flex flex-wrap items-center justify-center gap-8 text-muted-foreground/60">
-            {['BTP', 'Commerce', 'Informatique', 'Freelance', 'Services'].map((s) => (
+            {sectors.map((s) => (
               <span key={s} className="text-sm font-semibold tracking-wider uppercase">{s}</span>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Document mockups showcase */}
+      {/* Document mockups – Freelance & PME Keywords */}
       <section className="py-20 sm:py-28">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">Des documents qui inspirent confiance</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
+              Factures personnalisées PDF & devis professionnels
+            </h2>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-              Factures et devis au design professionnel, personnalisés avec votre identité de marque.
+              Génération PDF A4 avec votre identité de marque. Conversion devis en facture en un clic. L'outil de facturation freelance et PME par excellence.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="group relative rounded-2xl overflow-hidden border border-border/60 bg-card p-4 hover:shadow-xl transition-all duration-300">
-              <img 
-                src={mockupInvoice} 
-                alt="Exemple de facture professionnelle SpeedWork" 
+              <img
+                src={mockupInvoice}
+                alt="Générateur de factures professionnel – Export PDF A4"
                 className="w-full rounded-lg group-hover:scale-[1.02] transition-transform duration-300"
                 loading="lazy"
               />
               <div className="mt-4 text-center">
                 <h3 className="font-semibold text-foreground text-lg">Facture professionnelle</h3>
-                <p className="text-sm text-muted-foreground mt-1">Design moderne avec vos couleurs de marque</p>
+                <p className="text-sm text-muted-foreground mt-1">Numérotation automatique, calcul TVA et retenue à la source</p>
               </div>
             </div>
             <div className="group relative rounded-2xl overflow-hidden border border-border/60 bg-card p-4 hover:shadow-xl transition-all duration-300">
-              <img 
-                src={mockupQuote} 
-                alt="Exemple de devis professionnel SpeedWork" 
+              <img
+                src={mockupQuote}
+                alt="Application de gestion de devis – Création automatique"
                 className="w-full rounded-lg group-hover:scale-[1.02] transition-transform duration-300"
                 loading="lazy"
               />
               <div className="mt-4 text-center">
                 <h3 className="font-semibold text-foreground text-lg">Devis élégant</h3>
-                <p className="text-sm text-muted-foreground mt-1">Convertible en facture en un clic</p>
+                <p className="text-sm text-muted-foreground mt-1">Création de devis automatique, convertible en facture</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features grid */}
+      {/* Features grid – Core + Tech Keywords */}
       <section className="py-20 sm:py-28 bg-secondary/30 border-y border-border/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">Tout ce qu'il vous faut</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
+              Gestion financière PME complète et intelligente
+            </h2>
             <p className="mt-4 text-lg text-muted-foreground max-w-xl mx-auto">
-              Des outils puissants et simples pour gérer votre activité au quotidien.
+              Un outil de comptabilité simplifiée avec automatisation avancée pour piloter votre activité.
             </p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((f) => (
               <div key={f.title} className="group rounded-2xl border border-border/60 bg-card p-6 hover:shadow-lg hover:border-primary/20 transition-all duration-300">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                   <f.icon className="w-6 h-6" />
                 </div>
-                <h3 className="font-semibold text-foreground text-lg">{f.title}</h3>
+                <h3 className="font-semibold text-foreground text-base">{f.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
               </div>
             ))}
@@ -162,24 +184,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Comparison section */}
+      {/* Comparison – Business & Startup Keywords */}
       <section className="py-20 sm:py-28">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
-                Passez au niveau <span className="text-primary">supérieur</span>
+                Transformation numérique de votre{' '}
+                <span className="text-primary">gestion administrative</span>
               </h2>
               <p className="mt-4 text-lg text-muted-foreground">
-                Fini les factures manuscrites et les documents non professionnels. SpeedWork transforme votre image de marque.
+                Fini les factures manuscrites. Passez à la digitalisation des PME avec une startup fintech africaine qui comprend vos besoins. Gestion intelligente des revenus et productivité entrepreneuriale au rendez-vous.
               </p>
               <ul className="mt-8 space-y-4">
-                {[
-                  'Factures professionnelles prêtes à envoyer',
-                  'Image sérieuse auprès de vos clients',
-                  'Numérotation et calculs automatiques',
-                  'Export PDF haute qualité au format A4',
-                ].map((item) => (
+                {premiumBenefits.map((item) => (
                   <li key={item} className="flex items-center gap-3 text-foreground">
                     <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
                       <Check className="w-4 h-4" />
@@ -196,9 +214,9 @@ export default function Home() {
               </Button>
             </div>
             <div>
-              <img 
-                src={promoComparison} 
-                alt="Comparaison avant/après - Ancienne méthode vs SpeedWork" 
+              <img
+                src={promoComparison}
+                alt="Digitalisation des PME – Avant/après avec SpeedWork"
                 className="w-full rounded-2xl shadow-xl"
                 loading="lazy"
               />
@@ -211,14 +229,14 @@ export default function Home() {
       <section className="py-20 bg-secondary/30 border-y border-border/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">Comment ça marche ?</h2>
-            <p className="mt-4 text-lg text-muted-foreground">3 étapes simples pour démarrer</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">Démarrez en 3 étapes simples</h2>
+            <p className="mt-4 text-lg text-muted-foreground">Solution de gestion administrative rapide et intuitive</p>
           </div>
           <div className="grid sm:grid-cols-3 gap-8">
             {[
-              { step: '1', title: 'Créez votre compte', desc: 'Inscrivez-vous en quelques secondes et accédez à votre espace.' },
-              { step: '2', title: 'Ajoutez vos clients', desc: 'Renseignez vos clients et leurs coordonnées une seule fois.' },
-              { step: '3', title: 'Facturez', desc: 'Créez, envoyez et suivez vos factures et devis en temps réel.' },
+              { step: '1', title: 'Créez votre compte', desc: 'Inscription rapide et accès immédiat à votre plateforme de facturation cloud.' },
+              { step: '2', title: 'Ajoutez vos clients', desc: 'Gestion clients simplifiée : renseignez les coordonnées une seule fois.' },
+              { step: '3', title: 'Facturez & pilotez', desc: 'Créez vos factures, suivez les paiements clients et consultez votre dashboard financier.' },
             ].map((s) => (
               <div key={s.step} className="text-center">
                 <div className="w-14 h-14 rounded-2xl bg-primary text-primary-foreground text-2xl font-bold flex items-center justify-center mx-auto mb-4">
@@ -232,11 +250,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Testimonials – Geo Keywords */}
       <section className="py-20 sm:py-28">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">Ce que disent nos utilisateurs</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
+              Des entrepreneurs africains nous font confiance
+            </h2>
+            <p className="mt-4 text-muted-foreground">Innovation technologique au service de la productivité entrepreneuriale</p>
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
             {testimonials.map((t) => (
@@ -255,9 +276,11 @@ export default function Home() {
       {/* CTA */}
       <section className="py-20 bg-primary text-primary-foreground">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold">Prêt à professionnaliser votre facturation ?</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold">
+            Prêt à digitaliser votre gestion financière ?
+          </h2>
           <p className="mt-4 text-primary-foreground/80 text-lg">
-            Rejoignez des centaines d'entrepreneurs qui utilisent SpeedWork pour gérer leur activité.
+            Rejoignez des centaines d'entrepreneurs qui utilisent notre logiciel de facturation en ligne pour optimiser leurs revenus et leur productivité.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button size="lg" variant="secondary" asChild className="h-13 px-8 text-base font-semibold">
@@ -275,7 +298,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <img src={speedworkLogo} alt="SpeedWork" className="h-6 w-auto" />
+              <img src={speedworkLogo} alt="SpeedWork – Logiciel de facturation au Congo" className="h-6 w-auto" />
               <span className="font-semibold text-foreground">SpeedWork</span>
             </div>
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
@@ -284,7 +307,7 @@ export default function Home() {
               <Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link>
               <Link to="/login" className="hover:text-foreground transition-colors">Connexion</Link>
             </div>
-            <p className="text-xs text-muted-foreground">© 2025 SpeedWork. Tous droits réservés.</p>
+            <p className="text-xs text-muted-foreground">© 2025 SpeedWork. Startup technologique congolaise.</p>
           </div>
         </div>
       </footer>
