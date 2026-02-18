@@ -26,6 +26,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, AreaChart, Area,
 } from 'recharts';
+import FieldReportsList from '@/components/reports/FieldReportsList';
 
 const EXPENSE_CATEGORIES = [
   { value: 'salaires', label: 'Salaires', color: 'hsl(var(--chart-1))' },
@@ -345,6 +346,9 @@ export default function Reports() {
         <TabsList className="mb-6 flex-wrap h-auto gap-1">
           <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
           <TabsTrigger value="expenses">Dépenses</TabsTrigger>
+          <TabsTrigger value="field-reports">
+            <FileText className="w-3.5 h-3.5 mr-1" />Rapports terrain
+          </TabsTrigger>
           <TabsTrigger value="stock">
             <Package className="w-3.5 h-3.5 mr-1" />Stock
             {!hasProAccess && <Lock className="w-3 h-3 ml-1 text-muted-foreground" />}
@@ -505,6 +509,11 @@ export default function Reports() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Field Reports */}
+        <TabsContent value="field-reports">
+          <FieldReportsList />
         </TabsContent>
 
         {/* Stock Tab - Pro only */}

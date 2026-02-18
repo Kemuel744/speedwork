@@ -173,6 +173,95 @@ export type Database = {
         }
         Relationships: []
       }
+      field_report_images: {
+        Row: {
+          caption: string | null
+          created_at: string
+          id: string
+          image_url: string
+          report_id: string
+          sort_order: number
+          user_id: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          image_url: string
+          report_id: string
+          sort_order?: number
+          user_id: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string
+          report_id?: string
+          sort_order?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "field_report_images_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "field_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      field_reports: {
+        Row: {
+          created_at: string
+          id: string
+          intervention_date: string
+          intervention_location: string | null
+          observations: string | null
+          recommendations: string | null
+          reporter_name: string | null
+          reporter_position: string | null
+          status: string
+          subject: string
+          title: string
+          updated_at: string
+          user_id: string
+          workers: Json
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          intervention_date?: string
+          intervention_location?: string | null
+          observations?: string | null
+          recommendations?: string | null
+          reporter_name?: string | null
+          reporter_position?: string | null
+          status?: string
+          subject?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+          workers?: Json
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          intervention_date?: string
+          intervention_location?: string | null
+          observations?: string | null
+          recommendations?: string | null
+          reporter_name?: string | null
+          reporter_position?: string | null
+          status?: string
+          subject?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          workers?: Json
+        }
+        Relationships: []
+      }
       invoice_reminders: {
         Row: {
           document_id: string
