@@ -64,9 +64,10 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Fetch rates on mount
+  // Defer fetching rates so it doesn't block initial render / critical chain
   useEffect(() => {
-    fetchRates();
+    const timer = setTimeout(() => fetchRates(), 2000);
+    return () => clearTimeout(timer);
   }, [fetchRates]);
 
   const convertAmount = useCallback(
