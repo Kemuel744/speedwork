@@ -143,7 +143,7 @@ export default function Home() {
               <img
                 src={promoHero}
                 alt="SpeedWork – Logiciel de facturation en ligne pour PME et freelances en Afrique"
-                className="w-full rounded-2xl shadow-2xl"
+                className="w-full rounded-2xl shadow-2xl aspect-[2/3]"
                 width={1024}
                 height={1536}
                 fetchPriority="high"
@@ -183,7 +183,7 @@ export default function Home() {
               <img
                 src={mockupInvoice}
                 alt="Générateur de factures professionnel – Export PDF A4"
-                className="w-full rounded-lg group-hover:scale-[1.02] transition-transform duration-300"
+                className="w-full rounded-lg group-hover:scale-[1.02] transition-transform duration-300 aspect-[3/4]"
                 width={768}
                 height={1024}
                 loading="lazy"
@@ -197,7 +197,7 @@ export default function Home() {
               <img
                 src={mockupQuote}
                 alt="Application de gestion de devis – Création automatique"
-                className="w-full rounded-lg group-hover:scale-[1.02] transition-transform duration-300"
+                className="w-full rounded-lg group-hover:scale-[1.02] transition-transform duration-300 aspect-[3/4]"
                 width={768}
                 height={1024}
                 loading="lazy"
@@ -277,7 +277,7 @@ export default function Home() {
               <img
                 src={promoComparison}
                 alt="Digitalisation des PME – Avant/après avec SpeedWork"
-                className="w-full rounded-2xl shadow-xl"
+                className="w-full rounded-2xl shadow-xl aspect-[2/3]"
                 width={1024}
                 height={1536}
                 loading="lazy"
