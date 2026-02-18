@@ -4,8 +4,8 @@ import { useCompany } from '@/contexts/CompanyContext';
 import { supabase } from '@/integrations/supabase/client';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { FileText, Plus, Trash2, Eye, Download, MapPin, Calendar, ChevronLeft, Mail } from 'lucide-react';
-import { sendDocumentByEmail } from '@/lib/emailHelper';
+import { FileText, Plus, Trash2, Eye, Download, MapPin, Calendar, ChevronLeft, Mail, MessageCircle } from 'lucide-react';
+import { sendDocumentByEmail, sendDocumentByWhatsApp } from '@/lib/emailHelper';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -189,6 +189,12 @@ export default function FieldReportsList() {
                         subject: `Rapport: ${r.title} — ${company.name}`,
                         body: `Bonjour,\n\nVeuillez trouver ci-joint le rapport d'intervention "${r.title}".\n\nLieu: ${r.intervention_location || 'N/A'}\nDate: ${r.intervention_date}\n\nCordialement,\n${company.name}`,
                       })}><Mail className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="sm" title="Envoyer par WhatsApp" onClick={() => sendDocumentByWhatsApp({
+                        recipientName: '',
+                        documentType: 'report',
+                        companyName: company.name,
+                        message: `Bonjour,\n\nVeuillez trouver le rapport d'intervention "${r.title}".\n\nLieu: ${r.intervention_location || 'N/A'}\nDate: ${r.intervention_date}\n\nCordialement,\n${company.name}`,
+                      })}><MessageCircle className="w-4 h-4 text-green-600" /></Button>
                       <Button variant="ghost" size="sm" onClick={() => deleteReport(r.id)}><Trash2 className="w-4 h-4 text-muted-foreground hover:text-destructive" /></Button>
                     </div>
                   </div>
