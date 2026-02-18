@@ -17,7 +17,7 @@ export default function PublicFooter() {
           {/* Brand */}
           <div>
             <Link to="/" className="flex items-center gap-2 mb-3">
-              <img src={speedworkLogo} alt="SpeedWork" className="h-7 w-auto" loading="lazy" />
+              <img src={speedworkLogo} alt="SpeedWork" className="h-7 w-auto" width={28} height={28} loading="lazy" />
               <span className="text-lg font-bold text-foreground">SpeedWork</span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
