@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useDocuments } from '@/contexts/DocumentsContext';
-import { useCompany } from '@/contexts/CompanyContext';
-import { formatAmount } from '@/lib/currencies';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { Search, Plus, FileText, FileCheck, Trash2, Copy, ArrowUpDown, Mail, MessageCircle } from 'lucide-react';
 import { sendDocumentByEmail, sendDocumentByWhatsApp } from '@/lib/emailHelper';
@@ -25,7 +24,7 @@ const statusMap: Record<string, { label: string; class: string }> = {
 
 export default function Documents() {
   const { documents, deleteDocument, addDocument } = useDocuments();
-  const { company } = useCompany();
+  const { displayAmount } = useCurrency();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const typeFilter = searchParams.get('type') as 'invoice' | 'quote' | null;
@@ -147,7 +146,7 @@ export default function Documents() {
                       <td className="py-3 px-4 text-sm text-foreground hidden sm:table-cell">{doc.client.name}</td>
                       <td className="py-3 px-4 text-sm text-muted-foreground hidden md:table-cell">{doc.date}</td>
                       <td className="py-3 px-4"><Badge variant="outline" className={`text-xs ${st.class}`}>{st.label}</Badge></td>
-                      <td className="py-3 px-4 text-sm font-semibold text-foreground text-right">{formatAmount(doc.total, company.currency)}</td>
+                      <td className="py-3 px-4 text-sm font-semibold text-foreground text-right">{displayAmount(doc.total, doc.company.currency)}</td>
                       <td className="py-3 px-4 text-right">
                         <div className="flex items-center justify-end gap-1">
                           <Button variant="ghost" size="sm" title="Envoyer par email" onClick={async () => {
@@ -158,7 +157,7 @@ export default function Documents() {
                                 recipientName: doc.client.name,
                                 documentType: doc.type,
                                 documentNumber: doc.number,
-                                companyName: company.name,
+                                companyName: doc.company?.name || 'SpeedWork',
                                 shareUrl,
                               });
                             } catch { toast.error('Erreur lors de la génération du lien'); }
@@ -173,7 +172,7 @@ export default function Documents() {
                                 recipientName: doc.client.name,
                                 documentType: doc.type,
                                 documentNumber: doc.number,
-                                companyName: company.name,
+                                companyName: doc.company?.name || 'SpeedWork',
                                 shareUrl,
                               });
                             } catch { toast.error('Erreur lors de la génération du lien'); }

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useCompany } from '@/contexts/CompanyContext';
-import { formatAmount } from '@/lib/currencies';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { Link } from 'react-router-dom';
 import { Bell, AlertTriangle, Clock, FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -26,7 +25,7 @@ interface OverdueInvoice {
 export default function Reminders() {
   const [invoices, setInvoices] = useState<OverdueInvoice[]>([]);
   const [loading, setLoading] = useState(true);
-  const { company } = useCompany();
+  const { displayAmount, convertAmount, displayCurrency } = useCurrency();
 
   useEffect(() => {
     async function fetchOverdue() {
@@ -84,7 +83,7 @@ export default function Reminders() {
           total: Number(d.total),
           due_date: d.due_date!,
           days_overdue: daysOverdue,
-          company_currency: d.company_currency || company.currency,
+          company_currency: d.company_currency || 'XOF',
           reminder_count: rm.count,
           last_reminder: rm.last,
         };
@@ -96,7 +95,7 @@ export default function Reminders() {
     }
 
     fetchOverdue();
-  }, [company.currency]);
+  }, []);
 
   const severityBadge = (days: number) => {
     if (days > 30) return <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/20">Critique</Badge>;
@@ -141,7 +140,7 @@ export default function Reminders() {
             </div>
           </div>
           <p className="text-2xl font-bold text-foreground">
-            {formatAmount(invoices.reduce((s, i) => s + i.total, 0), company.currency)}
+            {displayAmount(invoices.reduce((s, i) => s + convertAmount(i.total, i.company_currency), 0), displayCurrency)}
           </p>
         </div>
       </div>
@@ -181,7 +180,7 @@ export default function Reminders() {
                     </div>
                   </TableCell>
                   <TableCell className="font-semibold">
-                    {formatAmount(inv.total, inv.company_currency)}
+                    {displayAmount(inv.total, inv.company_currency)}
                   </TableCell>
                   <TableCell className="text-sm">{inv.due_date}</TableCell>
                   <TableCell>
