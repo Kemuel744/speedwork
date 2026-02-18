@@ -76,17 +76,32 @@ export default function TeamManagement() {
       toast.error("Email, mot de passe et nom requis");
       return;
     }
+    // Validate email format client-side
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail.trim())) {
+      toast.error("Format d'email invalide. Vérifiez qu'il n'y a pas d'espaces ou de caractères spéciaux.");
+      return;
+    }
+    if (newPassword.trim().length < 6) {
+      toast.error("Le mot de passe doit contenir au moins 6 caractères");
+      return;
+    }
     setAdding(true);
-    const { data, error } = await supabase.functions.invoke('manage-team', {
-      body: { action: 'add-member', email: newEmail.trim(), password: newPassword.trim(), name: newName.trim(), position: newPosition.trim() },
-    });
-    if (error || data?.error) {
-      toast.error(data?.error || "Erreur lors de l'ajout");
-    } else {
-      toast.success("Collaborateur ajouté !");
-      setNewEmail(''); setNewPassword(''); setNewName(''); setNewPosition('');
-      setAddOpen(false);
-      fetchOrg();
+    try {
+      const res = await supabase.functions.invoke('manage-team', {
+        body: { action: 'add-member', email: newEmail.trim(), password: newPassword.trim(), name: newName.trim(), position: newPosition.trim() },
+      });
+      const responseData = res.data;
+      if (res.error || responseData?.error) {
+        toast.error(responseData?.error || res.error?.message || "Erreur lors de l'ajout");
+      } else {
+        toast.success("Collaborateur ajouté !");
+        setNewEmail(''); setNewPassword(''); setNewName(''); setNewPosition('');
+        setAddOpen(false);
+        fetchOrg();
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Erreur inattendue");
     }
     setAdding(false);
   };
