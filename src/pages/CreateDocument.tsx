@@ -16,11 +16,22 @@ import { extractColorsFromImage, ExtractedColors } from '@/lib/colorExtractor';
 import DocumentPreview from '@/components/document/DocumentPreview';
 import AutocompleteInput from '@/components/document/AutocompleteInput';
 
-function generateNumber(type: DocumentType) {
+function generateNumber(type: DocumentType, clientName: string, existingDocs: DocumentData[]) {
   const prefix = type === 'invoice' ? 'FAC' : 'DEV';
-  const year = new Date().getFullYear();
-  const rand = String(Math.floor(Math.random() * 999)).padStart(3, '0');
-  return `${prefix}-${year}-${rand}`;
+  // Create client abbreviation: first 3-5 chars, uppercase, no spaces
+  const clientAbbr = clientName
+    .trim()
+    .replace(/[^a-zA-ZÀ-ÿ0-9]/g, '')
+    .substring(0, 5)
+    .toUpperCase() || 'CLI';
+  
+  // Count existing docs for this client+type combo
+  const existing = existingDocs.filter(d => 
+    d.type === type && 
+    d.client.name.toLowerCase() === clientName.toLowerCase()
+  );
+  const nextNum = String(existing.length + 1).padStart(3, '0');
+  return `${prefix}-${clientAbbr}-${nextNum}`;
 }
 
 const templateOptions: { value: DocumentTemplate; label: string; desc: string }[] = [
@@ -232,7 +243,7 @@ export default function CreateDocument() {
   // Live preview document object
   const previewDoc = useMemo<DocumentData>(() => ({
     id: editingDoc?.id ?? 'preview',
-    number: editingDoc?.number ?? generateNumber(docType),
+    number: editingDoc?.number ?? generateNumber(docType, client.name, documents),
     type: docType,
     status,
     date: editingDoc?.date ?? new Date().toISOString().split('T')[0],
@@ -260,8 +271,8 @@ export default function CreateDocument() {
       return;
     }
 
-    if (!client.name || !client.email) {
-      toast.error('Veuillez remplir les informations client');
+    if (!client.name) {
+      toast.error('Veuillez renseigner le nom du client');
       return;
     }
     if (items.some(i => !i.description || i.unitPrice <= 0)) {
@@ -271,7 +282,7 @@ export default function CreateDocument() {
 
     const doc: DocumentData = {
       id: editingDoc?.id ?? crypto.randomUUID(),
-      number: editingDoc?.number ?? generateNumber(docType),
+      number: editingDoc?.number ?? generateNumber(docType, client.name, documents),
       type: docType,
       status,
       date: editingDoc?.date ?? new Date().toISOString().split('T')[0],
