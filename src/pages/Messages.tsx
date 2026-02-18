@@ -97,8 +97,9 @@ export default function Messages() {
     if (!user) return;
     const channel = supabase
       .channel('messages-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => {
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => {
         fetchMessages();
+        fetchUnreadCounts();
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
@@ -109,12 +110,24 @@ export default function Messages() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Unread count per contact
-  const unreadCounts = useMemo(() => {
+  // Unread counts per contact
+  const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
+
+  const fetchUnreadCounts = useCallback(async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from('messages')
+      .select('sender_id')
+      .eq('receiver_id', user.id)
+      .eq('is_read', false);
     const counts: Record<string, number> = {};
-    // We need to fetch all unread separately
-    return counts;
-  }, []);
+    (data || []).forEach((m: any) => {
+      counts[m.sender_id] = (counts[m.sender_id] || 0) + 1;
+    });
+    setUnreadCounts(counts);
+  }, [user]);
+
+  useEffect(() => { fetchUnreadCounts(); }, [fetchUnreadCounts]);
 
   const filteredContacts = useMemo(() => {
     if (!searchContact) return contacts;
@@ -205,10 +218,15 @@ export default function Messages() {
                   )}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <div className="relative w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                       <User className="w-4 h-4 text-primary" />
+                      {unreadCounts[contact.user_id] > 0 && (
+                        <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center">
+                          {unreadCounts[contact.user_id]}
+                        </span>
+                      )}
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="font-medium text-sm truncate">{contact.company_name || contact.email}</p>
                       <p className="text-xs text-muted-foreground truncate">{contact.email}</p>
                     </div>
