@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.notify-subscription-request]
 verify_jwt = false
+
+[functions.manage-team]
+verify_jwt = false

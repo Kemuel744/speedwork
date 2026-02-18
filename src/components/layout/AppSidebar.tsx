@@ -29,6 +29,7 @@ const clientNav = [
   { label: 'Mes Factures', to: '/documents?type=invoice', icon: FileText },
   { label: 'Mes Devis', to: '/documents?type=quote', icon: FileCheck },
   { label: 'Messagerie', to: '/messages', icon: MessageCircle },
+  { label: 'Mon Équipe', to: '/team', icon: Users },
   { label: 'Rapports', to: '/reports', icon: PieChart },
   { label: 'Bilan Annuel', to: '/annual-review', icon: BarChart3 },
 ];

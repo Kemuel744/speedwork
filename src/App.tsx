@@ -31,6 +31,7 @@ import Reminders from "@/pages/Reminders";
 import Reports from "@/pages/Reports";
 import Contact from "@/pages/Contact";
 import Messages from "@/pages/Messages";
+import TeamManagement from "@/pages/TeamManagement";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -72,6 +73,7 @@ const App = () => (
                 <Route path="/reminders" element={<Reminders />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/messages" element={<Messages />} />
+                <Route path="/team" element={<TeamManagement />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>

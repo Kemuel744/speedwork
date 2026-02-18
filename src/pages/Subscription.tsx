@@ -47,6 +47,22 @@ const plans = [
     popular: true,
     savings: '40%',
   },
+  {
+    id: 'enterprise',
+    name: 'Entreprise',
+    price: 15000,
+    period: '/mois',
+    description: '1 admin + 3 collaborateurs',
+    features: [
+      'Tout le plan Annuel',
+      '3 collaborateurs avec leurs postes',
+      'Messagerie interne sécurisée',
+      'Partage de documents en équipe',
+      'Gestion centralisée des accès',
+    ],
+    icon: Crown,
+    popular: false,
+  },
 ];
 
 const depositMethods = [
@@ -108,7 +124,7 @@ export default function Subscription() {
     setSubmitting(true);
     try {
       const plan = plans.find(p => p.id === selectedPlan);
-      const amount = selectedPlan === 'annual' ? (plan?.totalPrice ?? 36000) : (plan?.price ?? 5000);
+      const amount = selectedPlan === 'annual' ? (plan?.totalPrice ?? 36000) : (plan?.price ?? (selectedPlan === 'enterprise' ? 15000 : 5000));
       const method = depositMethods.find(m => m.id === selectedMethod);
 
       // Send notification to admin via edge function
@@ -195,7 +211,7 @@ export default function Subscription() {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Plan</span>
-                <span className="font-medium text-foreground">{selectedPlan === 'annual' ? 'Annuel' : 'Mensuel'}</span>
+                <span className="font-medium text-foreground">{selectedPlan === 'annual' ? 'Annuel' : selectedPlan === 'enterprise' ? 'Entreprise' : 'Mensuel'}</span>
               </div>
             </div>
             <div className="flex flex-col gap-3">
@@ -249,7 +265,7 @@ export default function Subscription() {
 
         {/* Step 1: Plans */}
         {step === 'plan' && (
-          <div className="grid md:grid-cols-2 gap-6 mb-10">
+          <div className="grid md:grid-cols-3 gap-6 mb-10">
             {plans.map((plan) => {
               const Icon = plan.icon;
               return (
@@ -310,7 +326,7 @@ export default function Subscription() {
               </Button>
             </div>
             <p className="text-sm text-muted-foreground mb-2">
-              Plan sélectionné : <strong>{selectedPlan === 'annual' ? 'Annuel — 36 000 FCFA' : 'Mensuel — 5 000 FCFA'}</strong>
+              Plan sélectionné : <strong>{selectedPlan === 'annual' ? 'Annuel — 36 000 FCFA' : selectedPlan === 'enterprise' ? 'Entreprise — 15 000 FCFA/mois' : 'Mensuel — 5 000 FCFA'}</strong>
             </p>
             <p className="text-sm text-muted-foreground mb-6">
               Envoyez le montant à l'un des numéros ci-dessous, puis cliquez sur "J'ai effectué le dépôt".
@@ -343,7 +359,7 @@ export default function Subscription() {
 
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-sm text-amber-800">
               <p className="font-semibold mb-1">⚠️ Important</p>
-              <p>Envoyez exactement <strong>{selectedPlan === 'annual' ? '36 000' : '5 000'} FCFA</strong> au numéro indiqué. Après le dépôt, remplissez le formulaire ci-dessous pour recevoir votre clé d'activation.</p>
+              <p>Envoyez exactement <strong>{selectedPlan === 'annual' ? '36 000' : selectedPlan === 'enterprise' ? '15 000' : '5 000'} FCFA</strong> au numéro indiqué. Après le dépôt, remplissez le formulaire ci-dessous pour recevoir votre clé d'activation.</p>
             </div>
 
             <Button

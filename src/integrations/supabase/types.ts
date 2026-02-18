@@ -380,6 +380,68 @@ export type Database = {
         }
         Relationships: []
       }
+      organization_members: {
+        Row: {
+          created_at: string
+          id: string
+          organization_id: string
+          position: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id: string
+          position?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string
+          position?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          id: string
+          max_members: number
+          name: string
+          owner_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          max_members?: number
+          name: string
+          owner_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          max_members?: number
+          name?: string
+          owner_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           alert_threshold: number
@@ -594,6 +656,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_user_org_id: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -601,6 +664,8 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_org_admin: { Args: { _user_id: string }; Returns: boolean }
+      same_org: { Args: { _user1: string; _user2: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "client"
@@ -609,7 +674,7 @@ export type Database = {
         | "airtel_money"
         | "orange_money"
         | "bank_card"
-      subscription_plan: "monthly" | "annual"
+      subscription_plan: "monthly" | "annual" | "enterprise"
       subscription_status: "active" | "expired" | "suspended"
     }
     CompositeTypes: {
@@ -745,7 +810,7 @@ export const Constants = {
         "orange_money",
         "bank_card",
       ],
-      subscription_plan: ["monthly", "annual"],
+      subscription_plan: ["monthly", "annual", "enterprise"],
       subscription_status: ["active", "expired", "suspended"],
     },
   },
