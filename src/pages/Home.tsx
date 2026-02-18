@@ -7,8 +7,8 @@ import {
 import SEO from '@/components/SEO';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
-import promoHero from '@/assets/promo-hero.png';
-import promoComparison from '@/assets/promo-comparison.png';
+import promoHero from '@/assets/promo-hero.webp';
+import promoComparison from '@/assets/promo-comparison.webp';
 import mockupInvoice from '@/assets/mockup-invoice.png';
 import mockupQuote from '@/assets/mockup-quote.png';
 

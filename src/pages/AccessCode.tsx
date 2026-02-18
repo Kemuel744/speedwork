@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { ShieldCheck, ArrowLeft } from 'lucide-react';
-import speedworkLogo from '@/assets/logo.png';
+import speedworkLogo from '@/assets/logo.webp';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
