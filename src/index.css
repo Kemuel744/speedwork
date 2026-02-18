@@ -116,8 +116,8 @@
 }
 
 @media print {
-  /* Force print background colors */
-  * {
+  /* Force print background colors on ALL elements */
+  *, *::before, *::after {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
@@ -147,8 +147,24 @@
     background: white !important;
   }
 
-  /* Ensure all colored elements print with background colors */
+  /* Force inline styles (brand colors) to print */
+  .a4-preview [style] {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
   .a4-preview [style*="background"] {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .a4-preview [style*="color"] {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .a4-preview [style*="border"] {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -162,7 +178,7 @@
     page-break-after: auto;
   }
 
-  /* Hide Lovable badge, sidebar, header, and any overlays */
+  /* Hide everything except the document */
   aside, header, nav, [data-lovable], iframe, .print\\:hidden,
   .fixed, [style*="position: fixed"] {
     display: none !important;

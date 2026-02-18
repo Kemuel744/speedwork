@@ -162,12 +162,12 @@ export default function DocumentPreview({ doc }: Props) {
   ) : null;
 
   const renderSignature = () => (
-    <div className="mt-6 flex justify-end">
-      <div className="text-center w-56">
-        <p className="text-xs font-semibold text-gray-800 mb-8">
+    <div className="mt-4 flex justify-end">
+      <div className="text-center w-48">
+        <p className="text-xs font-semibold text-gray-800 mb-5">
           {doc.company.signatoryTitle || 'Le Directeur Général'}
         </p>
-        <div style={{ borderTop: '1px solid #9ca3af' }} className="pt-1.5">
+        <div style={{ borderTop: '1px solid #9ca3af' }} className="pt-1">
           <p className="text-[10px] text-gray-500">Signature et cachet</p>
         </div>
       </div>
@@ -182,7 +182,6 @@ export default function DocumentPreview({ doc }: Props) {
       <div className="flex flex-wrap justify-between gap-4 text-[9px] text-gray-500 leading-relaxed">
         <div>
           <p className="font-semibold text-gray-700 mb-0.5">{doc.company.name}</p>
-          {doc.company.description && <p className="italic">{doc.company.description}</p>}
           <p>{doc.company.address}</p>
           <p>
             {doc.company.email}

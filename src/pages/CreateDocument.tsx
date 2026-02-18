@@ -362,7 +362,7 @@ export default function CreateDocument() {
         </div>
       </div>
 
-      <div className={showPreview ? 'flex gap-6 items-start' : ''}>
+      <div className={showPreview ? 'flex flex-col lg:flex-row gap-6 items-start' : ''}>
         <div className={showPreview ? 'flex-1 min-w-0' : ''}>
 
       <form onSubmit={handleSubmit} className="space-y-6">

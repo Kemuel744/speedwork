@@ -45,15 +45,17 @@ export default function ClientDetailPage() {
   return (
     <div className="page-container">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <Button variant="ghost" size="sm" onClick={() => navigate('/clients')}>
-          <ArrowLeft className="w-4 h-4" />
-        </Button>
-        <div className="flex-1">
-          <h1 className="section-title">{client.name}</h1>
-          <p className="text-muted-foreground text-sm">Dossier client</p>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <Button variant="ghost" size="sm" onClick={() => navigate('/clients')}>
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
+          <div className="min-w-0">
+            <h1 className="section-title truncate">{client.name}</h1>
+            <p className="text-muted-foreground text-sm">Dossier client</p>
+          </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Button size="sm" asChild>
             <Link to="/create/invoice"><Plus className="w-4 h-4 mr-1" />Facture</Link>
           </Button>
