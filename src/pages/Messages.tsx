@@ -53,7 +53,10 @@ export default function Messages() {
         .neq('user_id', user.id);
       setContacts(data || []);
     } else {
-      // Client only sees admins
+      // Client sees admins + org members
+      const contactSet = new Map<string, Contact>();
+
+      // Fetch admins
       const { data: adminRoles } = await supabase
         .from('user_roles')
         .select('user_id')
@@ -65,8 +68,32 @@ export default function Messages() {
           .from('profiles')
           .select('user_id, email, company_name')
           .in('user_id', adminIds);
-        setContacts(data || []);
+        (data || []).forEach(c => contactSet.set(c.user_id, c));
       }
+
+      // Fetch org members (same organization)
+      const { data: orgMembers } = await supabase
+        .from('organization_members')
+        .select('user_id, organization_id');
+      
+      if (orgMembers?.length) {
+        // Get my org
+        const myOrg = orgMembers.find(m => m.user_id === user.id);
+        if (myOrg) {
+          const peerIds = orgMembers
+            .filter(m => m.organization_id === myOrg.organization_id && m.user_id !== user.id)
+            .map(m => m.user_id);
+          if (peerIds.length) {
+            const { data } = await supabase
+              .from('profiles')
+              .select('user_id, email, company_name')
+              .in('user_id', peerIds);
+            (data || []).forEach(c => contactSet.set(c.user_id, c));
+          }
+        }
+      }
+
+      setContacts(Array.from(contactSet.values()));
     }
     setLoading(false);
   }, [user]);
