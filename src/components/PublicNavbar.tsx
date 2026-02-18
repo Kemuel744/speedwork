@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import speedworkLogo from '@/assets/logo.png';
+import speedworkLogo from '@/assets/logo.webp';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 

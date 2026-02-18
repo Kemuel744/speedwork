@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import speedworkLogo from '@/assets/logo.png';
+import speedworkLogo from '@/assets/logo.webp';
 
 const navLinks = [
   { label: 'Accueil', to: '/' },

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Check, Crown, ArrowRight, Smartphone, Zap, CheckCircle2 } from 'lucide-react';
-import speedworkLogo from '@/assets/logo.png';
+import speedworkLogo from '@/assets/logo.webp';
 import mtnLogo from '@/assets/mtn-momo.png';
 import airtelLogo from '@/assets/airtel-money.png';
 import { toast } from 'sonner';

@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import speedworkLogo from '@/assets/logo.png';
+import speedworkLogo from '@/assets/logo.webp';
 
 const adminNav = [
   { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
