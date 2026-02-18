@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -91,6 +92,16 @@ export default function Messages() {
 
   useEffect(() => { fetchContacts(); }, [fetchContacts]);
   useEffect(() => { fetchMessages(); }, [fetchMessages]);
+
+  // Auto-select contact from URL query param
+  const [searchParams] = useSearchParams();
+  useEffect(() => {
+    const contactId = searchParams.get('contact');
+    if (contactId && contacts.length > 0 && !selectedContact) {
+      const found = contacts.find(c => c.user_id === contactId);
+      if (found) setSelectedContact(found);
+    }
+  }, [searchParams, contacts, selectedContact]);
 
   // Realtime subscription
   useEffect(() => {

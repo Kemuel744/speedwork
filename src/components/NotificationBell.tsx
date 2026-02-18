@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 
 interface Notification {
@@ -15,6 +16,7 @@ interface Notification {
   type: string;
   is_read: boolean;
   created_at: string;
+  metadata?: Record<string, any>;
 }
 
 const typeIcon: Record<string, React.ElementType> = {
@@ -37,6 +39,7 @@ function timeAgo(dateStr: string) {
 
 export default function NotificationBell() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [open, setOpen] = useState(false);
 
@@ -126,7 +129,13 @@ export default function NotificationBell() {
                 return (
                   <button
                     key={notif.id}
-                    onClick={() => !notif.is_read && markAsRead(notif.id)}
+                    onClick={() => {
+                      if (!notif.is_read) markAsRead(notif.id);
+                      if (notif.type === 'new_message' && notif.metadata?.sender_id) {
+                        setOpen(false);
+                        navigate(`/messages?contact=${notif.metadata.sender_id}`);
+                      }
+                    }}
                     className={cn(
                       "w-full text-left px-4 py-3 flex gap-3 hover:bg-muted/50 transition-colors",
                       !notif.is_read && "bg-primary/5"
