@@ -3,8 +3,8 @@ import { useDocuments } from '@/contexts/DocumentsContext';
 import { useCompany } from '@/contexts/CompanyContext';
 import { formatAmount } from '@/lib/currencies';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
-import { Search, Plus, FileText, FileCheck, Trash2, Copy, ArrowUpDown, Mail } from 'lucide-react';
-import { sendDocumentByEmail } from '@/lib/emailHelper';
+import { Search, Plus, FileText, FileCheck, Trash2, Copy, ArrowUpDown, Mail, MessageCircle } from 'lucide-react';
+import { sendDocumentByEmail, sendDocumentByWhatsApp } from '@/lib/emailHelper';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -157,6 +157,15 @@ export default function Documents() {
                             companyName: company.name,
                           })}>
                             <Mail className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button variant="ghost" size="sm" title="Envoyer par WhatsApp" onClick={() => sendDocumentByWhatsApp({
+                            recipientPhone: doc.client.phone,
+                            recipientName: doc.client.name,
+                            documentType: doc.type,
+                            documentNumber: doc.number,
+                            companyName: company.name,
+                          })}>
+                            <MessageCircle className="w-3.5 h-3.5 text-green-600" />
                           </Button>
                           <Button variant="ghost" size="sm" onClick={() => handleDuplicate(doc.id)} title="Dupliquer">
                             <Copy className="w-3.5 h-3.5" />

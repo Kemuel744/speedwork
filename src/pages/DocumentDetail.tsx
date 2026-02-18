@@ -3,8 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useDocuments } from '@/contexts/DocumentsContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Printer, Download, RefreshCw, Pencil, Bell, Clock, Mail } from 'lucide-react';
-import { sendDocumentByEmail } from '@/lib/emailHelper';
+import { ArrowLeft, Printer, Download, RefreshCw, Pencil, Bell, Clock, Mail, MessageCircle } from 'lucide-react';
+import { sendDocumentByEmail, sendDocumentByWhatsApp } from '@/lib/emailHelper';
 import { toast } from 'sonner';
 import DocumentPreview from '@/components/document/DocumentPreview';
 
@@ -115,7 +115,16 @@ export default function DocumentDetail() {
             documentNumber: doc.number,
             companyName: doc.company.name,
           })}>
-            <Mail className="w-4 h-4 mr-2" />Envoyer par email
+            <Mail className="w-4 h-4 mr-2" />Email
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => sendDocumentByWhatsApp({
+            recipientPhone: doc.client.phone,
+            recipientName: doc.client.name,
+            documentType: doc.type,
+            documentNumber: doc.number,
+            companyName: doc.company.name,
+          })}>
+            <MessageCircle className="w-4 h-4 mr-2 text-green-600" />WhatsApp
           </Button>
           <Button variant="outline" size="sm" onClick={handlePrint}>
             <Printer className="w-4 h-4 mr-2" />Imprimer
