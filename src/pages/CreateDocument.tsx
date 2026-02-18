@@ -7,13 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Trash2, Save, Upload, Image, Camera, Loader2, Palette, Eye, EyeOff } from 'lucide-react';
+import { Plus, Trash2, Save, Upload, Image, Camera, Loader2, Palette, Eye, EyeOff, UserCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { currencies, formatAmount } from '@/lib/currencies';
 import { useTrialStatus } from '@/hooks/useTrialStatus';
 import { supabase } from '@/integrations/supabase/client';
 import { extractColorsFromImage, ExtractedColors } from '@/lib/colorExtractor';
 import DocumentPreview from '@/components/document/DocumentPreview';
+import AutocompleteInput from '@/components/document/AutocompleteInput';
 
 function generateNumber(type: DocumentType) {
   const prefix = type === 'invoice' ? 'FAC' : 'DEV';
@@ -32,7 +33,7 @@ const templateOptions: { value: DocumentTemplate; label: string; desc: string }[
 export default function CreateDocument() {
   const { type, id: editId } = useParams<{ type?: string; id?: string }>();
   const navigate = useNavigate();
-  const { addDocument, updateDocument, getDocument } = useDocuments();
+  const { addDocument, updateDocument, getDocument, documents } = useDocuments();
   const { company: savedCompany } = useCompany();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -71,6 +72,35 @@ export default function CreateDocument() {
   );
   const [extractedColors, setExtractedColors] = useState<ExtractedColors | null>(company.brandColors ?? null);
   const [isExtractingColors, setIsExtractingColors] = useState(false);
+
+  // === Autocomplete: descriptions + prices from past documents ===
+  const itemSuggestions = useMemo(() => {
+    const map = new Map<string, number>();
+    documents.forEach(doc => {
+      doc.items.forEach((item: LineItem) => {
+        if (item.description && !map.has(item.description)) {
+          map.set(item.description, item.unitPrice);
+        }
+      });
+    });
+    return Array.from(map.entries()).map(([desc, price]) => ({
+      label: desc,
+      sublabel: formatAmount(price, company.currency),
+      data: { unitPrice: price },
+    }));
+  }, [documents, company.currency]);
+
+  // === Client list for prefill ===
+  const knownClients = useMemo(() => {
+    const map = new Map<string, { name: string; email: string; phone: string; address: string }>();
+    documents.forEach(doc => {
+      const key = doc.client.email || doc.client.name;
+      if (key && !map.has(key)) {
+        map.set(key, { ...doc.client });
+      }
+    });
+    return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
+  }, [documents]);
 
   // Auto-extract colors when logo changes
   useEffect(() => {
@@ -464,7 +494,33 @@ export default function CreateDocument() {
           </div>
 
           <div className="stat-card space-y-4">
-            <h3 className="font-semibold text-foreground">Client</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-foreground">Client</h3>
+              {knownClients.length > 0 && (
+                <Select
+                  value=""
+                  onValueChange={(email) => {
+                    const found = knownClients.find(c => c.email === email);
+                    if (found) {
+                      setClient({ ...found });
+                      toast.success(`Client "${found.name}" sélectionné`);
+                    }
+                  }}
+                >
+                  <SelectTrigger className="w-auto max-w-[200px] h-8 text-xs gap-1">
+                    <UserCheck className="w-3.5 h-3.5" />
+                    <SelectValue placeholder="Client existant" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {knownClients.map(c => (
+                      <SelectItem key={c.email} value={c.email}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs">Nom *</Label>
@@ -590,7 +646,20 @@ export default function CreateDocument() {
             </div>
             {items.map(item => (
               <div key={item.id} className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
-                <Input className="sm:col-span-5" placeholder="Description" value={item.description} onChange={e => updateLine(item.id, 'description', e.target.value)} required />
+                <AutocompleteInput
+                  className="sm:col-span-5"
+                  placeholder="Description"
+                  value={item.description}
+                  onChange={e => updateLine(item.id, 'description', e.target.value)}
+                  required
+                  suggestions={itemSuggestions}
+                  onSelect={(s) => {
+                    updateLine(item.id, 'description', s.label);
+                    if (s.data?.unitPrice) {
+                      updateLine(item.id, 'unitPrice', s.data.unitPrice);
+                    }
+                  }}
+                />
                 <Input className="sm:col-span-2" type="number" min={1} value={item.quantity} onChange={e => updateLine(item.id, 'quantity', Number(e.target.value))} />
                 <Input className="sm:col-span-2" type="number" min={0} step={0.01} value={item.unitPrice} onChange={e => updateLine(item.id, 'unitPrice', Number(e.target.value))} />
                 <div className="sm:col-span-2 text-right text-sm font-semibold text-foreground">{formatAmount(item.total, company.currency)}</div>
