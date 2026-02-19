@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCompany } from '@/contexts/CompanyContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -86,7 +86,7 @@ export default function FieldReportForm({ onSaved, editReport }: Props) {
         recommendations: editReport.recommendations || '',
         images: (editReport._images || []).map((img: any) => ({
           id: img.id,
-          previewUrl: img.image_url,
+          previewUrl: img.image_url, // temporary, will be resolved via effect
           caption: img.caption || '',
           uploaded: true,
           image_url: img.image_url,
@@ -95,6 +95,24 @@ export default function FieldReportForm({ onSaved, editReport }: Props) {
     }
     return { ...EMPTY_REPORT, reporter_name: user?.name || '' };
   });
+
+  // Resolve signed URLs for private bucket images
+  useEffect(() => {
+    if (!editReport?._images?.length) return;
+    const resolveUrls = async () => {
+      const resolved = await Promise.all(
+        form.images.map(async (img) => {
+          if (img.uploaded && img.image_url && !img.image_url.startsWith('http')) {
+            const { data } = await supabase.storage.from('report-images').createSignedUrl(img.image_url, 3600);
+            if (data?.signedUrl) return { ...img, previewUrl: data.signedUrl };
+          }
+          return img;
+        })
+      );
+      setForm(prev => ({ ...prev, images: resolved }));
+    };
+    resolveUrls();
+  }, [editReport]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [workerInput, setWorkerInput] = useState({ name: '', role: '' });
   const [saving, setSaving] = useState(false);
@@ -139,8 +157,8 @@ export default function FieldReportForm({ onSaved, editReport }: Props) {
     const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
     const { error } = await supabase.storage.from('report-images').upload(path, img.file);
     if (error) throw error;
-    const { data } = supabase.storage.from('report-images').getPublicUrl(path);
-    return data.publicUrl;
+    // Store the path (not public URL) since bucket is now private
+    return path;
   };
 
   const saveReport = async () => {
