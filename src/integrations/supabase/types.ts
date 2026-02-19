@@ -641,6 +641,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_admin_contacts: {
+        Args: never
+        Returns: {
+          company_name: string
+          email: string
+          user_id: string
+        }[]
+      }
       get_my_subscription: {
         Args: never
         Returns: {

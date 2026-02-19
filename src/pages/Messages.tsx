@@ -56,20 +56,9 @@ export default function Messages() {
       // Client sees admins + org members
       const contactSet = new Map<string, Contact>();
 
-      // Fetch admins
-      const { data: adminRoles } = await supabase
-        .from('user_roles')
-        .select('user_id')
-        .eq('role', 'admin');
-      
-      if (adminRoles?.length) {
-        const adminIds = adminRoles.map(r => r.user_id);
-        const { data } = await supabase
-          .from('profiles')
-          .select('user_id, email, company_name')
-          .in('user_id', adminIds);
-        (data || []).forEach(c => contactSet.set(c.user_id, c));
-      }
+      // Fetch admins via secure RPC (limited fields only)
+      const { data: adminContacts } = await supabase.rpc('get_admin_contacts');
+      (adminContacts || []).forEach((c: any) => contactSet.set(c.user_id, c));
 
       // Fetch org members (same organization)
       const { data: orgMembers } = await supabase
