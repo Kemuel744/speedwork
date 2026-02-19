@@ -313,6 +313,13 @@ export type Database = {
             referencedRelation: "documents"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "invoice_reminders_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "shared_documents_view"
+            referencedColumns: ["id"]
+          },
         ]
       }
       messages: {
@@ -638,7 +645,120 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      shared_documents_view: {
+        Row: {
+          client_address: string | null
+          client_email: string | null
+          client_name: string | null
+          client_phone: string | null
+          company_address: string | null
+          company_bank_name: string | null
+          company_bic: string | null
+          company_brand_colors: Json | null
+          company_currency: string | null
+          company_custom_note: string | null
+          company_description: string | null
+          company_document_template: string | null
+          company_email: string | null
+          company_iban: string | null
+          company_logo: string | null
+          company_logo_position: string | null
+          company_name: string | null
+          company_phone: string | null
+          company_signatory_title: string | null
+          date: string | null
+          due_date: string | null
+          id: string | null
+          items: Json | null
+          labor_cost: number | null
+          number: string | null
+          share_token: string | null
+          status: string | null
+          subject: string | null
+          subtotal: number | null
+          tax_amount: number | null
+          tax_rate: number | null
+          total: number | null
+          type: string | null
+          withholding_amount: number | null
+          withholding_rate: number | null
+        }
+        Insert: {
+          client_address?: string | null
+          client_email?: string | null
+          client_name?: string | null
+          client_phone?: string | null
+          company_address?: string | null
+          company_bank_name?: string | null
+          company_bic?: string | null
+          company_brand_colors?: Json | null
+          company_currency?: string | null
+          company_custom_note?: string | null
+          company_description?: string | null
+          company_document_template?: string | null
+          company_email?: string | null
+          company_iban?: string | null
+          company_logo?: string | null
+          company_logo_position?: string | null
+          company_name?: string | null
+          company_phone?: string | null
+          company_signatory_title?: string | null
+          date?: string | null
+          due_date?: string | null
+          id?: string | null
+          items?: Json | null
+          labor_cost?: number | null
+          number?: string | null
+          share_token?: string | null
+          status?: string | null
+          subject?: string | null
+          subtotal?: number | null
+          tax_amount?: number | null
+          tax_rate?: number | null
+          total?: number | null
+          type?: string | null
+          withholding_amount?: number | null
+          withholding_rate?: number | null
+        }
+        Update: {
+          client_address?: string | null
+          client_email?: string | null
+          client_name?: string | null
+          client_phone?: string | null
+          company_address?: string | null
+          company_bank_name?: string | null
+          company_bic?: string | null
+          company_brand_colors?: Json | null
+          company_currency?: string | null
+          company_custom_note?: string | null
+          company_description?: string | null
+          company_document_template?: string | null
+          company_email?: string | null
+          company_iban?: string | null
+          company_logo?: string | null
+          company_logo_position?: string | null
+          company_name?: string | null
+          company_phone?: string | null
+          company_signatory_title?: string | null
+          date?: string | null
+          due_date?: string | null
+          id?: string | null
+          items?: Json | null
+          labor_cost?: number | null
+          number?: string | null
+          share_token?: string | null
+          status?: string | null
+          subject?: string | null
+          subtotal?: number | null
+          tax_amount?: number | null
+          tax_rate?: number | null
+          total?: number | null
+          type?: string | null
+          withholding_amount?: number | null
+          withholding_rate?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_admin_contacts: {
