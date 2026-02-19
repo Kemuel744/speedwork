@@ -21,6 +21,17 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Input length/format validation
+    if (typeof full_name !== "string" || full_name.length > 200 ||
+        typeof email !== "string" || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+        typeof phone !== "string" || phone.length > 30 ||
+        !["monthly", "annual", "enterprise"].includes(plan)) {
+      return new Response(
+        JSON.stringify({ error: "Données invalides." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!

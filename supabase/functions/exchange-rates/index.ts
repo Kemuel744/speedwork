@@ -35,7 +35,7 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error('Exchange rates error:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: "Erreur lors de la récupération des taux de change." }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
