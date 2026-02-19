@@ -42,7 +42,7 @@ function rowToDoc(row: any): DocumentData {
     withholdingRate: Number(row.withholding_rate),
     withholdingAmount: Number(row.withholding_amount),
     total: Number(row.total),
-    createdBy: row.user_id,
+    createdBy: '',
     clientId: '',
   };
 }
@@ -57,7 +57,7 @@ export default function SharedDocument() {
     async function fetchSharedDoc() {
       if (!token) { setError(true); setLoading(false); return; }
       const { data, error: err } = await supabase
-        .from('documents')
+        .from('shared_documents_view' as any)
         .select('*')
         .eq('share_token', token)
         .maybeSingle();
