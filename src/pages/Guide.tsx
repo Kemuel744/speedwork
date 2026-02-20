@@ -1,13 +1,15 @@
-import { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Printer, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import speedworkLogo from '@/assets/logo.webp';
+import mockupInvoice from '@/assets/mockup-invoice.png';
+import mockupQuote from '@/assets/mockup-quote.png';
+import mtnLogo from '@/assets/mtn-momo.png';
+import airtelLogo from '@/assets/airtel-money.png';
 import SEO from '@/components/SEO';
 
 export default function Guide() {
   const navigate = useNavigate();
-  const printRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = () => {
     window.print();
@@ -44,23 +46,27 @@ export default function Guide() {
       </div>
 
       {/* Document */}
-      <div
-        ref={printRef}
-        className="guide-doc mx-auto bg-white text-gray-900"
-        style={{ maxWidth: '820px', padding: '40px 60px', fontFamily: 'Georgia, serif' }}
-      >
+      <div className="guide-doc mx-auto" style={{ maxWidth: '820px', padding: '40px 60px', fontFamily: 'Georgia, serif', background: '#fff', color: '#111' }}>
+
         {/* Cover */}
         <div className="cover-page" style={{ textAlign: 'center', paddingTop: '80px', paddingBottom: '80px', borderBottom: '3px solid #1a56db', marginBottom: '48px' }}>
-          <img src={speedworkLogo} alt="SpeedWork" style={{ height: '64px', margin: '0 auto 24px' }} />
-          <h1 style={{ fontSize: '32px', fontWeight: 800, color: '#1a1a2e', marginBottom: '12px', fontFamily: 'Arial, sans-serif' }}>
+          <img src={speedworkLogo} alt="SpeedWork" style={{ height: '72px', margin: '0 auto 24px', display: 'block' }} />
+          <h1 style={{ fontSize: '36px', fontWeight: 800, color: '#1a1a2e', marginBottom: '12px', fontFamily: 'Arial, sans-serif' }}>
             SpeedWork
           </h1>
           <h2 style={{ fontSize: '20px', fontWeight: 400, color: '#4b5563', marginBottom: '32px', fontFamily: 'Arial, sans-serif' }}>
             Guide d'utilisation complet
           </h2>
-          <div style={{ display: 'inline-block', background: '#1a56db', color: '#fff', borderRadius: '8px', padding: '8px 24px', fontSize: '14px', fontFamily: 'Arial, sans-serif' }}>
+          <div style={{ display: 'inline-block', background: '#1a56db', color: '#fff', borderRadius: '8px', padding: '10px 28px', fontSize: '14px', fontFamily: 'Arial, sans-serif' }}>
             Facturation professionnelle • Mobile Money • Devis & Rapports
           </div>
+
+          {/* Mockup images on cover */}
+          <div style={{ display: 'flex', gap: '24px', justifyContent: 'center', marginTop: '48px', flexWrap: 'wrap' }}>
+            <img src={mockupInvoice} alt="Aperçu facture" style={{ width: '220px', borderRadius: '12px', boxShadow: '0 8px 32px rgba(26,86,219,0.15)', border: '1px solid #e5e7eb' }} />
+            <img src={mockupQuote} alt="Aperçu devis" style={{ width: '220px', borderRadius: '12px', boxShadow: '0 8px 32px rgba(26,86,219,0.15)', border: '1px solid #e5e7eb' }} />
+          </div>
+
           <p style={{ marginTop: '48px', fontSize: '13px', color: '#9ca3af', fontFamily: 'Arial, sans-serif' }}>
             Version 2025 – speedwork.pro
           </p>
@@ -69,7 +75,7 @@ export default function Guide() {
         {/* Table des matières */}
         <section style={{ marginBottom: '48px' }}>
           <h2 style={styles.h2}>Table des matières</h2>
-          <ol style={{ paddingLeft: '20px', lineHeight: 2, fontSize: '15px', color: '#374151' }}>
+          <ol style={{ paddingLeft: '20px', lineHeight: 2.2, fontSize: '15px', color: '#374151' }}>
             <li>Créer un compte (Inscription)</li>
             <li>Se connecter à l'application</li>
             <li>Choisir et payer un abonnement</li>
@@ -158,6 +164,25 @@ export default function Guide() {
           </table>
 
           <h3 style={styles.h3}>Comment payer ?</h3>
+
+          {/* Payment logos */}
+          <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#fff8e1', border: '1px solid #fde68a', borderRadius: '10px', padding: '12px 20px' }}>
+              <img src={mtnLogo} alt="MTN Mobile Money" style={{ height: '40px', objectFit: 'contain' }} />
+              <div>
+                <p style={{ margin: 0, fontWeight: 700, fontSize: '13px', fontFamily: 'Arial, sans-serif', color: '#92400e' }}>MTN Mobile Money</p>
+                <p style={{ margin: 0, fontSize: '13px', fontFamily: 'Arial, sans-serif', color: '#374151' }}>06 444 6047</p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: '10px', padding: '12px 20px' }}>
+              <img src={airtelLogo} alt="Airtel Money" style={{ height: '40px', objectFit: 'contain' }} />
+              <div>
+                <p style={{ margin: 0, fontWeight: 700, fontSize: '13px', fontFamily: 'Arial, sans-serif', color: '#991b1b' }}>Airtel Money</p>
+                <p style={{ margin: 0, fontSize: '13px', fontFamily: 'Arial, sans-serif', color: '#374151' }}>05 303 9818</p>
+              </div>
+            </div>
+          </div>
+
           <div style={styles.steps}>
             <Step n={1} text="Rendez-vous sur speedwork.pro/tarifs." />
             <Step n={2} text="Sélectionnez votre formule (Mensuel, Annuel ou Entreprise)." />
@@ -223,6 +248,13 @@ export default function Guide() {
             <Step n={6} text="Ajoutez une date d'échéance pour les rappels automatiques." />
             <Step n={7} text="Cliquez sur « Enregistrer » pour sauvegarder, puis sur « Exporter PDF » pour télécharger." />
           </div>
+
+          {/* Invoice mockup */}
+          <div style={{ textAlign: 'center', margin: '24px 0' }}>
+            <img src={mockupInvoice} alt="Exemple de facture SpeedWork" style={{ maxWidth: '100%', width: '480px', borderRadius: '12px', boxShadow: '0 6px 24px rgba(26,86,219,0.12)', border: '1px solid #e5e7eb' }} />
+            <p style={{ fontSize: '12px', color: '#9ca3af', marginTop: '8px', fontFamily: 'Arial, sans-serif' }}>Exemple de facture générée avec SpeedWork</p>
+          </div>
+
           <Tip text="Vous pouvez partager la facture directement avec votre client via un lien unique sécurisé, sans qu'il ait besoin d'un compte." />
         </section>
 
@@ -239,6 +271,12 @@ export default function Guide() {
             <Step n={2} text="Remplissez les informations client et les articles." />
             <Step n={3} text="Enregistrez et partagez le devis avec votre client." />
             <Step n={4} text="Une fois accepté, convertissez le devis en facture en un seul clic depuis la page du document." />
+          </div>
+
+          {/* Quote mockup */}
+          <div style={{ textAlign: 'center', margin: '24px 0' }}>
+            <img src={mockupQuote} alt="Exemple de devis SpeedWork" style={{ maxWidth: '100%', width: '480px', borderRadius: '12px', boxShadow: '0 6px 24px rgba(26,86,219,0.12)', border: '1px solid #e5e7eb' }} />
+            <p style={{ fontSize: '12px', color: '#9ca3af', marginTop: '8px', fontFamily: 'Arial, sans-serif' }}>Exemple de devis généré avec SpeedWork</p>
           </div>
         </section>
 
@@ -298,55 +336,30 @@ export default function Guide() {
         <section style={{ marginBottom: '40px' }}>
           <h2 style={styles.h2}>11. Questions fréquentes</h2>
 
-          <div style={{ marginBottom: '16px' }}>
-            <p style={{ ...styles.p, fontWeight: 700, marginBottom: '4px' }}>
-              Ma clé d'activation ne fonctionne pas ?
-            </p>
-            <p style={{ ...styles.p, marginTop: 0 }}>
-              Vérifiez que vous l'avez saisie correctement (sans espaces). Contactez le support si le problème persiste.
-            </p>
-          </div>
+          <FAQ question="Ma clé d'activation ne fonctionne pas ?">
+            Vérifiez que vous l'avez saisie correctement (sans espaces). Contactez le support si le problème persiste.
+          </FAQ>
 
-          <div style={{ marginBottom: '16px' }}>
-            <p style={{ ...styles.p, fontWeight: 700, marginBottom: '4px' }}>
-              Comment télécharger l'application sur mon téléphone ?
-            </p>
-            <p style={{ ...styles.p, marginTop: 0 }}>
-              Ouvrez speedwork.pro dans Chrome, puis tapez sur les 3 points en haut à droite → « Ajouter à l'écran d'accueil ». L'application fonctionne comme une app native.
-            </p>
-          </div>
+          <FAQ question="Comment télécharger l'application sur mon téléphone ?">
+            Ouvrez speedwork.pro dans Chrome, puis tapez sur les 3 points en haut à droite → « Ajouter à l'écran d'accueil ». L'application fonctionne comme une app native.
+          </FAQ>
 
-          <div style={{ marginBottom: '16px' }}>
-            <p style={{ ...styles.p, fontWeight: 700, marginBottom: '4px' }}>
-              Puis-je utiliser SpeedWork hors connexion ?
-            </p>
-            <p style={{ ...styles.p, marginTop: 0 }}>
-              Oui, l'application est une PWA (Progressive Web App). Une fois chargée, certaines fonctionnalités restent accessibles sans internet.
-            </p>
-          </div>
+          <FAQ question="Puis-je utiliser SpeedWork hors connexion ?">
+            Oui, l'application est une PWA (Progressive Web App). Une fois chargée, certaines fonctionnalités restent accessibles sans internet.
+          </FAQ>
 
-          <div style={{ marginBottom: '16px' }}>
-            <p style={{ ...styles.p, fontWeight: 700, marginBottom: '4px' }}>
-              Comment renouveler mon abonnement ?
-            </p>
-            <p style={{ ...styles.p, marginTop: 0 }}>
-              Effectuez un nouveau dépôt via Mobile Money avant l'expiration et soumettez le formulaire sur speedwork.pro/tarifs. Une nouvelle clé vous sera envoyée.
-            </p>
-          </div>
+          <FAQ question="Comment renouveler mon abonnement ?">
+            Effectuez un nouveau dépôt via Mobile Money avant l'expiration et soumettez le formulaire sur speedwork.pro/tarifs. Une nouvelle clé vous sera envoyée.
+          </FAQ>
 
-          <div style={{ marginBottom: '16px' }}>
-            <p style={{ ...styles.p, fontWeight: 700, marginBottom: '4px' }}>
-              Comment contacter le support ?
-            </p>
-            <p style={{ ...styles.p, marginTop: 0 }}>
-              Rendez-vous sur speedwork.pro/contact ou appelez directement le <strong>06 444 6047</strong> (MTN) ou <strong>05 303 9818</strong> (Airtel).
-            </p>
-          </div>
+          <FAQ question="Comment contacter le support ?">
+            Rendez-vous sur speedwork.pro/contact ou appelez directement le <strong>06 444 6047</strong> (MTN) ou <strong>05 303 9818</strong> (Airtel).
+          </FAQ>
         </section>
 
         {/* Footer */}
         <div style={{ marginTop: '60px', paddingTop: '24px', borderTop: '2px solid #1a56db', textAlign: 'center' }}>
-          <img src={speedworkLogo} alt="SpeedWork" style={{ height: '32px', margin: '0 auto 8px' }} />
+          <img src={speedworkLogo} alt="SpeedWork" style={{ height: '36px', margin: '0 auto 8px', display: 'block' }} />
           <p style={{ fontSize: '12px', color: '#9ca3af', margin: 0, fontFamily: 'Arial, sans-serif' }}>
             © 2025 SpeedWork • speedwork.pro • Tous droits réservés
           </p>
@@ -356,18 +369,33 @@ export default function Guide() {
         </div>
       </div>
 
-      {/* Bottom spacing for toolbar */}
+      {/* Bottom spacing */}
       <div className="no-print h-16" />
 
       <style>{`
+        /* Force background & colors in print */
+        .guide-doc * {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          color-adjust: exact !important;
+        }
+
         @media print {
           .no-print { display: none !important; }
-          body { margin: 0; }
+          html, body { margin: 0 !important; padding: 0 !important; background: #fff !important; }
           .guide-doc {
             max-width: 100% !important;
-            padding: 20px 40px !important;
+            padding: 10px 20px !important;
             box-shadow: none !important;
+            color: #111 !important;
+            background: #fff !important;
           }
+          img {
+            max-width: 100% !important;
+            display: block !important;
+          }
+          section { page-break-inside: avoid; }
+          h2 { page-break-after: avoid; }
         }
         @page {
           margin: 15mm 15mm;
@@ -400,13 +428,21 @@ function Step({ n, text }: { n: number; text: string }) {
 
 function Tip({ text }: { text: string }) {
   return (
-    <div style={{
-      background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px',
-      padding: '12px 16px', marginTop: '16px',
-    }}>
+    <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px', padding: '12px 16px', marginTop: '16px' }}>
       <p style={{ margin: 0, fontSize: '13px', color: '#1e40af', fontFamily: 'Arial, sans-serif' }}>
         💡 <strong>Conseil :</strong> {text}
       </p>
+    </div>
+  );
+}
+
+function FAQ({ question, children }: { question: string; children: React.ReactNode }) {
+  return (
+    <div style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid #f3f4f6' }}>
+      <p style={{ ...styles.p, fontWeight: 700, marginBottom: '4px', color: '#1a1a2e' }}>
+        ❓ {question}
+      </p>
+      <p style={{ ...styles.p, marginTop: 0 }}>{children}</p>
     </div>
   );
 }
