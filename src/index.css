@@ -123,15 +123,17 @@
     color-adjust: exact !important;
   }
 
-  body * {
+  /* === Document preview (factures/devis) === */
+  body:not(:has(.guide-doc)) * {
     visibility: hidden;
   }
 
-  .a4-preview, .a4-preview * {
+  body:not(:has(.guide-doc)) .a4-preview,
+  body:not(:has(.guide-doc)) .a4-preview * {
     visibility: visible !important;
   }
 
-  .a4-preview {
+  body:not(:has(.guide-doc)) .a4-preview {
     position: absolute;
     left: 0;
     top: 0;
@@ -148,25 +150,13 @@
   }
 
   /* Force inline styles (brand colors) to print */
-  .a4-preview [style] {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    color-adjust: exact !important;
-  }
-
-  .a4-preview [style*="background"] {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
-  .a4-preview [style*="color"] {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
+  .a4-preview [style],
+  .a4-preview [style*="background"],
+  .a4-preview [style*="color"],
   .a4-preview [style*="border"] {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    color-adjust: exact !important;
   }
 
   .a4-preview table {
@@ -176,6 +166,45 @@
   .a4-preview tr {
     page-break-inside: avoid;
     page-break-after: auto;
+  }
+
+  /* === Guide d'utilisation === */
+  body:has(.guide-doc) .no-print {
+    display: none !important;
+  }
+
+  body:has(.guide-doc) {
+    background: #fff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body:has(.guide-doc) .guide-doc {
+    max-width: 100% !important;
+    padding: 10px 20px !important;
+    box-shadow: none !important;
+    color: #111 !important;
+    background: #fff !important;
+  }
+
+  body:has(.guide-doc) .guide-doc * {
+    visibility: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  body:has(.guide-doc) img {
+    max-width: 100% !important;
+    display: block !important;
+  }
+
+  body:has(.guide-doc) section {
+    page-break-inside: avoid;
+  }
+
+  body:has(.guide-doc) h2 {
+    page-break-after: avoid;
   }
 
   /* Hide everything except the document */
