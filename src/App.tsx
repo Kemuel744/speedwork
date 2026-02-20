@@ -17,6 +17,7 @@ const AccessCode = lazy(() => import("@/pages/AccessCode"));
 const SharedDocument = lazy(() => import("@/pages/SharedDocument"));
 const Contact = lazy(() => import("@/pages/Contact"));
 const InstallApp = lazy(() => import("@/pages/InstallApp"));
+const Guide = lazy(() => import("@/pages/Guide"));
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/subscription" element={<Navigate to="/tarifs" replace />} />
             <Route path="/access-code" element={<AccessCode />} />
             <Route path="/installer" element={<InstallApp />} />
+            <Route path="/guide" element={<Guide />} />
 
             {/* Login needs AuthProvider */}
             <Route path="/login" element={<LoginWithAuth />} />
