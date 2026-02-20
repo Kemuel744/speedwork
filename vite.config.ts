@@ -71,7 +71,9 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,woff,woff2}"],
+        globPatterns: ["**/*.{js,css,html,ico,svg,woff,woff2}", "**/*.{png,webp}"],
+        globIgnores: ["**/promo-revolution*.png", "**/promo-hero*.webp", "**/promo-comparison*.webp", "**/logo*.webp"],
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MiB
         navigateFallback: "/",
         navigateFallbackDenylist: [/^\/~oauth/, /^\/share\//],
         runtimeCaching: [
