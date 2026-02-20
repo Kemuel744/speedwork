@@ -5,6 +5,7 @@ const navLinks = [
   { label: 'Accueil', to: '/' },
   { label: 'Fonctionnalités', to: '/fonctionnalites' },
   { label: 'Tarifs', to: '/tarifs' },
+  { label: 'Guide d\'utilisation', to: '/guide' },
   { label: 'Contact', to: '/contact' },
   { label: 'Connexion', to: '/login' },
 ];
