@@ -74,7 +74,7 @@ export default defineConfig(({ mode }) => ({
         globPatterns: ["**/*.{js,css,html,ico,svg,woff,woff2}", "**/*.{png,webp}"],
         globIgnores: ["**/promo-revolution*.png", "**/promo-hero*.webp", "**/promo-comparison*.webp", "**/logo*.webp"],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MiB
-        navigateFallback: "/",
+        navigateFallback: null,
         navigateFallbackDenylist: [/^\/~oauth/, /^\/share\//],
         runtimeCaching: [
           {
