@@ -3,10 +3,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   LayoutDashboard, FileText, FilePlus, FileCheck, User, Settings,
-  LogOut, ChevronLeft, Users, CreditCard, BarChart3, Bell, PieChart, MessageCircle,
+  LogOut, ChevronLeft, Users, CreditCard, BarChart3, Bell, PieChart, MessageCircle, Smartphone,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import speedworkLogo from '@/assets/logo.webp';
 
 const adminNav = [
@@ -37,6 +36,7 @@ const clientNav = [
 const bottomNav = [
   { label: 'Profil', to: '/profile', icon: User },
   { label: 'Paramètres', to: '/settings', icon: Settings },
+  { label: 'Application mobile', to: '/installer', icon: Smartphone },
 ];
 
 interface AppSidebarProps {
