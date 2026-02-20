@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import Home from "@/pages/Home";
+import { OfflineBanner, InstallPWABanner, UpdateAvailableBanner } from "@/components/PWABanners";
 
 // Lazy-loaded pages for code splitting
 const AuthenticatedRoutes = lazy(() => import("@/components/layout/AuthenticatedRoutes"));
@@ -15,6 +16,7 @@ const Subscription = lazy(() => import("@/pages/Subscription"));
 const AccessCode = lazy(() => import("@/pages/AccessCode"));
 const SharedDocument = lazy(() => import("@/pages/SharedDocument"));
 const Contact = lazy(() => import("@/pages/Contact"));
+const InstallApp = lazy(() => import("@/pages/InstallApp"));
 
 const queryClient = new QueryClient();
 
@@ -41,6 +43,7 @@ const App = () => (
             <Route path="/share/:token" element={<SharedDocument />} />
             <Route path="/subscription" element={<Navigate to="/tarifs" replace />} />
             <Route path="/access-code" element={<AccessCode />} />
+            <Route path="/installer" element={<InstallApp />} />
 
             {/* Login needs AuthProvider */}
             <Route path="/login" element={<LoginWithAuth />} />
@@ -49,6 +52,10 @@ const App = () => (
             <Route path="/*" element={<AuthenticatedRoutes />} />
           </Routes>
         </Suspense>
+        {/* PWA Banners – globally visible */}
+        <OfflineBanner />
+        <InstallPWABanner />
+        <UpdateAvailableBanner />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
