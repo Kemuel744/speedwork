@@ -379,24 +379,6 @@ export default function Guide() {
           print-color-adjust: exact !important;
           color-adjust: exact !important;
         }
-
-        @media print {
-          .no-print { display: none !important; }
-          html, body { margin: 0 !important; padding: 0 !important; background: #fff !important; }
-          .guide-doc {
-            max-width: 100% !important;
-            padding: 10px 20px !important;
-            box-shadow: none !important;
-            color: #111 !important;
-            background: #fff !important;
-          }
-          img {
-            max-width: 100% !important;
-            display: block !important;
-          }
-          section { page-break-inside: avoid; }
-          h2 { page-break-after: avoid; }
-        }
         @page {
           margin: 15mm 15mm;
           size: A4;
