@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   LayoutDashboard, FileText, FilePlus, FileCheck, User, Settings,
-  LogOut, ChevronLeft, Users, CreditCard, BarChart3, Bell, PieChart, MessageCircle, Smartphone, BookOpen,
+  LogOut, ChevronLeft, Users, CreditCard, BarChart3, Bell, PieChart, MessageCircle, Smartphone, BookOpen, GraduationCap,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo.webp';
@@ -36,6 +36,7 @@ const clientNav = [
 const bottomNav = [
   { label: 'Profil', to: '/profile', icon: User },
   { label: 'Paramètres', to: '/settings', icon: Settings },
+  { label: 'Apprentissage', to: '/learning', icon: GraduationCap },
   { label: 'Guide d\'utilisation', to: '/guide', icon: BookOpen },
   { label: 'Application mobile', to: '/installer', icon: Smartphone },
 ];
