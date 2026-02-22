@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Bell, UserPlus, CreditCard, Info, Check, MessageCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Bell, UserPlus, CreditCard, Info, Check, MessageCircle, BellRing } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -7,6 +7,9 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { playNotificationSound } from '@/lib/notificationSound';
+import { requestNotificationPermission, isNotificationSupported, showLocalNotification, getNotificationPermission } from '@/lib/pushNotifications';
+import { toast } from 'sonner';
 
 
 interface Notification {
@@ -42,6 +45,8 @@ export default function NotificationBell() {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [open, setOpen] = useState(false);
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const initialLoadDone = useRef(false);
 
   const fetchNotifications = async () => {
     if (!user) return;
@@ -50,7 +55,27 @@ export default function NotificationBell() {
       .select('*')
       .order('created_at', { ascending: false })
       .limit(30);
-    if (data) setNotifications(data as Notification[]);
+    if (data) {
+      setNotifications(data as Notification[]);
+      initialLoadDone.current = true;
+    }
+  };
+
+  // Request push permission on mount
+  useEffect(() => {
+    if (!isNotificationSupported()) return;
+    const perm = getNotificationPermission();
+    setPushEnabled(perm === 'granted');
+  }, []);
+
+  const enablePush = async () => {
+    const granted = await requestNotificationPermission();
+    setPushEnabled(granted);
+    if (granted) {
+      toast.success('Notifications push activées !');
+    } else {
+      toast.error('Les notifications ont été refusées. Activez-les dans les paramètres de votre navigateur.');
+    }
   };
 
   useEffect(() => {
@@ -63,7 +88,14 @@ export default function NotificationBell() {
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'notifications' },
         (payload) => {
-          setNotifications(prev => [payload.new as Notification, ...prev].slice(0, 30));
+          const newNotif = payload.new as Notification;
+          setNotifications(prev => [newNotif, ...prev].slice(0, 30));
+          
+          // Play sound + push notification only after initial load
+          if (initialLoadDone.current) {
+            playNotificationSound();
+            showLocalNotification(newNotif.title, newNotif.message);
+          }
         }
       )
       .on(
@@ -111,11 +143,18 @@ export default function NotificationBell() {
       <PopoverContent align="end" className="w-80 p-0">
         <div className="flex items-center justify-between px-4 py-3 border-b border-border">
           <h3 className="font-semibold text-sm text-foreground">Notifications</h3>
-          {unreadCount > 0 && (
-            <Button variant="ghost" size="sm" className="text-xs h-7" onClick={markAllRead}>
-              <Check className="w-3 h-3 mr-1" /> Tout lire
-            </Button>
-          )}
+          <div className="flex items-center gap-1">
+            {isNotificationSupported() && !pushEnabled && (
+              <Button variant="ghost" size="sm" className="text-xs h-7 gap-1" onClick={enablePush}>
+                <BellRing className="w-3 h-3" /> Activer push
+              </Button>
+            )}
+            {unreadCount > 0 && (
+              <Button variant="ghost" size="sm" className="text-xs h-7" onClick={markAllRead}>
+                <Check className="w-3 h-3 mr-1" /> Tout lire
+              </Button>
+            )}
+          </div>
         </div>
         <ScrollArea className="max-h-80">
           {notifications.length === 0 ? (
