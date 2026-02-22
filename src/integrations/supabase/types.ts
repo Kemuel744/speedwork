@@ -322,6 +322,39 @@ export type Database = {
           },
         ]
       }
+      learning_resources: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          resource_type: string
+          title: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          resource_type?: string
+          title: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          resource_type?: string
+          title?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string

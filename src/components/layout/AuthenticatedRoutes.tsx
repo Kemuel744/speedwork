@@ -22,6 +22,7 @@ const Reminders = lazy(() => import("@/pages/Reminders"));
 const Reports = lazy(() => import("@/pages/Reports"));
 const Messages = lazy(() => import("@/pages/Messages"));
 const TeamManagement = lazy(() => import("@/pages/TeamManagement"));
+const Learning = lazy(() => import("@/pages/Learning"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 const PageLoader = () => (
@@ -56,6 +57,7 @@ export default function AuthenticatedRoutes() {
                   <Route path="/reports" element={<Reports />} />
                   <Route path="/messages" element={<Messages />} />
                   <Route path="/team" element={<TeamManagement />} />
+                  <Route path="/learning" element={<Learning />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>
