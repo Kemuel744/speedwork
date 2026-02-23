@@ -66,7 +66,7 @@ export default function Home() {
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild className="h-13 px-8 text-base border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
-              <Link to="/connexion">Commencer dès maintenant</Link>
+              <Link to="/login">Commencer dès maintenant</Link>
             </Button>
           </div>
           <p className="mt-4 text-sm text-primary-foreground/60">
