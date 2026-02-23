@@ -1,13 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Zap, CheckCircle2 } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import promoHero from '@/assets/promo-hero.webp';
-
-const painPoints = [
-  'Créez devis & factures PDF en 1 clic',
-  'Suivi automatique des paiements clients',
-  'Bilans & rapports générés par IA',
-];
 
 export default function HeroSection() {
   return (
@@ -16,42 +10,28 @@ export default function HeroSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 relative">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-1.5 text-sm font-medium mb-6">
-              <Zap className="w-4 h-4" />
-              +500 entrepreneurs nous font confiance
-            </div>
             <h1 className="text-4xl sm:text-5xl font-extrabold text-foreground leading-tight tracking-tight">
-              Gérez devis, factures et rapports{' '}
-              <span className="text-primary">sans prise de tête</span>
+              Le logiciel de facturation simple et puissant pour les{' '}
+              <span className="text-primary">PME et freelances en Afrique</span>
             </h1>
             <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-              SpeedWork remplace vos cahiers, calculatrices et fichiers Excel. 
-              PME, freelances et entrepreneurs en Afrique créent leurs documents professionnels 
-              en moins de 2 minutes — et pilotent leur activité en temps réel.
+              Créez vos devis et factures en quelques clics, suivez vos paiements, 
+              gérez vos clients et visualisez vos performances — sans calculatrice et sans complexité.
             </p>
-
-            <ul className="mt-6 space-y-3">
-              {painPoints.map((point) => (
-                <li key={point} className="flex items-center gap-3 text-foreground">
-                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-                  <span className="font-medium">{point}</span>
-                </li>
-              ))}
-            </ul>
 
             <div className="mt-8 flex flex-col sm:flex-row items-start gap-4">
               <Button size="lg" asChild className="h-13 px-8 text-base font-semibold">
                 <Link to="/tarifs">
-                  Créer mon premier devis gratuit
+                  Essayer gratuitement
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild className="h-13 px-8 text-base">
-                <Link to="/fonctionnalites">Voir les fonctionnalités</Link>
+                <Link to="/fonctionnalites">Voir comment ça fonctionne</Link>
               </Button>
             </div>
             <p className="mt-4 text-sm text-muted-foreground">
-              ✓ Essai gratuit 3 jours &nbsp;·&nbsp; ✓ Aucune carte requise &nbsp;·&nbsp; ✓ Franc CFA natif
+              ✓ Essai gratuit 3 jours · ✓ Aucune carte requise · ✓ Franc CFA natif
             </p>
           </div>
           <div className="relative hidden lg:block">
