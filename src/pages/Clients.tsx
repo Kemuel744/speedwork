@@ -81,6 +81,7 @@ export default function ClientsPage() {
                 <div>
                   <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">{client.name}</h3>
                   <p className="text-xs text-muted-foreground">{client.email}</p>
+                  {client.phone && <p className="text-xs text-muted-foreground">{client.phone}</p>}
                 </div>
                 <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
               </div>

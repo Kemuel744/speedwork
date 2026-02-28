@@ -46,8 +46,8 @@ export default function PublicFooter() {
             <address className="not-italic text-sm text-muted-foreground space-y-1">
               <p>Oyo, Congo-Brazzaville</p>
               <p>
-                <a href="mailto:contact@speedwork.pro" className="hover:text-foreground transition-colors">
-                  contact@speedwork.pro
+                <a href="mailto:speedwork033@gmail.com" className="hover:text-foreground transition-colors">
+                  speedwork033@gmail.com
                 </a>
               </p>
             </address>
