@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   LayoutDashboard, FileText, FilePlus, FileCheck, User, Settings,
-  LogOut, ChevronLeft, Users, CreditCard, BarChart3, Bell, PieChart, MessageCircle, Smartphone, BookOpen, GraduationCap,
+  LogOut, ChevronLeft, Users, CreditCard, BarChart3, Bell, PieChart, MessageCircle, Smartphone, BookOpen, GraduationCap, Newspaper,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo.webp';
@@ -21,6 +21,7 @@ const adminNav = [
   { label: 'Relances', to: '/reminders', icon: Bell },
   { label: 'Rapports', to: '/reports', icon: PieChart },
   { label: 'Bilan Annuel', to: '/annual-review', icon: BarChart3 },
+  { label: 'Blog', to: '/admin/blog', icon: Newspaper },
 ];
 
 const clientNav = [
