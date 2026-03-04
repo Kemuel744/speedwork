@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import SEO from "@/components/SEO";
@@ -34,6 +34,20 @@ export default function BlogArticle() {
   const [post, setPost] = useState<Post | null>(null);
   const [related, setRelated] = useState<{ title: string; slug: string }[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Load AdSense script once on blog article pages
+  const adsLoaded = useRef(false);
+  useEffect(() => {
+    if (adsLoaded.current) return;
+    if (!document.querySelector('script[src*="adsbygoogle"]')) {
+      const s = document.createElement("script");
+      s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9622797998614025";
+      s.async = true;
+      s.crossOrigin = "anonymous";
+      document.head.appendChild(s);
+    }
+    adsLoaded.current = true;
+  }, []);
 
   useEffect(() => {
     if (slug) fetchPost(slug);

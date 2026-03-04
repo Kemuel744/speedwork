@@ -9,8 +9,8 @@ interface AdSenseSlotProps {
  * Only renders on blog pages (public), never in dashboard.
  */
 export default function AdSenseSlot({ slot, className = "" }: AdSenseSlotProps) {
-  // Toggle: set to true once AdSense is configured
-  const adsEnabled = false;
+  // AdSense is now configured
+  const adsEnabled = true;
 
   if (!adsEnabled) return null;
 
@@ -19,7 +19,7 @@ export default function AdSenseSlot({ slot, className = "" }: AdSenseSlotProps) 
       <ins
         className="adsbygoogle"
         style={{ display: "block", textAlign: "center" }}
-        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+        data-ad-client="ca-pub-9622797998614025"
         data-ad-slot={slot}
         data-ad-format="auto"
         data-full-width-responsive="true"
