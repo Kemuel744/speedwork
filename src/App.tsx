@@ -18,6 +18,8 @@ const SharedDocument = lazy(() => import("@/pages/SharedDocument"));
 const Contact = lazy(() => import("@/pages/Contact"));
 const InstallApp = lazy(() => import("@/pages/InstallApp"));
 const Guide = lazy(() => import("@/pages/Guide"));
+const Blog = lazy(() => import("@/pages/Blog"));
+const BlogArticle = lazy(() => import("@/pages/BlogArticle"));
 
 const queryClient = new QueryClient();
 
@@ -46,6 +48,8 @@ const App = () => (
             <Route path="/access-code" element={<AccessCode />} />
             <Route path="/installer" element={<InstallApp />} />
             <Route path="/guide" element={<Guide />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogArticle />} />
 
             {/* Login needs AuthProvider */}
             <Route path="/login" element={<LoginWithAuth />} />

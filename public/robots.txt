@@ -12,5 +12,11 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /dashboard
+Disallow: /admin/
+Disallow: /profile
+Disallow: /settings
+Disallow: /create/
+Disallow: /edit/
 
 Sitemap: https://speedwork.pro/sitemap.xml

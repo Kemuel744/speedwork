@@ -32,6 +32,72 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_posts: {
+        Row: {
+          author: string
+          category: string
+          content: string
+          created_at: string
+          created_by: string
+          excerpt: string
+          featured_image: string | null
+          id: string
+          keywords: string
+          meta_description: string
+          meta_title: string
+          published_at: string | null
+          reading_time: number
+          slug: string
+          status: string
+          tags: string[]
+          title: string
+          updated_at: string
+          views_count: number
+        }
+        Insert: {
+          author?: string
+          category?: string
+          content?: string
+          created_at?: string
+          created_by: string
+          excerpt?: string
+          featured_image?: string | null
+          id?: string
+          keywords?: string
+          meta_description?: string
+          meta_title?: string
+          published_at?: string | null
+          reading_time?: number
+          slug: string
+          status?: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+          views_count?: number
+        }
+        Update: {
+          author?: string
+          category?: string
+          content?: string
+          created_at?: string
+          created_by?: string
+          excerpt?: string
+          featured_image?: string | null
+          id?: string
+          keywords?: string
+          meta_description?: string
+          meta_title?: string
+          published_at?: string | null
+          reading_time?: number
+          slug?: string
+          status?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          views_count?: number
+        }
+        Relationships: []
+      }
       documents: {
         Row: {
           client_address: string | null
