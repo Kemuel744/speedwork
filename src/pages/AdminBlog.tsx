@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Eye, Download, FileText } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, Download, FileText, Upload, Image } from "lucide-react";
 
 interface BlogPost {
   id: string;
@@ -63,6 +63,46 @@ export default function AdminBlog() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [tagsInput, setTagsInput] = useState("");
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !editing) return;
+
+    setUploading(true);
+    const ext = file.name.split(".").pop();
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
+    const { error } = await supabase.storage.from("blog-images").upload(path, file);
+    if (error) {
+      toast({ title: "Erreur upload", description: error.message, variant: "destructive" });
+    } else {
+      const { data: urlData } = supabase.storage.from("blog-images").getPublicUrl(path);
+      setEditing({ ...editing, featured_image: urlData.publicUrl });
+      toast({ title: "Image uploadée" });
+    }
+    setUploading(false);
+  };
+
+  const handleContentImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !editing) return;
+
+    setUploading(true);
+    const ext = file.name.split(".").pop();
+    const path = `content/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
+    const { error } = await supabase.storage.from("blog-images").upload(path, file);
+    if (error) {
+      toast({ title: "Erreur upload", description: error.message, variant: "destructive" });
+    } else {
+      const { data: urlData } = supabase.storage.from("blog-images").getPublicUrl(path);
+      const markdown = `\n![${file.name}](${urlData.publicUrl})\n`;
+      setEditing({ ...editing, content: (editing.content || "") + markdown });
+      toast({ title: "Image insérée dans le contenu" });
+    }
+    setUploading(false);
+  };
 
   const fetchPosts = useCallback(async () => {
     const { data } = await supabase
@@ -258,11 +298,34 @@ export default function AdminBlog() {
                     />
                   </div>
                   <div>
-                    <Label>Image à la une (URL)</Label>
-                    <Input
-                      value={editing.featured_image || ""}
-                      onChange={(e) => setEditing({ ...editing, featured_image: e.target.value })}
-                    />
+                    <Label>Image à la une</Label>
+                    {editing.featured_image && (
+                      <img src={editing.featured_image} alt="Aperçu" className="w-full h-40 object-cover rounded-md mb-2" />
+                    )}
+                    <div className="flex gap-2">
+                      <Input
+                        value={editing.featured_image || ""}
+                        onChange={(e) => setEditing({ ...editing, featured_image: e.target.value })}
+                        placeholder="URL de l'image ou uploader ci-dessous"
+                        className="flex-1"
+                      />
+                      <label className="cursor-pointer">
+                        <Button type="button" variant="outline" size="icon" asChild disabled={uploading}>
+                          <span><Upload className="h-4 w-4" /></span>
+                        </Button>
+                        <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label>Insérer une image dans le contenu</Label>
+                    <label className="cursor-pointer">
+                      <Button type="button" variant="outline" size="sm" className="w-full" asChild disabled={uploading}>
+                        <span><Image className="h-4 w-4 mr-2" /> {uploading ? "Upload en cours..." : "Uploader et insérer en Markdown"}</span>
+                      </Button>
+                      <input type="file" accept="image/*" className="hidden" onChange={handleContentImageUpload} />
+                    </label>
                   </div>
 
                   {/* SEO Preview */}
