@@ -8,6 +8,8 @@ import { Calendar, Clock, ArrowRight, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useAdSense } from "@/hooks/useAdSense";
+import AdSenseSlot from "@/components/blog/AdSenseSlot";
 
 interface BlogPost {
   id: string;
@@ -37,6 +39,7 @@ export default function Blog() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Tous");
+  useAdSense();
 
   useEffect(() => {
     fetchPosts();
@@ -182,6 +185,8 @@ export default function Blog() {
             </div>
           )}
         </section>
+
+        <AdSenseSlot slot="blog-list" className="mt-4" />
 
         {/* CTA Banner */}
         <section className="bg-primary/5 border-y py-12 mt-8">

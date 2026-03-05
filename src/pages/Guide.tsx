@@ -7,8 +7,11 @@ import mockupQuote from '@/assets/mockup-quote.png';
 import mtnLogo from '@/assets/mtn-momo.png';
 import airtelLogo from '@/assets/airtel-money.png';
 import SEO from '@/components/SEO';
+import { useAdSense } from '@/hooks/useAdSense';
+import AdSenseSlot from '@/components/blog/AdSenseSlot';
 
 export default function Guide() {
+  useAdSense();
   const navigate = useNavigate();
 
   const handlePrint = () => {
@@ -367,6 +370,11 @@ export default function Guide() {
             Support : 06 444 6047 (MTN) | 05 303 9818 (Airtel)
           </p>
         </div>
+      </div>
+
+      {/* AdSense - hidden on print */}
+      <div className="no-print" style={{ maxWidth: '820px', margin: '0 auto', padding: '0 60px' }}>
+        <AdSenseSlot slot="guide-bottom" />
       </div>
 
       {/* Bottom spacing */}
