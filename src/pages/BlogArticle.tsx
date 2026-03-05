@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import SEO from "@/components/SEO";
@@ -10,6 +10,7 @@ import { Calendar, Clock, ArrowLeft, Tag } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import ReactMarkdown from "react-markdown";
+import { useAdSense } from "@/hooks/useAdSense";
 
 interface Post {
   id: string;
@@ -35,19 +36,7 @@ export default function BlogArticle() {
   const [related, setRelated] = useState<{ title: string; slug: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Load AdSense script once on blog article pages
-  const adsLoaded = useRef(false);
-  useEffect(() => {
-    if (adsLoaded.current) return;
-    if (!document.querySelector('script[src*="adsbygoogle"]')) {
-      const s = document.createElement("script");
-      s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9622797998614025";
-      s.async = true;
-      s.crossOrigin = "anonymous";
-      document.head.appendChild(s);
-    }
-    adsLoaded.current = true;
-  }, []);
+  useAdSense();
 
   useEffect(() => {
     if (slug) fetchPost(slug);

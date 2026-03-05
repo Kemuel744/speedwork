@@ -11,6 +11,8 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Plus, Trash2, Play, ExternalLink, FileText, Video, Link as LinkIcon } from 'lucide-react';
 import SEO from '@/components/SEO';
+import { useAdSense } from '@/hooks/useAdSense';
+import AdSenseSlot from '@/components/blog/AdSenseSlot';
 
 interface LearningResource {
   id: string;
@@ -34,6 +36,7 @@ export default function Learning() {
   const isAdmin = user?.role === 'admin';
   const [resources, setResources] = useState<LearningResource[]>([]);
   const [loading, setLoading] = useState(true);
+  useAdSense();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
@@ -260,6 +263,7 @@ export default function Learning() {
             })}
           </div>
         )}
+        <AdSenseSlot slot="learning-bottom" className="mt-6" />
       </div>
     </>
   );
