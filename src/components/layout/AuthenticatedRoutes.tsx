@@ -24,6 +24,12 @@ const Messages = lazy(() => import("@/pages/Messages"));
 const TeamManagement = lazy(() => import("@/pages/TeamManagement"));
 const Learning = lazy(() => import("@/pages/Learning"));
 const AdminBlog = lazy(() => import("@/pages/AdminBlog"));
+const Teams = lazy(() => import("@/pages/Teams"));
+const TeamDetail = lazy(() => import("@/pages/TeamDetail"));
+const TeamsMap = lazy(() => import("@/pages/TeamsMap"));
+const WorkTasks = lazy(() => import("@/pages/WorkTasks"));
+const ProductivityMap = lazy(() => import("@/pages/ProductivityMap"));
+const Missions = lazy(() => import("@/pages/Missions"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 const PageLoader = () => (
