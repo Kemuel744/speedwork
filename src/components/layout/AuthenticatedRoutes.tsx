@@ -66,6 +66,12 @@ export default function AuthenticatedRoutes() {
                   <Route path="/team" element={<TeamManagement />} />
                   <Route path="/learning" element={<Learning />} />
                   <Route path="/admin/blog" element={<AdminBlog />} />
+                  <Route path="/teams" element={<Teams />} />
+                  <Route path="/teams/:teamId" element={<TeamDetail />} />
+                  <Route path="/teams-map" element={<TeamsMap />} />
+                  <Route path="/work-tasks" element={<WorkTasks />} />
+                  <Route path="/productivity" element={<ProductivityMap />} />
+                  <Route path="/missions" element={<Missions />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>
