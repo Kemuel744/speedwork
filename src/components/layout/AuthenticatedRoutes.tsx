@@ -24,6 +24,12 @@ const Messages = lazy(() => import("@/pages/Messages"));
 const TeamManagement = lazy(() => import("@/pages/TeamManagement"));
 const Learning = lazy(() => import("@/pages/Learning"));
 const AdminBlog = lazy(() => import("@/pages/AdminBlog"));
+const Teams = lazy(() => import("@/pages/Teams"));
+const TeamDetail = lazy(() => import("@/pages/TeamDetail"));
+const TeamsMap = lazy(() => import("@/pages/TeamsMap"));
+const WorkTasks = lazy(() => import("@/pages/WorkTasks"));
+const ProductivityMap = lazy(() => import("@/pages/ProductivityMap"));
+const Missions = lazy(() => import("@/pages/Missions"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 const PageLoader = () => (
@@ -60,6 +66,12 @@ export default function AuthenticatedRoutes() {
                   <Route path="/team" element={<TeamManagement />} />
                   <Route path="/learning" element={<Learning />} />
                   <Route path="/admin/blog" element={<AdminBlog />} />
+                  <Route path="/teams" element={<Teams />} />
+                  <Route path="/teams/:teamId" element={<TeamDetail />} />
+                  <Route path="/teams-map" element={<TeamsMap />} />
+                  <Route path="/work-tasks" element={<WorkTasks />} />
+                  <Route path="/productivity" element={<ProductivityMap />} />
+                  <Route path="/missions" element={<Missions />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>

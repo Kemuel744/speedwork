@@ -465,6 +465,104 @@ export type Database = {
           },
         ]
       }
+      mission_applications: {
+        Row: {
+          applicant_email: string
+          applicant_name: string
+          applicant_phone: string
+          created_at: string
+          id: string
+          message: string
+          mission_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          applicant_email?: string
+          applicant_name: string
+          applicant_phone?: string
+          created_at?: string
+          id?: string
+          message?: string
+          mission_id: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          applicant_email?: string
+          applicant_name?: string
+          applicant_phone?: string
+          created_at?: string
+          id?: string
+          message?: string
+          mission_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_applications_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      missions: {
+        Row: {
+          created_at: string
+          deadline: string | null
+          description: string
+          duration: string
+          id: string
+          latitude: number | null
+          location: string
+          longitude: number | null
+          salary: number
+          salary_currency: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+          workers_needed: number
+        }
+        Insert: {
+          created_at?: string
+          deadline?: string | null
+          description?: string
+          duration?: string
+          id?: string
+          latitude?: number | null
+          location?: string
+          longitude?: number | null
+          salary?: number
+          salary_currency?: string
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+          workers_needed?: number
+        }
+        Update: {
+          created_at?: string
+          deadline?: string | null
+          description?: string
+          duration?: string
+          id?: string
+          latitude?: number | null
+          location?: string
+          longitude?: number | null
+          salary?: number
+          salary_currency?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          workers_needed?: number
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
@@ -724,6 +822,95 @@ export type Database = {
         }
         Relationships: []
       }
+      team_members: {
+        Row: {
+          created_at: string
+          id: string
+          is_leader: boolean
+          team_id: string
+          user_id: string
+          worker_name: string
+          worker_phone: string
+          worker_role: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_leader?: boolean
+          team_id: string
+          user_id: string
+          worker_name: string
+          worker_phone?: string
+          worker_role?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_leader?: boolean
+          team_id?: string
+          user_id?: string
+          worker_name?: string
+          worker_phone?: string
+          worker_role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_members_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teams: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          latitude: number | null
+          leader_name: string
+          leader_phone: string
+          longitude: number | null
+          name: string
+          site_name: string
+          status: string
+          updated_at: string
+          user_id: string
+          zone: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          latitude?: number | null
+          leader_name?: string
+          leader_phone?: string
+          longitude?: number | null
+          name: string
+          site_name?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          zone?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          latitude?: number | null
+          leader_name?: string
+          leader_phone?: string
+          longitude?: number | null
+          name?: string
+          site_name?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          zone?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -741,6 +928,100 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      work_proofs: {
+        Row: {
+          completed_at: string
+          created_at: string
+          id: string
+          latitude: number | null
+          longitude: number | null
+          notes: string
+          photo_url: string
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          created_at?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          notes?: string
+          photo_url: string
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          created_at?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          notes?: string
+          photo_url?: string
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_proofs_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "work_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      work_tasks: {
+        Row: {
+          assigned_to: string
+          created_at: string
+          description: string
+          due_date: string | null
+          id: string
+          status: string
+          team_id: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          zone: string
+        }
+        Insert: {
+          assigned_to?: string
+          created_at?: string
+          description?: string
+          due_date?: string | null
+          id?: string
+          status?: string
+          team_id?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+          zone?: string
+        }
+        Update: {
+          assigned_to?: string
+          created_at?: string
+          description?: string
+          due_date?: string | null
+          id?: string
+          status?: string
+          team_id?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          zone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_tasks_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

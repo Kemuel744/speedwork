@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import {
   LayoutDashboard, FileText, FilePlus, FileCheck, User, Settings,
   LogOut, ChevronLeft, Users, CreditCard, BarChart3, Bell, PieChart, MessageCircle, Smartphone, BookOpen, GraduationCap, Newspaper,
+  HardHat, ClipboardCheck, Map, TrendingUp, Briefcase,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo.webp';
@@ -15,6 +16,11 @@ const adminNav = [
   { label: 'Devis', to: '/documents?type=quote', icon: FileCheck },
   { label: 'Nouvelle Facture', to: '/create/invoice', icon: FilePlus },
   { label: 'Nouveau Devis', to: '/create/quote', icon: FilePlus },
+  { label: 'Équipes terrain', to: '/teams', icon: HardHat },
+  { label: 'Tâches & Preuves', to: '/work-tasks', icon: ClipboardCheck },
+  { label: 'Carte terrain', to: '/teams-map', icon: Map },
+  { label: 'Productivité', to: '/productivity', icon: TrendingUp },
+  { label: 'Recrutement', to: '/missions', icon: Briefcase },
   { label: 'Messagerie', to: '/messages', icon: MessageCircle },
   { label: 'Gestion Clients', to: '/admin/clients', icon: Users },
   { label: 'Abonnements', to: '/admin/subscriptions', icon: CreditCard },
@@ -28,6 +34,9 @@ const clientNav = [
   { label: 'Mon espace', to: '/client', icon: LayoutDashboard },
   { label: 'Mes Factures', to: '/documents?type=invoice', icon: FileText },
   { label: 'Mes Devis', to: '/documents?type=quote', icon: FileCheck },
+  { label: 'Équipes terrain', to: '/teams', icon: HardHat },
+  { label: 'Tâches & Preuves', to: '/work-tasks', icon: ClipboardCheck },
+  { label: 'Recrutement', to: '/missions', icon: Briefcase },
   { label: 'Messagerie', to: '/messages', icon: MessageCircle },
   { label: 'Mon Équipe', to: '/team', icon: Users },
   { label: 'Rapports', to: '/reports', icon: PieChart },
