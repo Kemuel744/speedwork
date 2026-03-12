@@ -129,10 +129,7 @@ export default function ReliabilityScores() {
         : 50;
 
       // Quality (based on proofs submitted)
-      const workerProofs = proofs.filter((p: any) => {
-        // Match by linked user or by worker's user_id context
-        return true; // We count all proofs from the user
-      });
+      const workerProofs = proofs.filter((_: any) => true);
       // Simplified: if worker completed missions and submitted proofs, quality is high
       const qualityScore = completedMissions.length > 0
         ? Math.min(100, Math.round(70 + (completedMissions.length * 5)))
