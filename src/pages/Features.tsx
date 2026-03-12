@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
-  FileText, FileCheck, Users, Download, BarChart3, Shield,
-  Bell, Repeat, Calculator, ArrowRight, Zap, Globe, Lock,
-  Smartphone, TrendingUp, Cloud
+  FileText, FileCheck, Users, BarChart3, Shield,
+  Bell, Calculator, ArrowRight, Zap, Globe, Lock,
+  Smartphone, TrendingUp, Cloud, MapPin, Clock
 } from 'lucide-react';
 import SEO from '@/components/SEO';
 import PublicNavbar from '@/components/PublicNavbar';
@@ -37,6 +37,73 @@ const categories = [
     ],
   },
   {
+    title: 'Gestion d\'équipes & RH',
+    icon: Users,
+    features: [
+      'Création d\'équipes dynamiques par chantier ou projet',
+      'Assignation de chef d\'équipe avec rôle dédié',
+      'Géolocalisation des équipes sur carte interactive',
+      'Gestion des membres : ajout, retrait, transfert',
+      'Suivi du statut des équipes (Active, En pause, Terminée)',
+    ],
+  },
+  {
+    title: 'Missions terrain géolocalisées',
+    icon: MapPin,
+    features: [
+      'Création de missions avec localisation GPS précise',
+      'Assignation à un travailleur ou une équipe entière',
+      'Carte interactive avec marqueurs colorés par statut',
+      'Suivi en temps réel de l\'avancement des missions',
+      'Gestion des priorités (Haute, Moyenne, Basse)',
+      'Historique complet des missions par travailleur',
+    ],
+  },
+  {
+    title: 'Pointage & Présence intelligent',
+    icon: Clock,
+    features: [
+      'Check-in/check-out avec validation GPS (< 500m)',
+      'Détection automatique des retards et absences',
+      'Preuves photo de travail (avant/après)',
+      'Historique de présence par travailleur',
+      'Gestion des pauses et heures supplémentaires',
+    ],
+  },
+  {
+    title: 'Analyse de productivité',
+    icon: TrendingUp,
+    features: [
+      'Dashboard KPI : missions terminées, taux de présence',
+      'Graphiques interactifs d\'évolution par période',
+      'Rendement par équipe et par travailleur',
+      'Carte de productivité géographique',
+      'Export des rapports analytiques',
+    ],
+  },
+  {
+    title: 'Scores de fiabilité des travailleurs',
+    icon: Shield,
+    features: [
+      'Score automatique basé sur 4 critères pondérés',
+      'Ponctualité (30%), Missions (25%), Qualité (20%), Présence (25%)',
+      'Classement et notation (A+ à F) de chaque travailleur',
+      'Filtrage par période (1, 3, 6 ou 12 mois)',
+      'Identification des top performers et travailleurs à surveiller',
+    ],
+  },
+  {
+    title: 'Calcul de paie automatique',
+    icon: Calculator,
+    features: [
+      'Calcul du salaire basé sur les jours/heures travaillés',
+      'Primes de mission et de performance automatiques',
+      'Pénalités retard et absence intégrées',
+      'Fiche de paie détaillée par travailleur',
+      'Export et historique mensuel complet',
+    ],
+  },
+  {
     title: 'Gestion clients simplifiée',
     icon: Users,
     features: [
@@ -54,17 +121,6 @@ const categories = [
       'Suivi des factures payées et impayées en temps réel',
       'Gestion des dépenses et gains centralisée',
       'Convertisseur de devises intégré',
-    ],
-  },
-  {
-    title: 'Authentification sécurisée & SaaS sécurisé',
-    icon: Shield,
-    features: [
-      'Bloc de signature sur chaque document',
-      'Titre du signataire personnalisable',
-      'Authentification sécurisée avec vérification email',
-      'Protection brute-force sur les codes d\'accès',
-      'Base de données cloud protégée',
     ],
   },
   {
@@ -88,18 +144,6 @@ const categories = [
     ],
   },
   {
-    title: 'Rapports & Analyse Financière',
-    icon: BarChart3,
-    features: [
-      'Dashboard analytique avec CA brut, montants encaissés et impayés',
-      'Suivi du bénéfice net et taux de conversion en temps réel',
-      'Graphiques interactifs : évolution revenus vs charges',
-      'Gestion des dépenses catégorisées (loyer, transport, fournitures…)',
-      'Export CSV et impression directe des rapports',
-      'Système intelligent de reporting pour l\'optimisation des revenus',
-    ],
-  },
-  {
     title: 'Bilan annuel automatique par IA',
     icon: Calculator,
     features: [
@@ -107,7 +151,6 @@ const categories = [
       'Analyse des tendances de revenus et performance financière',
       'Détail mensuel : factures émises, encaissées, taux de recouvrement',
       'Recommandations IA pour l\'optimisation des revenus',
-      'Consultation et export rapide du bilan',
     ],
   },
   {
@@ -115,9 +158,8 @@ const categories = [
     icon: FileText,
     features: [
       'Documentation complète des activités de terrain',
-      'Champs détaillés : objet, lieu, poste du rapporteur, travailleurs',
-      'Capture de photos avec légendes individuelles (caméra/galerie)',
-      'Génération PDF professionnelle avec identité visuelle de l\'entreprise',
+      'Capture de photos avec légendes individuelles',
+      'Génération PDF professionnelle avec identité visuelle',
       'Suivi des observations et recommandations par intervention',
     ],
   },
