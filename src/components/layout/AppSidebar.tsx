@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import {
   LayoutDashboard, FileText, FilePlus, FileCheck, User, Settings,
   LogOut, ChevronLeft, Users, CreditCard, BarChart3, Bell, PieChart, MessageCircle, Smartphone, BookOpen, GraduationCap, Newspaper,
-  HardHat, ClipboardCheck, Map, TrendingUp, Briefcase,
+  HardHat, ClipboardCheck, Map, TrendingUp, Briefcase, Timer,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo.webp';
@@ -22,6 +22,7 @@ const adminNav = [
   { label: 'Carte terrain', to: '/teams-map', icon: Map },
   { label: 'Productivité', to: '/productivity', icon: TrendingUp },
   { label: 'Recrutement', to: '/missions', icon: Briefcase },
+  { label: 'Pointage', to: '/attendance', icon: Timer },
   { label: 'Messagerie', to: '/messages', icon: MessageCircle },
   { label: 'Gestion Clients', to: '/admin/clients', icon: Users },
   { label: 'Abonnements', to: '/admin/subscriptions', icon: CreditCard },
@@ -40,6 +41,7 @@ const clientNav = [
   { label: 'Équipes terrain', to: '/teams', icon: HardHat },
   { label: 'Tâches & Preuves', to: '/work-tasks', icon: ClipboardCheck },
   { label: 'Missions', to: '/missions', icon: Briefcase },
+  { label: 'Pointage', to: '/attendance', icon: Timer },
   { label: 'Messagerie', to: '/messages', icon: MessageCircle },
   { label: 'Mon Équipe', to: '/team', icon: Users },
   { label: 'Rapports', to: '/reports', icon: PieChart },
