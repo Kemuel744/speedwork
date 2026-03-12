@@ -341,9 +341,113 @@ export default function Guide() {
 
         <hr style={styles.hr} />
 
-        {/* 11. FAQ */}
+        {/* 11. Travailleurs & Équipes */}
         <section style={{ marginBottom: '40px' }}>
-          <h2 style={styles.h2}>11. Questions fréquentes</h2>
+          <h2 style={styles.h2}>11. Gestion des travailleurs & équipes</h2>
+          <p style={styles.p}>
+            SpeedWork vous permet de créer un registre complet de vos travailleurs et de les organiser en équipes par chantier ou projet.
+          </p>
+          <h3 style={styles.h3}>Registre des travailleurs</h3>
+          <div style={styles.steps}>
+            <Step n={1} text="Allez dans « Travailleurs » depuis le menu latéral." />
+            <Step n={2} text="Cliquez sur « + Nouveau travailleur » et remplissez : nom, prénom, téléphone, poste, type de contrat et salaire de base." />
+            <Step n={3} text="Ajoutez une photo de profil (optionnel). Le statut (actif/inactif) est géré automatiquement." />
+          </div>
+          <h3 style={styles.h3}>Gestion des équipes</h3>
+          <div style={styles.steps}>
+            <Step n={1} text="Allez dans « Équipes » et cliquez sur « + Nouvelle équipe »." />
+            <Step n={2} text="Définissez le nom, le chantier, la zone géographique et le chef d'équipe." />
+            <Step n={3} text="Ajoutez des membres depuis votre registre de travailleurs." />
+            <Step n={4} text="Géolocalisez l'équipe pour la voir sur la carte interactive." />
+          </div>
+          <Tip text="Chaque équipe peut être visualisée sur la carte des équipes (/teams-map) avec sa zone d'activité." />
+        </section>
+
+        <hr style={styles.hr} />
+
+        {/* 12. Missions */}
+        <section style={{ marginBottom: '40px' }}>
+          <h2 style={styles.h2}>12. Missions terrain & carte interactive</h2>
+          <p style={styles.p}>
+            Assignez des missions géolocalisées à vos travailleurs ou équipes et suivez leur avancement en temps réel.
+          </p>
+          <div style={styles.steps}>
+            <Step n={1} text="Allez dans « Missions » et cliquez sur « + Nouvelle mission »." />
+            <Step n={2} text="Remplissez : titre, description, lieu, coordonnées GPS, date, priorité et salaire." />
+            <Step n={3} text="Assignez la mission à un travailleur ou une équipe." />
+            <Step n={4} text="Suivez l'avancement : Ouverte → En cours → Terminée." />
+            <Step n={5} text="Visualisez toutes les missions sur la carte interactive (« Carte missions »)." />
+          </div>
+          <Tip text="Les marqueurs sur la carte sont colorés par statut : rouge (ouverte), orange (en cours), vert (terminée), bleu (équipe)." />
+        </section>
+
+        <hr style={styles.hr} />
+
+        {/* 13. Pointage */}
+        <section style={{ marginBottom: '40px' }}>
+          <h2 style={styles.h2}>13. Pointage & présence</h2>
+          <p style={styles.p}>
+            Le système de pointage intelligent permet de suivre la présence de vos travailleurs avec validation GPS.
+          </p>
+          <div style={styles.steps}>
+            <Step n={1} text="Allez dans « Pointage » depuis le menu latéral." />
+            <Step n={2} text="Sélectionnez le travailleur et le type d'entrée (Arrivée, Pause, Départ)." />
+            <Step n={3} text="La géolocalisation est capturée automatiquement pour vérifier la présence sur site (< 500m)." />
+            <Step n={4} text="Ajoutez des preuves photo si nécessaire (avant/après travail)." />
+          </div>
+          <Tip text="Les retards sont détectés automatiquement (seuil 08h15) et impactent le score de fiabilité et le calcul de paie." />
+        </section>
+
+        <hr style={styles.hr} />
+
+        {/* 14. Analytics & Fiabilité */}
+        <section style={{ marginBottom: '40px' }}>
+          <h2 style={styles.h2}>14. Analyse de productivité & fiabilité</h2>
+          <p style={styles.p}>
+            SpeedWork calcule automatiquement des indicateurs de performance pour chaque travailleur et équipe.
+          </p>
+          <h3 style={styles.h3}>Dashboard analytique</h3>
+          <ul style={styles.ul}>
+            <li>Missions terminées vs assignées par période</li>
+            <li>Temps moyen par mission et rendement par équipe</li>
+            <li>Taux de présence et nombre de retards</li>
+            <li>Graphiques interactifs et export des rapports</li>
+          </ul>
+          <h3 style={styles.h3}>Scores de fiabilité</h3>
+          <p style={styles.p}>
+            Chaque travailleur reçoit un score automatique (A+ à F) basé sur 4 critères pondérés :
+          </p>
+          <ul style={styles.ul}>
+            <li><strong>Ponctualité (30%)</strong> : régularité des arrivées à l'heure</li>
+            <li><strong>Missions (25%)</strong> : ratio missions terminées vs assignées</li>
+            <li><strong>Qualité (20%)</strong> : preuves de travail soumises</li>
+            <li><strong>Présence (25%)</strong> : jours travaillés vs jours ouvrables</li>
+          </ul>
+        </section>
+
+        <hr style={styles.hr} />
+
+        {/* 15. Paie */}
+        <section style={{ marginBottom: '40px' }}>
+          <h2 style={styles.h2}>15. Calcul de paie automatique</h2>
+          <p style={styles.p}>
+            Le module de paie calcule automatiquement les salaires de vos travailleurs en tenant compte de tous les paramètres.
+          </p>
+          <div style={styles.steps}>
+            <Step n={1} text="Allez dans « Paie » depuis le menu latéral." />
+            <Step n={2} text="Sélectionnez le mois et l'année concernés." />
+            <Step n={3} text="Cliquez sur « Calculer la paie » — le système prend en compte : jours travaillés, heures, missions terminées, primes de performance, pénalités retard et absences." />
+            <Step n={4} text="Consultez la fiche de paie détaillée de chaque travailleur." />
+            <Step n={5} text="Validez et exportez les fiches de paie." />
+          </div>
+          <Tip text="Le salaire de base est défini dans la fiche du travailleur. Les primes et pénalités sont calculées automatiquement à partir des données de pointage et de missions." />
+        </section>
+
+        <hr style={styles.hr} />
+
+        {/* 16. FAQ */}
+        <section style={{ marginBottom: '40px' }}>
+          <h2 style={styles.h2}>16. Questions fréquentes</h2>
 
           <FAQ question="Ma clé d'activation ne fonctionne pas ?">
             Vérifiez que vous l'avez saisie correctement (sans espaces). Contactez le support si le problème persiste.
