@@ -41,6 +41,7 @@ const clientNav = [
   { label: 'Équipes terrain', to: '/teams', icon: HardHat },
   { label: 'Tâches & Preuves', to: '/work-tasks', icon: ClipboardCheck },
   { label: 'Missions', to: '/missions', icon: Briefcase },
+  { label: 'Pointage', to: '/attendance', icon: Timer },
   { label: 'Messagerie', to: '/messages', icon: MessageCircle },
   { label: 'Mon Équipe', to: '/team', icon: Users },
   { label: 'Rapports', to: '/reports', icon: PieChart },
