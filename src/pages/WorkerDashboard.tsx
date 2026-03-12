@@ -5,12 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Input } from '@/components/ui/input';
+
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
-  Clock, MapPin, Users, Star, Play, Pause, LogOut as LogOutIcon,
+  Clock, MapPin, Users, Star, Play, LogOut as LogOutIcon,
   Camera, CalendarDays, CheckCircle, AlertCircle, Navigation, Coffee,
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
@@ -72,6 +72,21 @@ export default function WorkerDashboard() {
   const [photoNotes, setPhotoNotes] = useState('');
   const [activeMissionId, setActiveMissionId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [checkInStatus, setCheckInStatus] = useState<'idle' | 'checking' | 'success' | 'error'>('idle');
+  const [checkInMessage, setCheckInMessage] = useState('');
+
+  // Maximum allowed distance in meters between worker and mission location
+  const MAX_CHECKIN_DISTANCE = 500; // 500 meters
+
+  /** Haversine formula: returns distance in meters between two GPS points */
+  const haversineDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+    const R = 6371000; // Earth radius in meters
+    const toRad = (deg: number) => (deg * Math.PI) / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  };
 
   const fetchData = useCallback(async () => {
     if (!user) return;
@@ -134,13 +149,89 @@ export default function WorkerDashboard() {
     });
   };
 
+  /**
+   * Validates GPS proximity for mission check-in.
+   * Returns { ok, gps, distance?, message? }
+   */
+  const validateMissionCheckIn = async (missionId: string): Promise<{
+    ok: boolean; gps: { lat: number; lng: number } | null; distance?: number; message?: string;
+  }> => {
+    const mission = missions.find(m => m.id === missionId);
+
+    // If mission has no GPS coordinates, allow check-in with just GPS capture
+    if (!mission?.latitude || !mission?.longitude) {
+      const gps = await getGPS();
+      return { ok: true, gps, message: 'Mission sans coordonnées GPS — pointage libre' };
+    }
+
+    // GPS is mandatory for missions with coordinates
+    const gps = await getGPS();
+    if (!gps) {
+      return { ok: false, gps: null, message: '📍 Position GPS requise. Activez la géolocalisation sur votre appareil et réessayez.' };
+    }
+
+    const distance = haversineDistance(gps.lat, gps.lng, mission.latitude, mission.longitude);
+
+    if (distance > MAX_CHECKIN_DISTANCE) {
+      return {
+        ok: false, gps, distance,
+        message: `🚫 Vous êtes à ${Math.round(distance)}m du lieu de mission (max: ${MAX_CHECKIN_DISTANCE}m). Rapprochez-vous du chantier pour pointer.`,
+      };
+    }
+
+    return { ok: true, gps, distance, message: `✅ Position validée — ${Math.round(distance)}m du lieu de mission` };
+  };
+
   const recordEntry = async (type: string, missionId?: string) => {
     if (!worker || !user) return;
+
+    const targetMissionId = missionId || activeMissionId || null;
+
+    // For arrival entries linked to a mission, validate GPS proximity
+    if (type === 'arrival' && targetMissionId) {
+      setCheckInStatus('checking');
+      setCheckInMessage('Vérification de votre position...');
+
+      const validation = await validateMissionCheckIn(targetMissionId);
+
+      if (!validation.ok) {
+        setCheckInStatus('error');
+        setCheckInMessage(validation.message || 'Erreur de validation');
+        // Auto-clear after 8 seconds
+        setTimeout(() => { setCheckInStatus('idle'); setCheckInMessage(''); }, 8000);
+        return;
+      }
+
+      // GPS validated — proceed
+      const { error } = await (supabase as any).from('time_entries').insert({
+        worker_id: worker.id,
+        user_id: user.id,
+        mission_id: targetMissionId,
+        entry_type: type,
+        latitude: validation.gps?.lat || null,
+        longitude: validation.gps?.lng || null,
+        notes: `Check-in validé — ${validation.distance ? Math.round(validation.distance) + 'm du site' : 'GPS libre'}`,
+      });
+      if (error) {
+        toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+        setCheckInStatus('idle');
+        return;
+      }
+
+      setCheckInStatus('success');
+      setCheckInMessage(validation.message || 'Pointage validé');
+      toast({ title: 'Mission démarrée ✓', description: validation.message });
+      setTimeout(() => { setCheckInStatus('idle'); setCheckInMessage(''); }, 5000);
+      fetchData();
+      return;
+    }
+
+    // For non-mission entries or non-arrival, just record with GPS
     const gps = await getGPS();
     const { error } = await (supabase as any).from('time_entries').insert({
       worker_id: worker.id,
       user_id: user.id,
-      mission_id: missionId || activeMissionId || null,
+      mission_id: targetMissionId,
       entry_type: type,
       latitude: gps?.lat || null,
       longitude: gps?.lng || null,
@@ -412,9 +503,32 @@ export default function WorkerDashboard() {
                     </a>
                   )}
                   {activeMissionId === m.id && (
-                    <div className="mt-2 pt-2 border-t flex gap-2">
-                      <Button size="sm" variant="outline" className="text-xs flex-1" onClick={(e) => { e.stopPropagation(); recordEntry('arrival', m.id); }}>
-                        <Play className="w-3 h-3 mr-1" /> Démarrer
+                    <div className="mt-2 pt-2 border-t space-y-2">
+                      {/* Check-in status feedback */}
+                      {checkInStatus !== 'idle' && (
+                        <div className={`text-xs rounded-lg px-3 py-2 flex items-start gap-2 ${
+                          checkInStatus === 'checking' ? 'bg-primary/10 text-primary' :
+                          checkInStatus === 'success' ? 'bg-success/10 text-success' :
+                          'bg-destructive/10 text-destructive'
+                        }`}>
+                          {checkInStatus === 'checking' && <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-current shrink-0 mt-0.5" />}
+                          {checkInStatus === 'success' && <CheckCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />}
+                          {checkInStatus === 'error' && <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />}
+                          <span>{checkInMessage}</span>
+                        </div>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs w-full"
+                        disabled={checkInStatus === 'checking'}
+                        onClick={(e) => { e.stopPropagation(); recordEntry('arrival', m.id); }}
+                      >
+                        {checkInStatus === 'checking' ? (
+                          <><div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current mr-1" /> Vérification GPS...</>
+                        ) : (
+                          <><Play className="w-3 h-3 mr-1" /> Démarrer mission</>
+                        )}
                       </Button>
                     </div>
                   )}
