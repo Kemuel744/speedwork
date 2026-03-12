@@ -511,16 +511,22 @@ export type Database = {
       }
       missions: {
         Row: {
+          assigned_team_id: string | null
+          assigned_worker_id: string | null
           created_at: string
           deadline: string | null
           description: string
           duration: string
+          estimated_duration_hours: number
           id: string
           latitude: number | null
           location: string
           longitude: number | null
+          mission_date: string | null
+          priority: string
           salary: number
           salary_currency: string
+          start_time: string | null
           status: string
           title: string
           updated_at: string
@@ -528,16 +534,22 @@ export type Database = {
           workers_needed: number
         }
         Insert: {
+          assigned_team_id?: string | null
+          assigned_worker_id?: string | null
           created_at?: string
           deadline?: string | null
           description?: string
           duration?: string
+          estimated_duration_hours?: number
           id?: string
           latitude?: number | null
           location?: string
           longitude?: number | null
+          mission_date?: string | null
+          priority?: string
           salary?: number
           salary_currency?: string
+          start_time?: string | null
           status?: string
           title: string
           updated_at?: string
@@ -545,23 +557,44 @@ export type Database = {
           workers_needed?: number
         }
         Update: {
+          assigned_team_id?: string | null
+          assigned_worker_id?: string | null
           created_at?: string
           deadline?: string | null
           description?: string
           duration?: string
+          estimated_duration_hours?: number
           id?: string
           latitude?: number | null
           location?: string
           longitude?: number | null
+          mission_date?: string | null
+          priority?: string
           salary?: number
           salary_currency?: string
+          start_time?: string | null
           status?: string
           title?: string
           updated_at?: string
           user_id?: string
           workers_needed?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "missions_assigned_team_id_fkey"
+            columns: ["assigned_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "missions_assigned_worker_id_fkey"
+            columns: ["assigned_worker_id"]
+            isOneToOne: false
+            referencedRelation: "workers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications: {
         Row: {
