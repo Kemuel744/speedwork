@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import AppSidebar from './AppSidebar';
 import ChatBot from '@/components/chat/ChatBot';
 import NotificationBell from '@/components/NotificationBell';
+import SyncStatusIndicator from '@/components/SyncStatus';
 import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { registerAutoSync } from '@/lib/syncQueue';
 
 export default function AppLayout() {
   const { user, isLoading } = useAuth();
