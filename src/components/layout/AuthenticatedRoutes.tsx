@@ -70,6 +70,7 @@ export default function AuthenticatedRoutes() {
                   <Route path="/teams" element={<Teams />} />
                   <Route path="/teams/:teamId" element={<TeamDetail />} />
                   <Route path="/teams-map" element={<TeamsMap />} />
+                  <Route path="/workers" element={<Workers />} />
                   <Route path="/work-tasks" element={<WorkTasks />} />
                   <Route path="/productivity" element={<ProductivityMap />} />
                   <Route path="/missions" element={<Missions />} />
