@@ -100,19 +100,19 @@ async function executeMutation(mutation: QueuedMutation): Promise<void> {
   // Type-safe table access via supabase - we use .from() with string
   switch (operation) {
     case 'insert': {
-      const { error } = await (supabase.from(table) as any).insert(data);
+      const { error } = await (supabase as any).from(table).insert(data);
       if (error) throw error;
       break;
     }
     case 'update': {
       if (!id) throw new Error('Update requires an id');
-      const { error } = await (supabase.from(table) as any).update(data).eq('id', id);
+      const { error } = await (supabase as any).from(table).update(data).eq('id', id);
       if (error) throw error;
       break;
     }
     case 'delete': {
       if (!id) throw new Error('Delete requires an id');
-      const { error } = await (supabase.from(table) as any).delete().eq('id', id);
+      const { error } = await (supabase as any).from(table).delete().eq('id', id);
       if (error) throw error;
       break;
     }

@@ -63,7 +63,7 @@ export default function SyncStatusIndicator() {
           className={cn(
             'flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-colors',
             !isOnline
-              ? 'text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-950/30'
+              ? 'text-accent-foreground bg-accent'
               : status === 'error'
               ? 'text-destructive bg-destructive/10'
               : pendingCount > 0

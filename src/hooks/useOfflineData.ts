@@ -153,7 +153,7 @@ export function useOfflineData<T extends { id?: string }>({
       await deleteFromCache(table, id);
 
       if (navigator.onLine) {
-        const { error } = await (supabase.from(table) as any).delete().eq('id', id);
+        const { error } = await (supabase as any).from(table).delete().eq('id', id);
         if (error) {
           console.error('[Offline] Delete failed, queuing:', error);
           await queueMutation(table, 'delete', {}, id);
