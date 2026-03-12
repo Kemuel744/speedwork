@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import MissionProofs from '@/components/missions/MissionProofs';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -354,6 +355,10 @@ export default function Missions() {
                 <div key={m.id}>
                   <div className="flex items-start gap-4">
                     <div className="flex-1"><MissionCard m={m} /></div>
+                  </div>
+                  {/* Mission proofs from workers */}
+                  <div className="ml-0 mt-2 px-4">
+                    <MissionProofs missionId={m.id} />
                   </div>
                   {/* Actions & applications */}
                   <div className="ml-0 mt-2 space-y-2">

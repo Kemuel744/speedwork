@@ -70,6 +70,7 @@ export default function WorkerDashboard() {
   const [photoOpen, setPhotoOpen] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoNotes, setPhotoNotes] = useState('');
+  const [proofType, setProofType] = useState<'before' | 'after'>('before');
   const [activeMissionId, setActiveMissionId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [checkInStatus, setCheckInStatus] = useState<'idle' | 'checking' | 'success' | 'error'>('idle');
@@ -250,24 +251,37 @@ export default function WorkerDashboard() {
     setUploading(true);
     try {
       const ext = photoFile.name.split('.').pop();
-      const path = `${user.id}/${worker.id}_${Date.now()}.${ext}`;
+      const path = `${user.id}/${worker.id}_${Date.now()}_${proofType}.${ext}`;
       const { error: uploadErr } = await supabase.storage.from('work-proofs').upload(path, photoFile);
       if (uploadErr) throw uploadErr;
       const { data: urlData } = supabase.storage.from('work-proofs').getPublicUrl(path);
       const gps = await getGPS();
 
+      // Save as work_proof with proof_type and mission link
+      await (supabase as any).from('work_proofs').insert({
+        task_id: null, // No task, linked via mission
+        user_id: user.id,
+        mission_id: activeMissionId || null,
+        photo_url: urlData.publicUrl,
+        proof_type: proofType,
+        notes: photoNotes,
+        latitude: gps?.lat || null,
+        longitude: gps?.lng || null,
+      });
+
+      // Also record in time_entries for timeline
       await (supabase as any).from('time_entries').insert({
         worker_id: worker.id,
         user_id: user.id,
         mission_id: activeMissionId || null,
         entry_type: 'photo',
         photo_url: urlData.publicUrl,
-        notes: photoNotes,
+        notes: `[${proofType === 'before' ? 'AVANT' : 'APRÈS'}] ${photoNotes}`,
         latitude: gps?.lat || null,
         longitude: gps?.lng || null,
       });
 
-      toast({ title: 'Photo envoyée ✓' });
+      toast({ title: `Photo ${proofType === 'before' ? 'AVANT' : 'APRÈS'} envoyée ✓` });
       setPhotoOpen(false);
       setPhotoFile(null);
       setPhotoNotes('');
@@ -539,31 +553,76 @@ export default function WorkerDashboard() {
         </CardContent>
       </Card>
 
-      {/* Photo upload dialog */}
+      {/* Photo upload dialog - Before/After */}
       <Dialog open={photoOpen} onOpenChange={setPhotoOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Photo de travail</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Preuve de travail</DialogTitle></DialogHeader>
           <div className="space-y-4">
+            {/* Proof type selector */}
+            <div>
+              <Label className="mb-2 block">Type de preuve</Label>
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  type="button"
+                  variant={proofType === 'before' ? 'default' : 'outline'}
+                  onClick={() => setProofType('before')}
+                  className="h-12"
+                >
+                  📷 Avant intervention
+                </Button>
+                <Button
+                  type="button"
+                  variant={proofType === 'after' ? 'default' : 'outline'}
+                  onClick={() => setProofType('after')}
+                  className="h-12"
+                >
+                  ✅ Après intervention
+                </Button>
+              </div>
+            </div>
+
+            {/* Mission selector */}
+            {missions.length > 0 && (
+              <div>
+                <Label className="mb-2 block">Mission associée</Label>
+                <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                  {missions.map(m => (
+                    <div
+                      key={m.id}
+                      onClick={() => setActiveMissionId(activeMissionId === m.id ? null : m.id)}
+                      className={`text-sm px-3 py-2 rounded-lg border cursor-pointer transition-colors ${activeMissionId === m.id ? 'border-primary bg-primary/5' : 'hover:bg-secondary/30'}`}
+                    >
+                      {m.title}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Photo capture */}
             <div className="border-2 border-dashed rounded-lg p-6 text-center">
               {photoFile ? (
                 <div className="space-y-2">
                   <img src={URL.createObjectURL(photoFile)} alt="Preview" className="max-h-48 mx-auto rounded-lg" />
                   <p className="text-sm text-muted-foreground">{photoFile.name}</p>
+                  <Button variant="ghost" size="sm" onClick={() => setPhotoFile(null)}>Changer</Button>
                 </div>
               ) : (
                 <label className="cursor-pointer space-y-2 block">
                   <Camera className="w-10 h-10 text-muted-foreground mx-auto" />
-                  <p className="text-sm text-muted-foreground">Prendre ou choisir une photo</p>
+                  <p className="text-sm text-muted-foreground">Prendre une photo {proofType === 'before' ? 'AVANT' : 'APRÈS'} intervention</p>
                   <input type="file" accept="image/*" capture="environment" className="hidden" onChange={e => setPhotoFile(e.target.files?.[0] || null)} />
                 </label>
               )}
             </div>
+
             <div>
-              <Label>Notes (optionnel)</Label>
-              <Textarea value={photoNotes} onChange={e => setPhotoNotes(e.target.value)} placeholder="Décrivez le travail effectué..." />
+              <Label>Commentaire (optionnel)</Label>
+              <Textarea value={photoNotes} onChange={e => setPhotoNotes(e.target.value)} placeholder="Observations sur le travail..." />
             </div>
+
             <Button onClick={uploadWorkPhoto} className="w-full" disabled={!photoFile || uploading}>
-              {uploading ? 'Envoi en cours...' : 'Envoyer la photo'}
+              {uploading ? 'Envoi en cours...' : `Envoyer preuve ${proofType === 'before' ? 'AVANT' : 'APRÈS'}`}
             </Button>
           </div>
         </DialogContent>

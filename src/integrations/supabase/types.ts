@@ -1045,8 +1045,10 @@ export type Database = {
           id: string
           latitude: number | null
           longitude: number | null
+          mission_id: string | null
           notes: string
           photo_url: string
+          proof_type: string
           task_id: string
           user_id: string
         }
@@ -1056,8 +1058,10 @@ export type Database = {
           id?: string
           latitude?: number | null
           longitude?: number | null
+          mission_id?: string | null
           notes?: string
           photo_url: string
+          proof_type?: string
           task_id: string
           user_id: string
         }
@@ -1067,12 +1071,21 @@ export type Database = {
           id?: string
           latitude?: number | null
           longitude?: number | null
+          mission_id?: string | null
           notes?: string
           photo_url?: string
+          proof_type?: string
           task_id?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "work_proofs_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "work_proofs_task_id_fkey"
             columns: ["task_id"]
