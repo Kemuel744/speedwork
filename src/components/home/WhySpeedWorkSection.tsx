@@ -7,9 +7,11 @@ const benefits = [
   'Fini les factures manuscrites et les erreurs de calcul',
   'Vos devis se convertissent en facture en 1 clic',
   'Dashboard avec revenus, impayés et tendances en temps réel',
-  'Bilans annuels générés automatiquement par IA',
+  'Carte interactive des missions et équipes terrain',
+  'Scores de fiabilité et analyse de productivité automatiques',
+  'Paie calculée avec primes, retards et absences',
+  'Bilans annuels générés par intelligence artificielle',
   'Application responsive, accessible partout sur mobile',
-  'Support natif du Franc CFA (XAF) et multi-devises',
 ];
 
 export default function WhySpeedWorkSection() {
@@ -23,14 +25,14 @@ export default function WhySpeedWorkSection() {
               <span className="text-primary">digitalisation complète</span>
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              SpeedWork est la solution conçue pour les réalités du marché africain. 
-              Remplacez les cahiers et les tableurs par une plateforme professionnelle qui travaille pour vous.
+              SpeedWork est la plateforme tout-en-un conçue pour les réalités du marché africain. 
+              Remplacez les cahiers, tableurs et WhatsApp par un outil professionnel qui travaille pour vous.
             </p>
-            <ul className="mt-8 space-y-4">
+            <ul className="mt-8 space-y-3">
               {benefits.map((item) => (
                 <li key={item} className="flex items-start gap-3 text-foreground">
-                  <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
-                    <Check className="w-4 h-4" />
+                  <div className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                    <Check className="w-3.5 h-3.5" />
                   </div>
                   <span className="text-sm">{item}</span>
                 </li>

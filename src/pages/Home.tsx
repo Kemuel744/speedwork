@@ -6,18 +6,20 @@ import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
 import HeroSection from '@/components/home/HeroSection';
 import ProblemSection from '@/components/home/ProblemSection';
+import PowerFeaturesSection from '@/components/home/PowerFeaturesSection';
 import SolutionSection from '@/components/home/SolutionSection';
 import SocialProofSection from '@/components/home/SocialProofSection';
 import SimplicitySection from '@/components/home/SimplicitySection';
 import BenefitsSection from '@/components/home/BenefitsSection';
 import PositioningSection from '@/components/home/PositioningSection';
+import WhySpeedWorkSection from '@/components/home/WhySpeedWorkSection';
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title="Logiciel de facturation pour PME en Afrique | Devis et Factures en ligne"
-        description="Gérez vos devis, factures et paiements facilement avec SpeedWork. Solution simple et rapide pour PME et freelances en Afrique."
+        title="SpeedWork – Gestion d'entreprise tout-en-un pour PME en Afrique"
+        description="Facturation, gestion d'équipes, missions terrain, analyse de productivité et scores de fiabilité. La plateforme complète pour piloter votre entreprise en Afrique."
         path="/"
         jsonLd={{
           "@context": "https://schema.org",
@@ -28,7 +30,7 @@ export default function Home() {
               "name": "Qu'est-ce que SpeedWork ?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "SpeedWork est un logiciel de facturation en ligne conçu pour les PME, freelances et entrepreneurs en Afrique. Il permet de créer des factures et devis professionnels en PDF, de gérer ses clients et de suivre ses revenus."
+                "text": "SpeedWork est une plateforme de gestion d'entreprise tout-en-un pour les PME en Afrique. Elle permet de gérer la facturation, les équipes, les missions terrain, le pointage, la productivité et les scores de fiabilité des travailleurs."
               }
             },
             {
@@ -38,6 +40,14 @@ export default function Home() {
                 "@type": "Answer",
                 "text": "SpeedWork propose un essai gratuit de 3 jours sans carte bancaire. Des abonnements sont disponibles à partir de 3 000 FCFA/mois."
               }
+            },
+            {
+              "@type": "Question",
+              "name": "Quelles fonctionnalités propose SpeedWork ?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "SpeedWork propose 9 modules : facturation et devis, gestion d'équipes, missions terrain géolocalisées, pointage de présence, analyse de productivité, scores de fiabilité, paie automatique, bilans IA et relances automatiques."
+              }
             }
           ]
         }}
@@ -46,8 +56,10 @@ export default function Home() {
 
       <HeroSection />
       <ProblemSection />
+      <PowerFeaturesSection />
       <SolutionSection />
       <SocialProofSection />
+      <WhySpeedWorkSection />
       <SimplicitySection />
       <BenefitsSection />
       <PositioningSection />
@@ -56,8 +68,11 @@ export default function Home() {
       <section className="py-20 bg-primary text-primary-foreground">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold">
-            Prêt à simplifier votre gestion ?
+            Prêt à piloter votre entreprise efficacement ?
           </h2>
+          <p className="mt-4 text-primary-foreground/80 text-lg">
+            Rejoignez +120 entreprises qui gèrent tout avec SpeedWork.
+          </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button size="lg" variant="secondary" asChild className="h-13 px-8 text-base font-semibold">
               <Link to="/tarifs">
@@ -66,7 +81,7 @@ export default function Home() {
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild className="h-13 px-8 text-base border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
-              <Link to="/login">Commencer dès maintenant</Link>
+              <Link to="/login">Se connecter</Link>
             </Button>
           </div>
           <p className="mt-4 text-sm text-primary-foreground/60">
