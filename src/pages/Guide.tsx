@@ -233,9 +233,10 @@ export default function Guide() {
             <li>Les derniers documents créés</li>
             <li>Les alertes de factures impayées</li>
             <li>Un graphique de l'évolution de vos revenus</li>
+            <li>Résumé des missions actives et équipes sur le terrain</li>
           </ul>
           <p style={styles.p}>
-            La barre latérale gauche vous permet de naviguer entre les différentes sections : Documents, Clients, Rapports, Messages, Paramètres.
+            La barre latérale gauche vous permet de naviguer entre les différentes sections : Documents, Clients, Équipes, Travailleurs, Missions, Pointage, Analytics, Fiabilité, Paie, Rapports, Messages, Paramètres.
           </p>
         </section>
 

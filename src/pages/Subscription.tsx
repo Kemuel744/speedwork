@@ -163,8 +163,8 @@ export default function Subscription() {
     <main className="min-h-screen bg-background">
       <PublicNavbar />
       <SEO
-        title="Tarifs – Abonnement Facturation"
-        description="Choisissez votre abonnement SpeedWork : factures et devis illimités à partir de 3 000 FCFA/mois. Paiement par Mobile Money."
+        title="Tarifs – Gestion d'entreprise tout-en-un"
+        description="Abonnement SpeedWork : facturation, équipes, missions terrain, pointage, analytics et paie à partir de 3 000 FCFA/mois. Paiement par Mobile Money."
         path="/tarifs"
       />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
