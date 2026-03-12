@@ -28,6 +28,7 @@ const Teams = lazy(() => import("@/pages/Teams"));
 const TeamDetail = lazy(() => import("@/pages/TeamDetail"));
 const TeamsMap = lazy(() => import("@/pages/TeamsMap"));
 const Workers = lazy(() => import("@/pages/Workers"));
+const WorkerDashboard = lazy(() => import("@/pages/WorkerDashboard"));
 const WorkTasks = lazy(() => import("@/pages/WorkTasks"));
 const ProductivityMap = lazy(() => import("@/pages/ProductivityMap"));
 const Missions = lazy(() => import("@/pages/Missions"));
