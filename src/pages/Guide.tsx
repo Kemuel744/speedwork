@@ -61,7 +61,7 @@ export default function Guide() {
             Guide d'utilisation complet
           </h2>
           <div style={{ display: 'inline-block', background: '#1a56db', color: '#fff', borderRadius: '8px', padding: '10px 28px', fontSize: '14px', fontFamily: 'Arial, sans-serif' }}>
-            Facturation professionnelle • Mobile Money • Devis & Rapports
+            Facturation • Équipes • Missions terrain • Pointage • Analytics • Paie
           </div>
 
           {/* Mockup images on cover */}
