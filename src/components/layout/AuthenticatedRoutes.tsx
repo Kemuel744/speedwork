@@ -27,6 +27,7 @@ const AdminBlog = lazy(() => import("@/pages/AdminBlog"));
 const Teams = lazy(() => import("@/pages/Teams"));
 const TeamDetail = lazy(() => import("@/pages/TeamDetail"));
 const TeamsMap = lazy(() => import("@/pages/TeamsMap"));
+const Workers = lazy(() => import("@/pages/Workers"));
 const WorkTasks = lazy(() => import("@/pages/WorkTasks"));
 const ProductivityMap = lazy(() => import("@/pages/ProductivityMap"));
 const Missions = lazy(() => import("@/pages/Missions"));
@@ -69,6 +70,7 @@ export default function AuthenticatedRoutes() {
                   <Route path="/teams" element={<Teams />} />
                   <Route path="/teams/:teamId" element={<TeamDetail />} />
                   <Route path="/teams-map" element={<TeamsMap />} />
+                  <Route path="/workers" element={<Workers />} />
                   <Route path="/work-tasks" element={<WorkTasks />} />
                   <Route path="/productivity" element={<ProductivityMap />} />
                   <Route path="/missions" element={<Missions />} />
