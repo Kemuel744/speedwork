@@ -691,6 +691,83 @@ export type Database = {
         }
         Relationships: []
       }
+      payroll: {
+        Row: {
+          absence_penalty: number
+          base_salary: number
+          created_at: string
+          days_absent: number
+          days_worked: number
+          gross_salary: number
+          hours_worked: number
+          id: string
+          late_count: number
+          late_penalty: number
+          mission_bonus: number
+          missions_completed: number
+          month_year: string
+          net_salary: number
+          notes: string
+          performance_bonus: number
+          status: string
+          updated_at: string
+          user_id: string
+          worker_id: string
+        }
+        Insert: {
+          absence_penalty?: number
+          base_salary?: number
+          created_at?: string
+          days_absent?: number
+          days_worked?: number
+          gross_salary?: number
+          hours_worked?: number
+          id?: string
+          late_count?: number
+          late_penalty?: number
+          mission_bonus?: number
+          missions_completed?: number
+          month_year: string
+          net_salary?: number
+          notes?: string
+          performance_bonus?: number
+          status?: string
+          updated_at?: string
+          user_id: string
+          worker_id: string
+        }
+        Update: {
+          absence_penalty?: number
+          base_salary?: number
+          created_at?: string
+          days_absent?: number
+          days_worked?: number
+          gross_salary?: number
+          hours_worked?: number
+          id?: string
+          late_count?: number
+          late_penalty?: number
+          mission_bonus?: number
+          missions_completed?: number
+          month_year?: string
+          net_salary?: number
+          notes?: string
+          performance_bonus?: number
+          status?: string
+          updated_at?: string
+          user_id?: string
+          worker_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "workers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           alert_threshold: number
