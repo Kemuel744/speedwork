@@ -20,6 +20,7 @@ const adminNav = [
   { label: 'Équipes terrain', to: '/teams', icon: HardHat },
   { label: 'Tâches & Preuves', to: '/work-tasks', icon: ClipboardCheck },
   { label: 'Carte terrain', to: '/teams-map', icon: Map },
+  { label: 'Analyse', to: '/analytics', icon: BarChart3 },
   { label: 'Productivité', to: '/productivity', icon: TrendingUp },
   { label: 'Recrutement', to: '/missions', icon: Briefcase },
   { label: 'Pointage', to: '/attendance', icon: Timer },

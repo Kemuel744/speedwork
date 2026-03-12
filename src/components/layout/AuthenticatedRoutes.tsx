@@ -81,6 +81,7 @@ export default function AuthenticatedRoutes() {
                   <Route path="/missions" element={<Missions />} />
                   <Route path="/attendance" element={<Attendance />} />
                   <Route path="/payroll" element={<Payroll />} />
+                  <Route path="/analytics" element={<ProductivityAnalytics />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>
