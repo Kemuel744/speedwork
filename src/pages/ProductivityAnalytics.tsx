@@ -214,14 +214,6 @@ export default function ProductivityAnalytics() {
       }));
   }, [timeEntries]);
 
-  // 7. Late distribution
-  const lateData = useMemo(() => {
-    const total = workerPerformance.reduce((s, w) => s + w.lateCount, 0);
-    const onTime = workerPerformance.filter(w => w.lateCount === 0).length;
-    const late = workerPerformance.filter(w => w.lateCount > 0).length;
-    return { total, onTime, late };
-  }, [workerPerformance]);
-
   // Summary KPIs
   const totalHours = workerPerformance.reduce((s, w) => s + w.hoursWorked, 0);
   const avgAttendance = workerPerformance.length > 0
