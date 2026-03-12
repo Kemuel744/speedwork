@@ -553,31 +553,76 @@ export default function WorkerDashboard() {
         </CardContent>
       </Card>
 
-      {/* Photo upload dialog */}
+      {/* Photo upload dialog - Before/After */}
       <Dialog open={photoOpen} onOpenChange={setPhotoOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Photo de travail</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Preuve de travail</DialogTitle></DialogHeader>
           <div className="space-y-4">
+            {/* Proof type selector */}
+            <div>
+              <Label className="mb-2 block">Type de preuve</Label>
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  type="button"
+                  variant={proofType === 'before' ? 'default' : 'outline'}
+                  onClick={() => setProofType('before')}
+                  className="h-12"
+                >
+                  📷 Avant intervention
+                </Button>
+                <Button
+                  type="button"
+                  variant={proofType === 'after' ? 'default' : 'outline'}
+                  onClick={() => setProofType('after')}
+                  className="h-12"
+                >
+                  ✅ Après intervention
+                </Button>
+              </div>
+            </div>
+
+            {/* Mission selector */}
+            {missions.length > 0 && (
+              <div>
+                <Label className="mb-2 block">Mission associée</Label>
+                <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                  {missions.map(m => (
+                    <div
+                      key={m.id}
+                      onClick={() => setActiveMissionId(activeMissionId === m.id ? null : m.id)}
+                      className={`text-sm px-3 py-2 rounded-lg border cursor-pointer transition-colors ${activeMissionId === m.id ? 'border-primary bg-primary/5' : 'hover:bg-secondary/30'}`}
+                    >
+                      {m.title}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Photo capture */}
             <div className="border-2 border-dashed rounded-lg p-6 text-center">
               {photoFile ? (
                 <div className="space-y-2">
                   <img src={URL.createObjectURL(photoFile)} alt="Preview" className="max-h-48 mx-auto rounded-lg" />
                   <p className="text-sm text-muted-foreground">{photoFile.name}</p>
+                  <Button variant="ghost" size="sm" onClick={() => setPhotoFile(null)}>Changer</Button>
                 </div>
               ) : (
                 <label className="cursor-pointer space-y-2 block">
                   <Camera className="w-10 h-10 text-muted-foreground mx-auto" />
-                  <p className="text-sm text-muted-foreground">Prendre ou choisir une photo</p>
+                  <p className="text-sm text-muted-foreground">Prendre une photo {proofType === 'before' ? 'AVANT' : 'APRÈS'} intervention</p>
                   <input type="file" accept="image/*" capture="environment" className="hidden" onChange={e => setPhotoFile(e.target.files?.[0] || null)} />
                 </label>
               )}
             </div>
+
             <div>
-              <Label>Notes (optionnel)</Label>
-              <Textarea value={photoNotes} onChange={e => setPhotoNotes(e.target.value)} placeholder="Décrivez le travail effectué..." />
+              <Label>Commentaire (optionnel)</Label>
+              <Textarea value={photoNotes} onChange={e => setPhotoNotes(e.target.value)} placeholder="Observations sur le travail..." />
             </div>
+
             <Button onClick={uploadWorkPhoto} className="w-full" disabled={!photoFile || uploading}>
-              {uploading ? 'Envoi en cours...' : 'Envoyer la photo'}
+              {uploading ? 'Envoi en cours...' : `Envoyer preuve ${proofType === 'before' ? 'AVANT' : 'APRÈS'}`}
             </Button>
           </div>
         </DialogContent>
