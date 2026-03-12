@@ -38,12 +38,6 @@ function getMonthOptions() {
   return options;
 }
 
-function formatHours(mins: number) {
-  const h = Math.floor(mins / 60);
-  const m = Math.round(mins % 60);
-  return `${h}h${m > 0 ? String(m).padStart(2, '0') : ''}`;
-}
-
 function countWorkingDays(year: number, month: number) {
   let count = 0;
   const days = new Date(year, month, 0).getDate();
