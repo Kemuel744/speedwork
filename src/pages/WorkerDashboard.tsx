@@ -73,6 +73,21 @@ export default function WorkerDashboard() {
   const [photoNotes, setPhotoNotes] = useState('');
   const [activeMissionId, setActiveMissionId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [checkInStatus, setCheckInStatus] = useState<'idle' | 'checking' | 'success' | 'error'>('idle');
+  const [checkInMessage, setCheckInMessage] = useState('');
+
+  // Maximum allowed distance in meters between worker and mission location
+  const MAX_CHECKIN_DISTANCE = 500; // 500 meters
+
+  /** Haversine formula: returns distance in meters between two GPS points */
+  const haversineDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+    const R = 6371000; // Earth radius in meters
+    const toRad = (deg: number) => (deg * Math.PI) / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  };
 
   const fetchData = useCallback(async () => {
     if (!user) return;
