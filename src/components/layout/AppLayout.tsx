@@ -49,6 +49,7 @@ export default function AppLayout() {
           <Menu className="w-5 h-5 text-muted-foreground" />
         </button>
         <div className="ml-auto flex items-center gap-3">
+          <SyncStatusIndicator />
           <NotificationBell />
           <div className="text-right">
             <p className="text-sm font-medium text-foreground">{user.name}</p>
