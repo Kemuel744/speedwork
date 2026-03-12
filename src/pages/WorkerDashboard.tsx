@@ -12,7 +12,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import {
   Clock, MapPin, Users, Star, Play, LogOut as LogOutIcon,
   Camera, CalendarDays, CheckCircle, AlertCircle, Navigation, Coffee,
-  ShieldAlert, ShieldCheck, Loader2,
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
