@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
-  FileText, FileCheck, Users, Download, BarChart3, Shield,
-  Bell, Repeat, Calculator, ArrowRight, Zap, Globe, Lock,
-  Smartphone, TrendingUp, Cloud
+  FileText, FileCheck, Users, BarChart3, Shield,
+  Bell, Calculator, ArrowRight, Zap, Globe, Lock,
+  Smartphone, TrendingUp, Cloud, MapPin, Clock
 } from 'lucide-react';
 import SEO from '@/components/SEO';
 import PublicNavbar from '@/components/PublicNavbar';
