@@ -34,6 +34,7 @@ const ProductivityMap = lazy(() => import("@/pages/ProductivityMap"));
 const Missions = lazy(() => import("@/pages/Missions"));
 const Attendance = lazy(() => import("@/pages/Attendance"));
 const Payroll = lazy(() => import("@/pages/Payroll"));
+const ProductivityAnalytics = lazy(() => import("@/pages/ProductivityAnalytics"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 const PageLoader = () => (
@@ -80,6 +81,7 @@ export default function AuthenticatedRoutes() {
                   <Route path="/missions" element={<Missions />} />
                   <Route path="/attendance" element={<Attendance />} />
                   <Route path="/payroll" element={<Payroll />} />
+                  <Route path="/analytics" element={<ProductivityAnalytics />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>
