@@ -829,6 +829,7 @@ export type Database = {
           is_leader: boolean
           team_id: string
           user_id: string
+          worker_id: string | null
           worker_name: string
           worker_phone: string
           worker_role: string
@@ -839,6 +840,7 @@ export type Database = {
           is_leader?: boolean
           team_id: string
           user_id: string
+          worker_id?: string | null
           worker_name: string
           worker_phone?: string
           worker_role?: string
@@ -849,6 +851,7 @@ export type Database = {
           is_leader?: boolean
           team_id?: string
           user_id?: string
+          worker_id?: string | null
           worker_name?: string
           worker_phone?: string
           worker_role?: string
@@ -861,12 +864,20 @@ export type Database = {
             referencedRelation: "teams"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "team_members_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "workers"
+            referencedColumns: ["id"]
+          },
         ]
       }
       teams: {
         Row: {
           created_at: string
           description: string
+          end_date: string | null
           id: string
           latitude: number | null
           leader_name: string
@@ -874,7 +885,9 @@ export type Database = {
           longitude: number | null
           name: string
           site_name: string
+          start_date: string | null
           status: string
+          team_type: string
           updated_at: string
           user_id: string
           zone: string
@@ -882,6 +895,7 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string
+          end_date?: string | null
           id?: string
           latitude?: number | null
           leader_name?: string
@@ -889,7 +903,9 @@ export type Database = {
           longitude?: number | null
           name: string
           site_name?: string
+          start_date?: string | null
           status?: string
+          team_type?: string
           updated_at?: string
           user_id: string
           zone?: string
@@ -897,6 +913,7 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string
+          end_date?: string | null
           id?: string
           latitude?: number | null
           leader_name?: string
@@ -904,7 +921,9 @@ export type Database = {
           longitude?: number | null
           name?: string
           site_name?: string
+          start_date?: string | null
           status?: string
+          team_type?: string
           updated_at?: string
           user_id?: string
           zone?: string
@@ -1022,6 +1041,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      workers: {
+        Row: {
+          base_salary: number
+          contract_type: string
+          created_at: string
+          first_name: string
+          hire_date: string
+          id: string
+          last_name: string
+          phone: string
+          photo_url: string | null
+          position: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          base_salary?: number
+          contract_type?: string
+          created_at?: string
+          first_name: string
+          hire_date?: string
+          id?: string
+          last_name: string
+          phone?: string
+          photo_url?: string | null
+          position?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          base_salary?: number
+          contract_type?: string
+          created_at?: string
+          first_name?: string
+          hire_date?: string
+          id?: string
+          last_name?: string
+          phone?: string
+          photo_url?: string | null
+          position?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {
