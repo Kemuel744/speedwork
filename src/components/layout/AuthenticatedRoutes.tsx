@@ -33,6 +33,7 @@ const WorkTasks = lazy(() => import("@/pages/WorkTasks"));
 const ProductivityMap = lazy(() => import("@/pages/ProductivityMap"));
 const Missions = lazy(() => import("@/pages/Missions"));
 const Attendance = lazy(() => import("@/pages/Attendance"));
+const Payroll = lazy(() => import("@/pages/Payroll"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 const PageLoader = () => (
@@ -78,6 +79,7 @@ export default function AuthenticatedRoutes() {
                   <Route path="/productivity" element={<ProductivityMap />} />
                   <Route path="/missions" element={<Missions />} />
                   <Route path="/attendance" element={<Attendance />} />
+                  <Route path="/payroll" element={<Payroll />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>
