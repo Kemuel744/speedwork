@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import {
   LayoutDashboard, FileText, FilePlus, FileCheck, User, Settings,
   LogOut, ChevronLeft, Users, CreditCard, BarChart3, Bell, PieChart, MessageCircle, Smartphone, BookOpen, GraduationCap, Newspaper,
-  HardHat, ClipboardCheck, Map, TrendingUp, Briefcase, Timer, Calculator, Shield,
+  HardHat, ClipboardCheck, Map, MapPin, TrendingUp, Briefcase, Timer, Calculator, Shield,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo.webp';
@@ -20,6 +20,7 @@ const adminNav = [
   { label: 'Équipes terrain', to: '/teams', icon: HardHat },
   { label: 'Tâches & Preuves', to: '/work-tasks', icon: ClipboardCheck },
   { label: 'Carte terrain', to: '/teams-map', icon: Map },
+  { label: 'Carte missions', to: '/missions-map', icon: MapPin },
   { label: 'Analyse', to: '/analytics', icon: BarChart3 },
   { label: 'Productivité', to: '/productivity', icon: TrendingUp },
   { label: 'Recrutement', to: '/missions', icon: Briefcase },
