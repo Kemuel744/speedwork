@@ -150,13 +150,89 @@ export default function WorkerDashboard() {
     });
   };
 
+  /**
+   * Validates GPS proximity for mission check-in.
+   * Returns { ok, gps, distance?, message? }
+   */
+  const validateMissionCheckIn = async (missionId: string): Promise<{
+    ok: boolean; gps: { lat: number; lng: number } | null; distance?: number; message?: string;
+  }> => {
+    const mission = missions.find(m => m.id === missionId);
+
+    // If mission has no GPS coordinates, allow check-in with just GPS capture
+    if (!mission?.latitude || !mission?.longitude) {
+      const gps = await getGPS();
+      return { ok: true, gps, message: 'Mission sans coordonnées GPS — pointage libre' };
+    }
+
+    // GPS is mandatory for missions with coordinates
+    const gps = await getGPS();
+    if (!gps) {
+      return { ok: false, gps: null, message: '📍 Position GPS requise. Activez la géolocalisation sur votre appareil et réessayez.' };
+    }
+
+    const distance = haversineDistance(gps.lat, gps.lng, mission.latitude, mission.longitude);
+
+    if (distance > MAX_CHECKIN_DISTANCE) {
+      return {
+        ok: false, gps, distance,
+        message: `🚫 Vous êtes à ${Math.round(distance)}m du lieu de mission (max: ${MAX_CHECKIN_DISTANCE}m). Rapprochez-vous du chantier pour pointer.`,
+      };
+    }
+
+    return { ok: true, gps, distance, message: `✅ Position validée — ${Math.round(distance)}m du lieu de mission` };
+  };
+
   const recordEntry = async (type: string, missionId?: string) => {
     if (!worker || !user) return;
+
+    const targetMissionId = missionId || activeMissionId || null;
+
+    // For arrival entries linked to a mission, validate GPS proximity
+    if (type === 'arrival' && targetMissionId) {
+      setCheckInStatus('checking');
+      setCheckInMessage('Vérification de votre position...');
+
+      const validation = await validateMissionCheckIn(targetMissionId);
+
+      if (!validation.ok) {
+        setCheckInStatus('error');
+        setCheckInMessage(validation.message || 'Erreur de validation');
+        // Auto-clear after 8 seconds
+        setTimeout(() => { setCheckInStatus('idle'); setCheckInMessage(''); }, 8000);
+        return;
+      }
+
+      // GPS validated — proceed
+      const { error } = await (supabase as any).from('time_entries').insert({
+        worker_id: worker.id,
+        user_id: user.id,
+        mission_id: targetMissionId,
+        entry_type: type,
+        latitude: validation.gps?.lat || null,
+        longitude: validation.gps?.lng || null,
+        notes: `Check-in validé — ${validation.distance ? Math.round(validation.distance) + 'm du site' : 'GPS libre'}`,
+      });
+      if (error) {
+        toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+        setCheckInStatus('idle');
+        return;
+      }
+
+      setCheckInStatus('success');
+      setCheckInMessage(validation.message || 'Pointage validé');
+      toast({ title: 'Mission démarrée ✓', description: validation.message });
+      setTimeout(() => { setCheckInStatus('idle'); setCheckInMessage(''); }, 5000);
+      fetchData();
+      return;
+    }
+
+    // For non-mission entries or non-arrival, just record with GPS
     const gps = await getGPS();
     const { error } = await (supabase as any).from('time_entries').insert({
       worker_id: worker.id,
       user_id: user.id,
-      mission_id: missionId || activeMissionId || null,
+      mission_id: targetMissionId,
       entry_type: type,
       latitude: gps?.lat || null,
       longitude: gps?.lng || null,
