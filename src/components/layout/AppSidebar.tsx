@@ -25,6 +25,7 @@ const adminNav = [
   { label: 'Recrutement', to: '/missions', icon: Briefcase },
   { label: 'Pointage', to: '/attendance', icon: Timer },
   { label: 'Salaires', to: '/payroll', icon: Calculator },
+  { label: 'Fiabilité', to: '/reliability', icon: Shield },
   { label: 'Messagerie', to: '/messages', icon: MessageCircle },
   { label: 'Gestion Clients', to: '/admin/clients', icon: Users },
   { label: 'Abonnements', to: '/admin/subscriptions', icon: CreditCard },
