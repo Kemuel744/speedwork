@@ -22,7 +22,7 @@ export default function PublicFooter() {
               <span className="text-lg font-bold text-foreground">SpeedWork</span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Logiciel de facturation et devis en ligne pour entreprises en Afrique, Congo-Brazzaville et dans le monde entier.
+              Plateforme de gestion d'entreprise tout-en-un : facturation, équipes, missions terrain, pointage, analytics, fiabilité et paie. Conçue pour les PME en Afrique.
             </p>
           </div>
 

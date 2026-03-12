@@ -21,10 +21,11 @@ const plans = [
     period: '/mois',
     description: 'Idéal pour démarrer',
     features: [
-      'Factures & devis illimités',
+      'Factures & devis illimités + PDF',
       'Gestion des clients',
-      'Export PDF',
-      'Signature électronique',
+      'Gestion d\'équipes & travailleurs',
+      'Missions terrain géolocalisées',
+      'Pointage & présence intelligent',
       'Support par email',
     ],
     icon: Zap,
@@ -39,10 +40,11 @@ const plans = [
     description: 'Économisez 24 000 FCFA/an',
     features: [
       'Tout le plan Mensuel',
-      'Tableau de bord avancé',
-      'Multi-utilisateurs',
+      'Analyse de productivité & KPI',
+      'Scores de fiabilité travailleurs',
+      'Calcul de paie automatique',
+      'Bilan annuel par IA',
       'Support prioritaire',
-      'Mises à jour en avant-première',
     ],
     icon: Crown,
     popular: true,
@@ -57,8 +59,9 @@ const plans = [
     features: [
       'Tout le plan Annuel',
       '3 collaborateurs avec leurs postes',
+      'Carte des missions en temps réel',
+      'Relances automatiques par IA',
       'Messagerie interne sécurisée',
-      'Partage de documents en équipe',
       'Gestion centralisée des accès',
     ],
     icon: Crown,
@@ -160,8 +163,8 @@ export default function Subscription() {
     <main className="min-h-screen bg-background">
       <PublicNavbar />
       <SEO
-        title="Tarifs – Abonnement Facturation"
-        description="Choisissez votre abonnement SpeedWork : factures et devis illimités à partir de 3 000 FCFA/mois. Paiement par Mobile Money."
+        title="Tarifs – Gestion d'entreprise tout-en-un"
+        description="Abonnement SpeedWork : facturation, équipes, missions terrain, pointage, analytics et paie à partir de 3 000 FCFA/mois. Paiement par Mobile Money."
         path="/tarifs"
       />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
@@ -236,7 +239,7 @@ export default function Subscription() {
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-3">Choisissez votre abonnement</h1>
           <p className="text-primary-foreground/80 text-lg max-w-xl mx-auto">
-            Gérez vos factures et devis professionnellement. Commencez dès aujourd'hui.
+            Facturation, équipes, missions terrain, pointage, analytics et paie. Tout-en-un.
           </p>
         </div>
       </div>
