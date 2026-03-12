@@ -504,9 +504,32 @@ export default function WorkerDashboard() {
                     </a>
                   )}
                   {activeMissionId === m.id && (
-                    <div className="mt-2 pt-2 border-t flex gap-2">
-                      <Button size="sm" variant="outline" className="text-xs flex-1" onClick={(e) => { e.stopPropagation(); recordEntry('arrival', m.id); }}>
-                        <Play className="w-3 h-3 mr-1" /> Démarrer
+                    <div className="mt-2 pt-2 border-t space-y-2">
+                      {/* Check-in status feedback */}
+                      {checkInStatus !== 'idle' && (
+                        <div className={`text-xs rounded-lg px-3 py-2 flex items-start gap-2 ${
+                          checkInStatus === 'checking' ? 'bg-primary/10 text-primary' :
+                          checkInStatus === 'success' ? 'bg-success/10 text-success' :
+                          'bg-destructive/10 text-destructive'
+                        }`}>
+                          {checkInStatus === 'checking' && <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-current shrink-0 mt-0.5" />}
+                          {checkInStatus === 'success' && <CheckCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />}
+                          {checkInStatus === 'error' && <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />}
+                          <span>{checkInMessage}</span>
+                        </div>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs w-full"
+                        disabled={checkInStatus === 'checking'}
+                        onClick={(e) => { e.stopPropagation(); recordEntry('arrival', m.id); }}
+                      >
+                        {checkInStatus === 'checking' ? (
+                          <><div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current mr-1" /> Vérification GPS...</>
+                        ) : (
+                          <><Play className="w-3 h-3 mr-1" /> Démarrer mission</>
+                        )}
                       </Button>
                     </div>
                   )}
