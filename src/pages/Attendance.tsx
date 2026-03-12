@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   Clock, MapPin, Users, Play, Coffee, LogOut as LogOutIcon,
-  CalendarDays, CheckCircle, Navigation, Search, BarChart3, Timer,
+  CheckCircle, Navigation, Search, BarChart3, Timer,
 } from 'lucide-react';
 import { format, parseISO, differenceInMinutes, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { fr } from 'date-fns/locale';
