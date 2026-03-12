@@ -11,8 +11,8 @@ import {
   PolarAngleAxis, PolarRadiusAxis, Radar,
 } from 'recharts';
 import {
-  BarChart3, CheckCircle, Clock, Users, AlertTriangle,
-  TrendingUp, Award, Target, Timer,
+  BarChart3, CheckCircle, Users, AlertTriangle,
+  Award, Target, Timer,
 } from 'lucide-react';
 import { format, parseISO, differenceInMinutes, startOfMonth, endOfMonth } from 'date-fns';
 import { fr } from 'date-fns/locale';
