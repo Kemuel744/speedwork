@@ -13,6 +13,10 @@ export default function AppLayout() {
   const { user, isLoading } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
 
+  useEffect(() => {
+    registerAutoSync();
+  }, []);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
