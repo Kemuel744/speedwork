@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { DocumentData } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { putAll, getAll, putOne, deleteOne as deleteFromCache, setLastSync } from '@/lib/offlineDb';
+import { queueMutation } from '@/lib/syncQueue';
 
 interface ReminderData {
   id: string;
@@ -122,16 +124,37 @@ export function DocumentsProvider({ children }: { children: ReactNode }) {
       return;
     }
     setLoading(true);
-    const { data, error } = await supabase
-      .from('documents')
-      .select('*')
-      .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Error fetching documents:', error);
-    } else {
-      setDocuments((data || []).map(rowToDoc));
+    try {
+      if (navigator.onLine) {
+        const { data, error } = await supabase
+          .from('documents')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        // Cache in IndexedDB
+        await putAll('documents', data || []);
+        await setLastSync('documents');
+        setDocuments((data || []).map(rowToDoc));
+      } else {
+        // Read from offline cache
+        const cached = await getAll<any>('documents');
+        cached.sort((a: any, b: any) => (b.created_at || '').localeCompare(a.created_at || ''));
+        setDocuments(cached.map(rowToDoc));
+      }
+    } catch (err: any) {
+      console.warn('[Documents] Fetch failed, falling back to cache:', err.message);
+      try {
+        const cached = await getAll<any>('documents');
+        cached.sort((a: any, b: any) => (b.created_at || '').localeCompare(a.created_at || ''));
+        setDocuments(cached.map(rowToDoc));
+      } catch {
+        console.error('[Documents] Cache fallback also failed');
+      }
     }
+
     setLoading(false);
   }, [user]);
 
@@ -139,41 +162,70 @@ export function DocumentsProvider({ children }: { children: ReactNode }) {
     fetchDocuments();
   }, [fetchDocuments]);
 
+  // Refetch when coming back online
+  useEffect(() => {
+    const handleOnline = () => fetchDocuments();
+    window.addEventListener('online', handleOnline);
+    return () => window.removeEventListener('online', handleOnline);
+  }, [fetchDocuments]);
+
   const addDocument = useCallback(async (doc: DocumentData) => {
     if (!user) return;
     const row = docToRow(doc, user.id);
-    const { error } = await supabase.from('documents').insert(row as any);
-    if (error) {
-      console.error('Error adding document:', error);
-      throw error;
+
+    // Optimistic update
+    setDocuments(prev => [rowToDoc(row), ...prev]);
+    await putOne('documents', row);
+
+    if (navigator.onLine) {
+      const { error } = await supabase.from('documents').insert(row as any);
+      if (error) {
+        console.error('[Documents] Insert failed, queuing:', error);
+        await queueMutation('documents', 'insert', row);
+      }
+    } else {
+      await queueMutation('documents', 'insert', row);
     }
-    await fetchDocuments();
-  }, [user, fetchDocuments]);
+  }, [user]);
 
   const updateDocument = useCallback(async (id: string, updates: Partial<DocumentData>) => {
     if (!user) return;
-    // Build partial row from the full updated doc
     const existing = documents.find(d => d.id === id);
     if (!existing) return;
     const merged = { ...existing, ...updates };
     const row = docToRow(merged, user.id);
     const { id: _id, user_id, ...updateData } = row;
-    const { error } = await supabase.from('documents').update(updateData as any).eq('id', id);
-    if (error) {
-      console.error('Error updating document:', error);
-      throw error;
+
+    // Optimistic update
+    setDocuments(prev => prev.map(d => d.id === id ? rowToDoc(row) : d));
+    await putOne('documents', row);
+
+    if (navigator.onLine) {
+      const { error } = await supabase.from('documents').update(updateData as any).eq('id', id);
+      if (error) {
+        console.error('[Documents] Update failed, queuing:', error);
+        await queueMutation('documents', 'update', updateData, id);
+      }
+    } else {
+      await queueMutation('documents', 'update', updateData, id);
     }
-    await fetchDocuments();
-  }, [user, documents, fetchDocuments]);
+  }, [user, documents]);
 
   const deleteDocument = useCallback(async (id: string) => {
-    const { error } = await supabase.from('documents').delete().eq('id', id);
-    if (error) {
-      console.error('Error deleting document:', error);
-      throw error;
+    // Optimistic update
+    setDocuments(prev => prev.filter(d => d.id !== id));
+    await deleteFromCache('documents', id);
+
+    if (navigator.onLine) {
+      const { error } = await supabase.from('documents').delete().eq('id', id);
+      if (error) {
+        console.error('[Documents] Delete failed, queuing:', error);
+        await queueMutation('documents', 'delete', {}, id);
+      }
+    } else {
+      await queueMutation('documents', 'delete', {}, id);
     }
-    await fetchDocuments();
-  }, [fetchDocuments]);
+  }, []);
 
   const getDocument = useCallback((id: string) => {
     return documents.find(d => d.id === id);
