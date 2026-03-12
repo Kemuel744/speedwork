@@ -1,23 +1,46 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, FileText, Users, MapPin, BarChart3, Shield, Zap } from 'lucide-react';
 import promoHero from '@/assets/promo-hero.webp';
+
+const badges = [
+  { icon: FileText, label: 'Facturation' },
+  { icon: Users, label: 'Équipes' },
+  { icon: MapPin, label: 'Missions terrain' },
+  { icon: BarChart3, label: 'Analytics' },
+  { icon: Shield, label: 'Fiabilité' },
+];
 
 export default function HeroSection() {
   return (
     <section className="relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-accent/8" />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 relative">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-1.5 text-sm font-medium mb-6">
+              <Zap className="w-4 h-4" />
+              Plateforme tout-en-un pour entreprises
+            </div>
             <h1 className="text-4xl sm:text-5xl font-extrabold text-foreground leading-tight tracking-tight">
-              Le logiciel de facturation simple et puissant pour les{' '}
-              <span className="text-primary">PME et freelances en Afrique</span>
+              Gérez votre entreprise de A à Z avec{' '}
+              <span className="text-primary">une seule plateforme</span>
             </h1>
             <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-              Créez vos devis et factures en quelques clics, suivez vos paiements, 
-              gérez vos clients et visualisez vos performances — sans calculatrice et sans complexité.
+              Facturation, gestion d'équipes, missions terrain, suivi de présence, 
+              analyse de productivité et scores de fiabilité — tout ce dont votre entreprise 
+              a besoin, dans un outil simple et puissant.
             </p>
+
+            {/* Feature badges */}
+            <div className="mt-6 flex flex-wrap gap-2">
+              {badges.map((b) => (
+                <span key={b.label} className="inline-flex items-center gap-1.5 bg-secondary text-foreground rounded-full px-3 py-1.5 text-xs font-medium border border-border/50">
+                  <b.icon className="w-3.5 h-3.5 text-primary" />
+                  {b.label}
+                </span>
+              ))}
+            </div>
 
             <div className="mt-8 flex flex-col sm:flex-row items-start gap-4">
               <Button size="lg" asChild className="h-13 px-8 text-base font-semibold">
@@ -27,7 +50,7 @@ export default function HeroSection() {
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild className="h-13 px-8 text-base">
-                <Link to="/fonctionnalites">Voir comment ça fonctionne</Link>
+                <Link to="/fonctionnalites">Découvrir les fonctionnalités</Link>
               </Button>
             </div>
             <p className="mt-4 text-sm text-muted-foreground">
@@ -37,7 +60,7 @@ export default function HeroSection() {
           <div className="relative hidden lg:block">
             <img
               src={promoHero}
-              alt="SpeedWork – Logiciel de facturation en ligne pour PME et freelances en Afrique"
+              alt="SpeedWork – Plateforme de gestion d'entreprise tout-en-un pour PME et freelances en Afrique"
               className="w-full rounded-2xl shadow-2xl aspect-[2/3]"
               width={1024}
               height={1536}
