@@ -239,7 +239,7 @@ export default function Subscription() {
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-3">Choisissez votre abonnement</h1>
           <p className="text-primary-foreground/80 text-lg max-w-xl mx-auto">
-            Gérez vos factures et devis professionnellement. Commencez dès aujourd'hui.
+            Facturation, équipes, missions terrain, pointage, analytics et paie. Tout-en-un.
           </p>
         </div>
       </div>
