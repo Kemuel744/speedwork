@@ -16,6 +16,7 @@ const adminNav = [
   { label: 'Devis', to: '/documents?type=quote', icon: FileCheck },
   { label: 'Nouvelle Facture', to: '/create/invoice', icon: FilePlus },
   { label: 'Nouveau Devis', to: '/create/quote', icon: FilePlus },
+  { label: 'Travailleurs', to: '/workers', icon: Users },
   { label: 'Équipes terrain', to: '/teams', icon: HardHat },
   { label: 'Tâches & Preuves', to: '/work-tasks', icon: ClipboardCheck },
   { label: 'Carte terrain', to: '/teams-map', icon: Map },
