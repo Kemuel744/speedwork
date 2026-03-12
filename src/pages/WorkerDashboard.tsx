@@ -251,24 +251,37 @@ export default function WorkerDashboard() {
     setUploading(true);
     try {
       const ext = photoFile.name.split('.').pop();
-      const path = `${user.id}/${worker.id}_${Date.now()}.${ext}`;
+      const path = `${user.id}/${worker.id}_${Date.now()}_${proofType}.${ext}`;
       const { error: uploadErr } = await supabase.storage.from('work-proofs').upload(path, photoFile);
       if (uploadErr) throw uploadErr;
       const { data: urlData } = supabase.storage.from('work-proofs').getPublicUrl(path);
       const gps = await getGPS();
 
+      // Save as work_proof with proof_type and mission link
+      await (supabase as any).from('work_proofs').insert({
+        task_id: null, // No task, linked via mission
+        user_id: user.id,
+        mission_id: activeMissionId || null,
+        photo_url: urlData.publicUrl,
+        proof_type: proofType,
+        notes: photoNotes,
+        latitude: gps?.lat || null,
+        longitude: gps?.lng || null,
+      });
+
+      // Also record in time_entries for timeline
       await (supabase as any).from('time_entries').insert({
         worker_id: worker.id,
         user_id: user.id,
         mission_id: activeMissionId || null,
         entry_type: 'photo',
         photo_url: urlData.publicUrl,
-        notes: photoNotes,
+        notes: `[${proofType === 'before' ? 'AVANT' : 'APRÈS'}] ${photoNotes}`,
         latitude: gps?.lat || null,
         longitude: gps?.lng || null,
       });
 
-      toast({ title: 'Photo envoyée ✓' });
+      toast({ title: `Photo ${proofType === 'before' ? 'AVANT' : 'APRÈS'} envoyée ✓` });
       setPhotoOpen(false);
       setPhotoFile(null);
       setPhotoNotes('');
