@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import {
   LayoutDashboard, FileText, FilePlus, FileCheck, User, Settings,
   LogOut, ChevronLeft, Users, CreditCard, BarChart3, Bell, PieChart, MessageCircle, Smartphone, BookOpen, GraduationCap, Newspaper,
-  HardHat, ClipboardCheck, Map, TrendingUp, Briefcase, Timer, Calculator,
+  HardHat, ClipboardCheck, Map, TrendingUp, Briefcase, Timer, Calculator, Shield,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo.webp';
@@ -25,6 +25,7 @@ const adminNav = [
   { label: 'Recrutement', to: '/missions', icon: Briefcase },
   { label: 'Pointage', to: '/attendance', icon: Timer },
   { label: 'Salaires', to: '/payroll', icon: Calculator },
+  { label: 'Fiabilité', to: '/reliability', icon: Shield },
   { label: 'Messagerie', to: '/messages', icon: MessageCircle },
   { label: 'Gestion Clients', to: '/admin/clients', icon: Users },
   { label: 'Abonnements', to: '/admin/subscriptions', icon: CreditCard },
