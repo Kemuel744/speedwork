@@ -22,6 +22,7 @@ const adminNav = [
   { label: 'Carte terrain', to: '/teams-map', icon: Map },
   { label: 'Productivité', to: '/productivity', icon: TrendingUp },
   { label: 'Recrutement', to: '/missions', icon: Briefcase },
+  { label: 'Pointage', to: '/attendance', icon: Timer },
   { label: 'Messagerie', to: '/messages', icon: MessageCircle },
   { label: 'Gestion Clients', to: '/admin/clients', icon: Users },
   { label: 'Abonnements', to: '/admin/subscriptions', icon: CreditCard },
