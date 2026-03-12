@@ -35,6 +35,7 @@ const clientNav = [
   { label: 'Mon espace', to: '/client', icon: LayoutDashboard },
   { label: 'Mes Factures', to: '/documents?type=invoice', icon: FileText },
   { label: 'Mes Devis', to: '/documents?type=quote', icon: FileCheck },
+  { label: 'Travailleurs', to: '/workers', icon: Users },
   { label: 'Équipes terrain', to: '/teams', icon: HardHat },
   { label: 'Tâches & Preuves', to: '/work-tasks', icon: ClipboardCheck },
   { label: 'Recrutement', to: '/missions', icon: Briefcase },
