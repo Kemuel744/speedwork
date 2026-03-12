@@ -963,6 +963,63 @@ export type Database = {
         }
         Relationships: []
       }
+      time_entries: {
+        Row: {
+          created_at: string
+          entry_type: string
+          id: string
+          latitude: number | null
+          longitude: number | null
+          mission_id: string | null
+          notes: string
+          photo_url: string | null
+          timestamp: string
+          user_id: string
+          worker_id: string
+        }
+        Insert: {
+          created_at?: string
+          entry_type?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          mission_id?: string | null
+          notes?: string
+          photo_url?: string | null
+          timestamp?: string
+          user_id: string
+          worker_id: string
+        }
+        Update: {
+          created_at?: string
+          entry_type?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          mission_id?: string | null
+          notes?: string
+          photo_url?: string | null
+          timestamp?: string
+          user_id?: string
+          worker_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "time_entries_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_entries_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "workers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -1084,6 +1141,7 @@ export type Database = {
           hire_date: string
           id: string
           last_name: string
+          linked_user_id: string | null
           phone: string
           photo_url: string | null
           position: string
@@ -1099,6 +1157,7 @@ export type Database = {
           hire_date?: string
           id?: string
           last_name: string
+          linked_user_id?: string | null
           phone?: string
           photo_url?: string | null
           position?: string
@@ -1114,6 +1173,7 @@ export type Database = {
           hire_date?: string
           id?: string
           last_name?: string
+          linked_user_id?: string | null
           phone?: string
           photo_url?: string | null
           position?: string
