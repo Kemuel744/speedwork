@@ -33,7 +33,7 @@ export function useOfflineData<T extends { id?: string }>({
     try {
       if (navigator.onLine) {
         // Fetch from server
-        let query = (supabase.from(table) as any).select('*');
+        let query = (supabase as any).from(table).select('*');
         if (filterColumn && filterValue) {
           query = query.eq(filterColumn, filterValue);
         }
