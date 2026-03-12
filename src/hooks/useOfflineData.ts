@@ -132,7 +132,7 @@ export function useOfflineData<T extends { id?: string }>({
       }
 
       if (navigator.onLine) {
-        const { error } = await (supabase.from(table) as any).update(updates).eq('id', id);
+        const { error } = await (supabase as any).from(table).update(updates).eq('id', id);
         if (error) {
           console.error('[Offline] Update failed, queuing:', error);
           await queueMutation(table, 'update', updates, id);
