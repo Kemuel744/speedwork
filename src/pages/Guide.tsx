@@ -89,6 +89,11 @@ export default function Guide() {
             <li>Gérer ses clients</li>
             <li>Rapports de terrain</li>
             <li>Paramètres et personnalisation</li>
+            <li>Gestion des travailleurs & équipes</li>
+            <li>Missions terrain & carte interactive</li>
+            <li>Pointage & présence</li>
+            <li>Analyse de productivité & fiabilité</li>
+            <li>Calcul de paie automatique</li>
             <li>Questions fréquentes</li>
           </ol>
         </section>
