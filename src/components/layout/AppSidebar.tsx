@@ -33,12 +33,13 @@ const adminNav = [
 
 const clientNav = [
   { label: 'Mon espace', to: '/client', icon: LayoutDashboard },
+  { label: 'Mon Dashboard', to: '/worker-dashboard', icon: HardHat },
   { label: 'Mes Factures', to: '/documents?type=invoice', icon: FileText },
   { label: 'Mes Devis', to: '/documents?type=quote', icon: FileCheck },
   { label: 'Travailleurs', to: '/workers', icon: Users },
   { label: 'Équipes terrain', to: '/teams', icon: HardHat },
   { label: 'Tâches & Preuves', to: '/work-tasks', icon: ClipboardCheck },
-  { label: 'Recrutement', to: '/missions', icon: Briefcase },
+  { label: 'Missions', to: '/missions', icon: Briefcase },
   { label: 'Messagerie', to: '/messages', icon: MessageCircle },
   { label: 'Mon Équipe', to: '/team', icon: Users },
   { label: 'Rapports', to: '/reports', icon: PieChart },
