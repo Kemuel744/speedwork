@@ -33,6 +33,7 @@ const WorkTasks = lazy(() => import("@/pages/WorkTasks"));
 const ProductivityMap = lazy(() => import("@/pages/ProductivityMap"));
 const Missions = lazy(() => import("@/pages/Missions"));
 const Attendance = lazy(() => import("@/pages/Attendance"));
+const Payroll = lazy(() => import("@/pages/Payroll"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 const PageLoader = () => (
