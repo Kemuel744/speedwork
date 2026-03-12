@@ -356,6 +356,10 @@ export default function Missions() {
                   <div className="flex items-start gap-4">
                     <div className="flex-1"><MissionCard m={m} /></div>
                   </div>
+                  {/* Mission proofs from workers */}
+                  <div className="ml-0 mt-2 px-4">
+                    <MissionProofs missionId={m.id} />
+                  </div>
                   {/* Actions & applications */}
                   <div className="ml-0 mt-2 space-y-2">
                     <div className="flex items-center gap-2">
