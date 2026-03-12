@@ -16,6 +16,7 @@ const STORES = [
   'expenses',
   'products',
   'field_reports',
+  'workers',
   'sync_queue',
   'meta',
 ] as const;
