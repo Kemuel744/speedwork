@@ -70,6 +70,7 @@ export default function WorkerDashboard() {
   const [photoOpen, setPhotoOpen] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoNotes, setPhotoNotes] = useState('');
+  const [proofType, setProofType] = useState<'before' | 'after'>('before');
   const [activeMissionId, setActiveMissionId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [checkInStatus, setCheckInStatus] = useState<'idle' | 'checking' | 'success' | 'error'>('idle');
