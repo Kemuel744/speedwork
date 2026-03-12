@@ -106,7 +106,7 @@ export function useOfflineData<T extends { id?: string }>({
       await putOne(table, newItem);
 
       if (navigator.onLine) {
-        const { error } = await (supabase.from(table) as any).insert(newItem);
+        const { error } = await (supabase as any).from(table).insert(newItem);
         if (error) {
           console.error('[Offline] Insert failed, queuing:', error);
           await queueMutation(table, 'insert', newItem);
