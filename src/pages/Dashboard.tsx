@@ -10,6 +10,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { monthlyRevenue } from '@/lib/mockData';
 import CurrencyConverter from '@/components/CurrencyConverter';
 import TrialBanner from '@/components/TrialBanner';
+import SubscriptionCard from '@/components/SubscriptionCard';
 
 function StatCard({ icon: Icon, label, value, sub, color }: { icon: any; label: string; value: string; sub?: string; color: string }) {
   return (
