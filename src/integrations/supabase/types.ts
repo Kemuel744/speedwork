@@ -1266,6 +1266,7 @@ export type Database = {
           id: string
           last_name: string
           linked_user_id: string | null
+          onboarding_completed: boolean
           phone: string
           photo_url: string | null
           position: string
@@ -1283,6 +1284,7 @@ export type Database = {
           id?: string
           last_name: string
           linked_user_id?: string | null
+          onboarding_completed?: boolean
           phone?: string
           photo_url?: string | null
           position?: string
@@ -1300,6 +1302,7 @@ export type Database = {
           id?: string
           last_name?: string
           linked_user_id?: string | null
+          onboarding_completed?: boolean
           phone?: string
           photo_url?: string | null
           position?: string

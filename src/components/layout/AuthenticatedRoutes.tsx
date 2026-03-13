@@ -39,6 +39,7 @@ const Payroll = lazy(() => import("@/pages/Payroll"));
 const ProductivityAnalytics = lazy(() => import("@/pages/ProductivityAnalytics"));
 const ReliabilityScores = lazy(() => import("@/pages/ReliabilityScores"));
 const MissionsMap = lazy(() => import("@/pages/MissionsMap"));
+const WorkerOnboarding = lazy(() => import("@/pages/WorkerOnboarding"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 const PageLoader = () => (
@@ -81,6 +82,7 @@ export default function AuthenticatedRoutes() {
                   <Route path="/workers" element={<EnterpriseGuard><Workers /></EnterpriseGuard>} />
                   <Route path="/workers/:workerId" element={<EnterpriseGuard><WorkerDetail /></EnterpriseGuard>} />
                   <Route path="/worker-dashboard" element={<EnterpriseGuard><WorkerDashboard /></EnterpriseGuard>} />
+                  <Route path="/worker-onboarding" element={<WorkerOnboarding />} />
                   <Route path="/work-tasks" element={<EnterpriseGuard><WorkTasks /></EnterpriseGuard>} />
                   <Route path="/productivity" element={<EnterpriseGuard><ProductivityMap /></EnterpriseGuard>} />
                   <Route path="/missions" element={<EnterpriseGuard><Missions /></EnterpriseGuard>} />
