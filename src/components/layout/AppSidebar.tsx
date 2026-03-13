@@ -100,6 +100,28 @@ const clientSections: NavSection[] = [
   },
 ];
 
+const workerSections: NavSection[] = [
+  {
+    titleKey: 'nav.principal',
+    items: [
+      { labelKey: 'nav.myDashboard', to: '/worker-dashboard', icon: HardHat },
+    ],
+  },
+  {
+    titleKey: 'nav.terrain',
+    items: [
+      { labelKey: 'nav.missions', to: '/missions', icon: Briefcase },
+      { labelKey: 'nav.tasksProofs', to: '/work-tasks', icon: ClipboardCheck },
+    ],
+  },
+  {
+    titleKey: 'nav.communication',
+    items: [
+      { labelKey: 'nav.messages', to: '/messages', icon: MessageCircle },
+    ],
+  },
+];
+
 const bottomNavKeys: NavItem[] = [
   { labelKey: 'nav.profile', to: '/profile', icon: User },
   { labelKey: 'nav.settings', to: '/settings', icon: Settings },
@@ -115,7 +137,7 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
   const { user, logout } = useAuth();
   const { t } = useLanguage();
   const location = useLocation();
-  const sections = user?.role === 'admin' ? adminSections : clientSections;
+  const sections = user?.role === 'admin' ? adminSections : user?.isWorker ? workerSections : clientSections;
 
   const isActive = (to: string) => {
     const [path] = to.split('?');
