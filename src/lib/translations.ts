@@ -981,6 +981,10 @@ export const translations: Record<Language, Record<string, string>> = {
     'enterprise.feat5': 'Attendance & automated payroll',
     'enterprise.feat6': '3 collaborators included',
     'enterprise.cta': 'Subscribe to the Enterprise plan',
+    'enterprise.trial_ended': 'Your 3-day free trial has ended. Subscribe to the Enterprise plan to keep using these features.',
+    'enterprise.trial_badge': 'Enterprise Free Trial',
+    'enterprise.trial_days_left': 'day(s) remaining',
+    'enterprise.subscribe_now': 'Subscribe now',
 
     // Features Page
     'features.heroBadge': 'Invoicing SaaS • Smart Management',
