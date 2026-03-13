@@ -63,6 +63,7 @@ export default function Workers() {
   const [form, setForm] = useState(emptyForm);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
+  const [inviting, setInviting] = useState<string | null>(null);
 
   const fetchWorkers = useCallback(async () => {
     const { data, error } = await (supabase as any).from('workers').select('*').order('created_at', { ascending: false });
