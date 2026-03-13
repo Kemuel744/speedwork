@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useLanguage } from '@/contexts/LanguageContext';
 import DocumentPreview from '@/components/document/DocumentPreview';
 import { DocumentData } from '@/types';
 import { Printer, Download } from 'lucide-react';
@@ -49,6 +50,7 @@ function rowToDoc(row: any): DocumentData {
 
 export default function SharedDocument() {
   const { token } = useParams<{ token: string }>();
+  const { t } = useLanguage();
   const [doc, setDoc] = useState<DocumentData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -80,7 +82,7 @@ export default function SharedDocument() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-gray-500">Chargement du document...</p>
+        <p className="text-gray-500">{t('shared.loading')}</p>
       </div>
     );
   }
@@ -89,8 +91,8 @@ export default function SharedDocument() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Document introuvable</h1>
-          <p className="text-gray-500">Ce lien de partage est invalide ou a expiré.</p>
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">{t('shared.notFound')}</h1>
+          <p className="text-gray-500">{t('shared.invalidLink')}</p>
         </div>
       </div>
     );
@@ -101,14 +103,14 @@ export default function SharedDocument() {
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6 print:hidden">
           <h1 className="text-base sm:text-lg font-semibold text-gray-800">
-            {doc.type === 'invoice' ? 'Facture' : 'Devis'} {doc.number}
+            {doc.type === 'invoice' ? t('docDetail.invoice') : t('docDetail.quote')} {doc.number}
           </h1>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={handlePrint}>
-              <Printer className="w-4 h-4 mr-2" />Imprimer
+              <Printer className="w-4 h-4 mr-2" />{t('common.print')}
             </Button>
             <Button size="sm" onClick={handlePrint}>
-              <Download className="w-4 h-4 mr-2" />Télécharger PDF
+              <Download className="w-4 h-4 mr-2" />{t('common.download')}
             </Button>
           </div>
         </div>

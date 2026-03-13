@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
   LayoutDashboard, FileText, User, Settings,
   LogOut, ChevronLeft, Users, CreditCard, BarChart3, Bell, PieChart, MessageCircle, BookOpen, Newspaper,
@@ -10,99 +11,99 @@ import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo.webp';
 
 interface NavItem {
-  label: string;
+  labelKey: string;
   to: string;
   icon: React.ComponentType<{ className?: string }>;
 }
 
 interface NavSection {
-  title: string;
+  titleKey: string;
   items: NavItem[];
 }
 
 const adminSections: NavSection[] = [
   {
-    title: 'Principal',
+    titleKey: 'nav.principal',
     items: [
-      { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
-      { label: 'Documents', to: '/documents', icon: FileText },
-      { label: 'Clients', to: '/clients', icon: Users },
+      { labelKey: 'nav.dashboard', to: '/dashboard', icon: LayoutDashboard },
+      { labelKey: 'nav.documents', to: '/documents', icon: FileText },
+      { labelKey: 'nav.clients', to: '/clients', icon: Users },
     ],
   },
   {
-    title: 'Terrain',
+    titleKey: 'nav.terrain',
     items: [
-      { label: 'Travailleurs', to: '/workers', icon: Users },
-      { label: 'Équipes', to: '/teams', icon: HardHat },
-      { label: 'Missions', to: '/missions', icon: Briefcase },
-      { label: 'Carte missions', to: '/missions-map', icon: MapPin },
-      { label: 'Tâches & Preuves', to: '/work-tasks', icon: ClipboardCheck },
-      { label: 'Pointage', to: '/attendance', icon: Timer },
+      { labelKey: 'nav.workers', to: '/workers', icon: Users },
+      { labelKey: 'nav.teams', to: '/teams', icon: HardHat },
+      { labelKey: 'nav.missions', to: '/missions', icon: Briefcase },
+      { labelKey: 'nav.missionsMap', to: '/missions-map', icon: MapPin },
+      { labelKey: 'nav.tasksProofs', to: '/work-tasks', icon: ClipboardCheck },
+      { labelKey: 'nav.attendance', to: '/attendance', icon: Timer },
     ],
   },
   {
-    title: 'Performance',
+    titleKey: 'nav.performance',
     items: [
-      { label: 'Analytics', to: '/analytics', icon: BarChart3 },
-      { label: 'Productivité', to: '/productivity', icon: TrendingUp },
-      { label: 'Fiabilité', to: '/reliability', icon: Shield },
-      { label: 'Salaires', to: '/payroll', icon: Calculator },
-      { label: 'Bilan Annuel', to: '/annual-review', icon: PieChart },
+      { labelKey: 'nav.analytics', to: '/analytics', icon: BarChart3 },
+      { labelKey: 'nav.productivity', to: '/productivity', icon: TrendingUp },
+      { labelKey: 'nav.reliability', to: '/reliability', icon: Shield },
+      { labelKey: 'nav.payroll', to: '/payroll', icon: Calculator },
+      { labelKey: 'nav.annualReview', to: '/annual-review', icon: PieChart },
     ],
   },
   {
-    title: 'Communication',
+    titleKey: 'nav.communication',
     items: [
-      { label: 'Messagerie', to: '/messages', icon: MessageCircle },
-      { label: 'Relances', to: '/reminders', icon: Bell },
-      { label: 'Rapports', to: '/reports', icon: PieChart },
+      { labelKey: 'nav.messages', to: '/messages', icon: MessageCircle },
+      { labelKey: 'nav.reminders', to: '/reminders', icon: Bell },
+      { labelKey: 'nav.reports', to: '/reports', icon: PieChart },
     ],
   },
   {
-    title: 'Administration',
+    titleKey: 'nav.administration',
     items: [
-      { label: 'Gestion Clients', to: '/admin/clients', icon: Users },
-      { label: 'Abonnements', to: '/admin/subscriptions', icon: CreditCard },
-      { label: 'Blog', to: '/admin/blog', icon: Newspaper },
+      { labelKey: 'nav.clientMgmt', to: '/admin/clients', icon: Users },
+      { labelKey: 'nav.subscriptions', to: '/admin/subscriptions', icon: CreditCard },
+      { labelKey: 'nav.blog', to: '/admin/blog', icon: Newspaper },
     ],
   },
 ];
 
 const clientSections: NavSection[] = [
   {
-    title: 'Principal',
+    titleKey: 'nav.principal',
     items: [
-      { label: 'Mon espace', to: '/client', icon: LayoutDashboard },
-      { label: 'Mon Dashboard', to: '/worker-dashboard', icon: HardHat },
-      { label: 'Documents', to: '/documents', icon: FileText },
+      { labelKey: 'nav.mySpace', to: '/client', icon: LayoutDashboard },
+      { labelKey: 'nav.myDashboard', to: '/worker-dashboard', icon: HardHat },
+      { labelKey: 'nav.documents', to: '/documents', icon: FileText },
     ],
   },
   {
-    title: 'Terrain',
+    titleKey: 'nav.terrain',
     items: [
-      { label: 'Travailleurs', to: '/workers', icon: Users },
-      { label: 'Équipes', to: '/teams', icon: HardHat },
-      { label: 'Missions', to: '/missions', icon: Briefcase },
-      { label: 'Tâches & Preuves', to: '/work-tasks', icon: ClipboardCheck },
-      { label: 'Pointage', to: '/attendance', icon: Timer },
-      { label: 'Salaires', to: '/payroll', icon: Calculator },
+      { labelKey: 'nav.workers', to: '/workers', icon: Users },
+      { labelKey: 'nav.teams', to: '/teams', icon: HardHat },
+      { labelKey: 'nav.missions', to: '/missions', icon: Briefcase },
+      { labelKey: 'nav.tasksProofs', to: '/work-tasks', icon: ClipboardCheck },
+      { labelKey: 'nav.attendance', to: '/attendance', icon: Timer },
+      { labelKey: 'nav.payroll', to: '/payroll', icon: Calculator },
     ],
   },
   {
-    title: 'Communication',
+    titleKey: 'nav.communication',
     items: [
-      { label: 'Messagerie', to: '/messages', icon: MessageCircle },
-      { label: 'Mon Équipe', to: '/team', icon: Users },
-      { label: 'Rapports', to: '/reports', icon: PieChart },
-      { label: 'Bilan Annuel', to: '/annual-review', icon: BarChart3 },
+      { labelKey: 'nav.messages', to: '/messages', icon: MessageCircle },
+      { labelKey: 'nav.myTeam', to: '/team', icon: Users },
+      { labelKey: 'nav.reports', to: '/reports', icon: PieChart },
+      { labelKey: 'nav.annualReview', to: '/annual-review', icon: BarChart3 },
     ],
   },
 ];
 
-const bottomNav: NavItem[] = [
-  { label: 'Profil', to: '/profile', icon: User },
-  { label: 'Paramètres', to: '/settings', icon: Settings },
-  { label: 'Guide', to: '/guide', icon: BookOpen },
+const bottomNavKeys: NavItem[] = [
+  { labelKey: 'nav.profile', to: '/profile', icon: User },
+  { labelKey: 'nav.settings', to: '/settings', icon: Settings },
+  { labelKey: 'nav.guide', to: '/guide', icon: BookOpen },
 ];
 
 interface AppSidebarProps {
@@ -112,6 +113,7 @@ interface AppSidebarProps {
 
 export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const location = useLocation();
   const sections = user?.role === 'admin' ? adminSections : clientSections;
 
@@ -122,7 +124,6 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
 
   return (
     <>
-      {/* Mobile overlay */}
       {!collapsed && (
         <div className="fixed inset-0 bg-foreground/20 backdrop-blur-sm z-40 lg:hidden" onClick={onToggle} />
       )}
@@ -132,20 +133,18 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
           collapsed ? "w-0 lg:w-16 overflow-hidden lg:overflow-visible" : "w-64"
         )}
       >
-        {/* Logo */}
         <div className="flex items-center gap-3 px-4 h-16 border-b border-sidebar-border shrink-0">
           <img src={speedworkLogo} alt="SpeedWork" className="h-9 w-auto shrink-0" />
           {!collapsed && <span className="font-bold text-lg tracking-tight text-sidebar-accent-foreground">SpeedWork</span>}
         </div>
 
-        {/* Nav */}
         <nav className="flex-1 py-3 px-2 space-y-1 overflow-y-auto">
           {sections.map((section, sIdx) => (
-            <div key={section.title}>
+            <div key={section.titleKey}>
               {sIdx > 0 && <div className="my-2 mx-3 border-t border-sidebar-border" />}
               {!collapsed && (
                 <p className="px-3 mb-1.5 mt-1 text-[10px] font-semibold uppercase tracking-widest text-sidebar-foreground/40">
-                  {section.title}
+                  {t(section.titleKey)}
                 </p>
               )}
               {section.items.map(item => (
@@ -153,7 +152,6 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
                   key={item.to}
                   to={item.to}
                   onClick={() => {
-                    // Close sidebar on mobile after navigation
                     if (window.innerWidth < 1024) onToggle();
                   }}
                   className={cn(
@@ -164,16 +162,15 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
                   )}
                 >
                   <item.icon className="w-4 h-4 shrink-0" />
-                  {!collapsed && <span>{item.label}</span>}
+                  {!collapsed && <span>{t(item.labelKey)}</span>}
                 </Link>
               ))}
             </div>
           ))}
         </nav>
 
-        {/* Bottom */}
         <div className="border-t border-sidebar-border px-2 py-3 space-y-1">
-          {bottomNav.map(item => (
+          {bottomNavKeys.map(item => (
             <Link
               key={item.to}
               to={item.to}
@@ -185,7 +182,7 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
               )}
             >
               <item.icon className="w-4 h-4 shrink-0" />
-              {!collapsed && <span>{item.label}</span>}
+              {!collapsed && <span>{t(item.labelKey)}</span>}
             </Link>
           ))}
           <button
@@ -193,11 +190,10 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-sidebar-foreground hover:bg-destructive/20 hover:text-destructive transition-colors w-full"
           >
             <LogOut className="w-4 h-4 shrink-0" />
-            {!collapsed && <span>Déconnexion</span>}
+            {!collapsed && <span>{t('nav.logout')}</span>}
           </button>
         </div>
 
-        {/* Collapse button - desktop only */}
         <button
           onClick={onToggle}
           className="hidden lg:flex absolute -right-3 top-20 w-6 h-6 rounded-full bg-card border border-border items-center justify-center shadow-sm hover:bg-secondary transition-colors"

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDocuments } from '@/contexts/DocumentsContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Link } from 'react-router-dom';
 import { FileText, FileCheck, DollarSign, AlertCircle, Plus, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -25,16 +26,10 @@ function StatCard({ icon: Icon, label, value, sub, color }: { icon: any; label: 
   );
 }
 
-const statusMap: Record<string, { label: string; class: string }> = {
-  paid: { label: 'Payée', class: 'bg-success/10 text-success border-success/20' },
-  unpaid: { label: 'Impayée', class: 'bg-destructive/10 text-destructive border-destructive/20' },
-  pending: { label: 'En attente', class: 'bg-warning/10 text-warning border-warning/20' },
-  draft: { label: 'Brouillon', class: 'bg-muted text-muted-foreground border-border' },
-};
-
 export default function Dashboard() {
   const { documents } = useDocuments();
   const { displayAmount, convertAmount, displayCurrency } = useCurrency();
+  const { t } = useLanguage();
   const invoices = documents.filter(d => d.type === 'invoice');
   const quotes = documents.filter(d => d.type === 'quote');
   const totalRevenue = invoices.filter(d => d.status === 'paid').reduce((s, d) => s + convertAmount(d.total, d.company.currency || 'XOF'), 0);
@@ -42,39 +37,44 @@ export default function Dashboard() {
   const unpaidTotal = unpaid.reduce((s, d) => s + convertAmount(d.total, d.company.currency || 'XOF'), 0);
   const recent = documents.slice(0, 5);
 
+  const statusMap: Record<string, { label: string; class: string }> = {
+    paid: { label: t('status.paid'), class: 'bg-success/10 text-success border-success/20' },
+    unpaid: { label: t('status.unpaid'), class: 'bg-destructive/10 text-destructive border-destructive/20' },
+    pending: { label: t('status.pending'), class: 'bg-warning/10 text-warning border-warning/20' },
+    draft: { label: t('status.draft'), class: 'bg-muted text-muted-foreground border-border' },
+  };
+
   return (
     <div className="page-container">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
-          <h1 className="section-title">Dashboard</h1>
-          <p className="text-muted-foreground text-sm mt-1">Vue d'ensemble de votre activité</p>
+          <h1 className="section-title">{t('dashboard.title')}</h1>
+          <p className="text-muted-foreground text-sm mt-1">{t('dashboard.overview')}</p>
         </div>
         <div className="flex gap-3">
           <Button asChild>
-            <Link to="/create/invoice"><Plus className="w-4 h-4 mr-2" />Facture</Link>
+            <Link to="/create/invoice"><Plus className="w-4 h-4 mr-2" />{t('dashboard.newInvoice')}</Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link to="/create/quote"><Plus className="w-4 h-4 mr-2" />Devis</Link>
+            <Link to="/create/quote"><Plus className="w-4 h-4 mr-2" />{t('dashboard.newQuote')}</Link>
           </Button>
         </div>
       </div>
 
       <TrialBanner />
 
-      {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard icon={FileText} label="Factures" value={String(invoices.length)} sub={`${unpaid.length} impayée(s)`} color="bg-primary/10 text-primary" />
-        <StatCard icon={FileCheck} label="Devis" value={String(quotes.length)} color="bg-accent/10 text-accent" />
-        <StatCard icon={DollarSign} label="Revenus" value={displayAmount(totalRevenue, displayCurrency)} sub="Total encaissé" color="bg-success/10 text-success" />
-        <StatCard icon={AlertCircle} label="Impayées" value={displayAmount(unpaidTotal, displayCurrency)} sub={`${unpaid.length} facture(s)`} color="bg-destructive/10 text-destructive" />
+        <StatCard icon={FileText} label={t('dashboard.invoices')} value={String(invoices.length)} sub={t('dashboard.unpaidCount').replace('{count}', String(unpaid.length))} color="bg-primary/10 text-primary" />
+        <StatCard icon={FileCheck} label={t('dashboard.quotes')} value={String(quotes.length)} color="bg-accent/10 text-accent" />
+        <StatCard icon={DollarSign} label={t('dashboard.revenue')} value={displayAmount(totalRevenue, displayCurrency)} sub={t('dashboard.totalCollected')} color="bg-success/10 text-success" />
+        <StatCard icon={AlertCircle} label={t('dashboard.unpaid')} value={displayAmount(unpaidTotal, displayCurrency)} sub={t('dashboard.invoiceCount').replace('{count}', String(unpaid.length))} color="bg-destructive/10 text-destructive" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Chart */}
         <div className="lg:col-span-2 stat-card">
           <div className="flex items-center gap-2 mb-6">
             <TrendingUp className="w-4 h-4 text-muted-foreground" />
-            <h3 className="font-semibold text-foreground">Revenus mensuels</h3>
+            <h3 className="font-semibold text-foreground">{t('dashboard.monthlyRevenue')}</h3>
           </div>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={monthlyRevenue}>
@@ -88,16 +88,15 @@ export default function Dashboard() {
                   borderRadius: '8px',
                   fontSize: '13px',
                 }}
-                formatter={(value: number) => [displayAmount(value, displayCurrency), 'Revenus']}
+                formatter={(value: number) => [displayAmount(value, displayCurrency), t('dashboard.revenue')]}
               />
               <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Recent documents */}
         <div className="stat-card">
-          <h3 className="font-semibold text-foreground mb-4">Derniers documents</h3>
+          <h3 className="font-semibold text-foreground mb-4">{t('dashboard.recentDocs')}</h3>
           <div className="space-y-3">
             {recent.map(doc => {
               const st = statusMap[doc.status];
@@ -118,7 +117,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Currency Converter */}
       <div className="mt-6">
         <CurrencyConverter />
       </div>
