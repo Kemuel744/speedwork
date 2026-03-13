@@ -42,7 +42,7 @@ export default function SocialProofSection() {
               Ils pilotent leur entreprise avec SpeedWork
             </h2>
           </ScrollReveal>
-          <StaggerContainer className="grid sm:grid-cols-3 gap-6">
+          <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {testimonials.map((t) => (
               <StaggerItem key={t.name}>
                 <div className="rounded-2xl border border-border/60 bg-card p-6 h-full">

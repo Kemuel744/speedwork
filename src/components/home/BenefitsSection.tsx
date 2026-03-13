@@ -19,7 +19,7 @@ export default function BenefitsSection() {
             Ce que vous gagnez avec SpeedWork
           </h2>
         </ScrollReveal>
-        <StaggerContainer className="mt-12 grid grid-cols-2 sm:grid-cols-3 gap-6">
+        <StaggerContainer className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {benefits.map((b) => (
             <StaggerItem key={b.title}>
               <div className="flex flex-col items-center gap-3 rounded-2xl border border-border/60 bg-card p-6 h-full">

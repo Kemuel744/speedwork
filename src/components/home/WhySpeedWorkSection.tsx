@@ -19,7 +19,7 @@ export default function WhySpeedWorkSection() {
   return (
     <section className="py-20 sm:py-28">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
           <ScrollReveal direction="left">
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
               Passez de la gestion manuelle à la{' '}
@@ -50,7 +50,7 @@ export default function WhySpeedWorkSection() {
             <img
               src={promoComparison}
               alt="Digitalisation des PME – Avant/après avec SpeedWork"
-              className="w-full rounded-2xl shadow-xl aspect-[2/3]"
+              className="w-full rounded-2xl shadow-xl object-cover aspect-[4/5] md:aspect-[3/4] lg:aspect-[2/3]"
               width={1024}
               height={1536}
               loading="lazy"

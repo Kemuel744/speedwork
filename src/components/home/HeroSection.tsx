@@ -16,8 +16,8 @@ export default function HeroSection() {
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-accent/8" />
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 relative">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28 relative">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
@@ -69,7 +69,7 @@ export default function HeroSection() {
             </p>
           </motion.div>
           <motion.div
-            className="relative hidden lg:block"
+            className="relative hidden md:block"
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
@@ -77,7 +77,7 @@ export default function HeroSection() {
             <img
               src={promoHero}
               alt="SpeedWork – Plateforme de gestion d'entreprise tout-en-un pour PME et freelances en Afrique"
-              className="w-full rounded-2xl shadow-2xl aspect-[2/3]"
+              className="w-full rounded-2xl shadow-2xl object-cover aspect-[4/5] md:aspect-[3/4] lg:aspect-[2/3]"
               width={560}
               height={840}
               fetchPriority="high"

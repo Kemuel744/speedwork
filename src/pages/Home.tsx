@@ -77,7 +77,7 @@ export default function Home() {
         <ScrollReveal>
           <section className="py-20 bg-primary text-primary-foreground">
             <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-              <h2 className="text-3xl sm:text-4xl font-bold">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
                 Prêt à piloter votre entreprise efficacement ?
               </h2>
               <p className="mt-4 text-primary-foreground/80 text-lg">
@@ -90,7 +90,7 @@ export default function Home() {
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" asChild className="h-13 px-8 text-base border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+                <Button size="lg" variant="outline" asChild className="h-13 px-6 sm:px-8 text-base border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
                   <Link to="/login">Se connecter</Link>
                 </Button>
               </div>

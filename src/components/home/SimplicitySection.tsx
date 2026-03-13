@@ -21,7 +21,7 @@ export default function SimplicitySection() {
             par n'importe qui, dès le premier jour.
           </p>
         </ScrollReveal>
-        <StaggerContainer className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6">
+        <StaggerContainer className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {points.map((p) => (
             <StaggerItem key={p.text}>
               <div className="rounded-2xl border border-border/60 bg-card p-6 flex flex-col items-center gap-4 h-full">
