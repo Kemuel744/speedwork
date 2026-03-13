@@ -1,7 +1,7 @@
 import { WifiOff, Wifi, Download, RefreshCw, X } from "lucide-react";
 import { usePWA } from "@/hooks/usePWA";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, forwardRef } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 export function OfflineBanner() {
