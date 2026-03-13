@@ -485,6 +485,19 @@ export default function Guide() {
         </div>
       </div>
 
+      {/* Learning Section – interactive, hidden from print */}
+      <div className="no-print" style={{ maxWidth: '820px', margin: '0 auto', padding: '40px 20px' }}>
+        <div className="border-t border-border pt-8">
+          <Suspense fallback={
+            <div className="flex justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+            </div>
+          }>
+            <LearningSection />
+          </Suspense>
+        </div>
+      </div>
+
       {/* AdSense - hidden on print */}
       <div className="no-print" style={{ maxWidth: '820px', margin: '0 auto', padding: '0 60px' }}>
         <AdSenseSlot slot="guide-bottom" />
