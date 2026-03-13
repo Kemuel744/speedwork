@@ -22,7 +22,26 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   React.useEffect(() => {
-    if (user) navigate(user.role === 'admin' ? '/dashboard' : '/client', { replace: true });
+    if (!user) return;
+    if (user.role === 'admin') {
+      navigate('/dashboard', { replace: true });
+      return;
+    }
+    // Check if this is a worker needing onboarding
+    (async () => {
+      const { data: workerData } = await (supabase as any)
+        .from('workers')
+        .select('id, onboarding_completed')
+        .eq('linked_user_id', user.id)
+        .single();
+      if (workerData && !workerData.onboarding_completed) {
+        navigate('/worker-onboarding', { replace: true });
+      } else if (workerData) {
+        navigate('/worker-dashboard', { replace: true });
+      } else {
+        navigate('/client', { replace: true });
+      }
+    })();
   }, [user, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
