@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, FileText, Users, MapPin, BarChart3, Shield, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
-import promoHero from '@/assets/promo-hero.webp';
+import promoHero from '@/assets/promo-hero-small.webp';
 
 const badges = [
   { icon: FileText, label: 'Facturation' },
