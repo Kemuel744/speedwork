@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 import SEO from '@/components/SEO';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
@@ -13,6 +14,7 @@ import SimplicitySection from '@/components/home/SimplicitySection';
 import BenefitsSection from '@/components/home/BenefitsSection';
 import PositioningSection from '@/components/home/PositioningSection';
 import WhySpeedWorkSection from '@/components/home/WhySpeedWorkSection';
+import ScrollReveal from '@/components/home/ScrollReveal';
 
 export default function Home() {
   return (
@@ -65,30 +67,32 @@ export default function Home() {
       <PositioningSection />
 
       {/* CTA Final */}
-      <section className="py-20 bg-primary text-primary-foreground">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold">
-            Prêt à piloter votre entreprise efficacement ?
-          </h2>
-          <p className="mt-4 text-primary-foreground/80 text-lg">
-            Rejoignez +120 entreprises qui gèrent tout avec SpeedWork.
-          </p>
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" variant="secondary" asChild className="h-13 px-8 text-base font-semibold">
-              <Link to="/tarifs">
-                Créer mon compte gratuitement
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild className="h-13 px-8 text-base border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
-              <Link to="/login">Se connecter</Link>
-            </Button>
+      <ScrollReveal>
+        <section className="py-20 bg-primary text-primary-foreground">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+            <h2 className="text-3xl sm:text-4xl font-bold">
+              Prêt à piloter votre entreprise efficacement ?
+            </h2>
+            <p className="mt-4 text-primary-foreground/80 text-lg">
+              Rejoignez +120 entreprises qui gèrent tout avec SpeedWork.
+            </p>
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button size="lg" variant="secondary" asChild className="h-13 px-8 text-base font-semibold">
+                <Link to="/tarifs">
+                  Créer mon compte gratuitement
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild className="h-13 px-8 text-base border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+                <Link to="/login">Se connecter</Link>
+              </Button>
+            </div>
+            <p className="mt-4 text-sm text-primary-foreground/60">
+              3 jours gratuits • Sans engagement • Aucune carte requise
+            </p>
           </div>
-          <p className="mt-4 text-sm text-primary-foreground/60">
-            3 jours gratuits • Sans engagement • Aucune carte requise
-          </p>
-        </div>
-      </section>
+        </section>
+      </ScrollReveal>
 
       <PublicFooter />
     </div>

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Check } from 'lucide-react';
+import ScrollReveal from './ScrollReveal';
 import promoComparison from '@/assets/promo-comparison.webp';
 
 const benefits = [
@@ -19,7 +20,7 @@ export default function WhySpeedWorkSection() {
     <section className="py-20 sm:py-28">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div>
+          <ScrollReveal direction="left">
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
               Passez de la gestion manuelle à la{' '}
               <span className="text-primary">digitalisation complète</span>
@@ -44,8 +45,8 @@ export default function WhySpeedWorkSection() {
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
             </Button>
-          </div>
-          <div>
+          </ScrollReveal>
+          <ScrollReveal direction="right" delay={0.15}>
             <img
               src={promoComparison}
               alt="Digitalisation des PME – Avant/après avec SpeedWork"
@@ -54,7 +55,7 @@ export default function WhySpeedWorkSection() {
               height={1536}
               loading="lazy"
             />
-          </div>
+          </ScrollReveal>
         </div>
       </div>
     </section>

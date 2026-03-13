@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, FileText, Users, MapPin, BarChart3, Shield, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
 import promoHero from '@/assets/promo-hero.webp';
 
 const badges = [
@@ -17,7 +18,11 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-accent/8" />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 relative">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div>
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+          >
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-1.5 text-sm font-medium mb-6">
               <Zap className="w-4 h-4" />
               Plateforme tout-en-un pour entreprises
@@ -34,11 +39,17 @@ export default function HeroSection() {
 
             {/* Feature badges */}
             <div className="mt-6 flex flex-wrap gap-2">
-              {badges.map((b) => (
-                <span key={b.label} className="inline-flex items-center gap-1.5 bg-secondary text-foreground rounded-full px-3 py-1.5 text-xs font-medium border border-border/50">
+              {badges.map((b, i) => (
+                <motion.span
+                  key={b.label}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.5 + i * 0.08, duration: 0.3 }}
+                  className="inline-flex items-center gap-1.5 bg-secondary text-foreground rounded-full px-3 py-1.5 text-xs font-medium border border-border/50"
+                >
                   <b.icon className="w-3.5 h-3.5 text-primary" />
                   {b.label}
-                </span>
+                </motion.span>
               ))}
             </div>
 
@@ -56,8 +67,13 @@ export default function HeroSection() {
             <p className="mt-4 text-sm text-muted-foreground">
               ✓ Essai gratuit 3 jours · ✓ Aucune carte requise · ✓ Franc CFA natif
             </p>
-          </div>
-          <div className="relative hidden lg:block">
+          </motion.div>
+          <motion.div
+            className="relative hidden lg:block"
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+          >
             <img
               src={promoHero}
               alt="SpeedWork – Plateforme de gestion d'entreprise tout-en-un pour PME et freelances en Afrique"
@@ -66,7 +82,7 @@ export default function HeroSection() {
               height={1536}
               fetchPriority="high"
             />
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
