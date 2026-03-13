@@ -138,6 +138,7 @@ export default function Workers() {
       first_name: w.first_name,
       last_name: w.last_name,
       phone: w.phone,
+      email: w.email || '',
       position: w.position,
       base_salary: w.base_salary,
       status: w.status,
@@ -146,6 +147,31 @@ export default function Workers() {
     });
     setPhotoFile(null);
     setOpen(true);
+  };
+
+  const handleInvite = async (w: Worker) => {
+    if (!w.email) {
+      toast({ title: 'Email requis', description: 'Ajoutez l\'email du travailleur avant de l\'inviter.', variant: 'destructive' });
+      return;
+    }
+    if (w.linked_user_id) {
+      toast({ title: 'Déjà lié', description: 'Ce travailleur a déjà un compte associé.' });
+      return;
+    }
+    setInviting(w.id);
+    try {
+      const { data, error } = await supabase.functions.invoke('invite-worker', {
+        body: { worker_id: w.id, email: w.email },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast({ title: 'Invitation envoyée ✓', description: data?.message || `Email envoyé à ${w.email}` });
+      fetchWorkers();
+    } catch (err: any) {
+      toast({ title: 'Erreur', description: err.message, variant: 'destructive' });
+    } finally {
+      setInviting(null);
+    }
   };
 
   const handleDelete = async (id: string) => {
