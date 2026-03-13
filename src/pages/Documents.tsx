@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { useDocuments } from '@/contexts/DocumentsContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
-import { useSearchParams, Link, useNavigate } from 'react-router-dom';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useSearchParams, Link } from 'react-router-dom';
 import { Search, Plus, FileText, FileCheck, Trash2, Copy, ArrowUpDown, Mail, MessageCircle } from 'lucide-react';
 import { sendDocumentByEmail, sendDocumentByWhatsApp } from '@/lib/emailHelper';
 import { getOrCreateShareUrl } from '@/lib/shareHelper';
@@ -15,22 +16,22 @@ import {
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
 
-const statusMap: Record<string, { label: string; class: string }> = {
-  paid: { label: 'Payée', class: 'bg-success/10 text-success border-success/20' },
-  unpaid: { label: 'Impayée', class: 'bg-destructive/10 text-destructive border-destructive/20' },
-  pending: { label: 'En attente', class: 'bg-warning/10 text-warning border-warning/20' },
-  draft: { label: 'Brouillon', class: 'bg-muted text-muted-foreground border-border' },
-};
-
 export default function Documents() {
   const { documents, deleteDocument, addDocument } = useDocuments();
   const { displayAmount } = useCurrency();
+  const { t } = useLanguage();
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const typeFilter = searchParams.get('type') as 'invoice' | 'quote' | null;
   const [search, setSearch] = useState('');
   const [sortAsc, setSortAsc] = useState(false);
   const [clientFilter, setClientFilter] = useState('');
+
+  const statusMap: Record<string, { label: string; class: string }> = {
+    paid: { label: t('status.paid'), class: 'bg-success/10 text-success border-success/20' },
+    unpaid: { label: t('status.unpaid'), class: 'bg-destructive/10 text-destructive border-destructive/20' },
+    pending: { label: t('status.pending'), class: 'bg-warning/10 text-warning border-warning/20' },
+    draft: { label: t('status.draft'), class: 'bg-muted text-muted-foreground border-border' },
+  };
 
   const clientNames = useMemo(() => {
     const names = new Set(documents.map(d => d.client.name));
@@ -60,22 +61,22 @@ export default function Documents() {
     };
     try {
       await addDocument(newDoc);
-      toast.success('Document dupliqué');
+      toast.success(t('documents.duplicated'));
     } catch {
-      toast.error('Erreur lors de la duplication');
+      toast.error(t('documents.linkError'));
     }
   };
 
   const handleDelete = async (id: string) => {
     try {
       await deleteDocument(id);
-      toast.success('Document supprimé');
+      toast.success(t('documents.deleted'));
     } catch {
-      toast.error('Erreur lors de la suppression');
+      toast.error(t('documents.linkError'));
     }
   };
 
-  const title = typeFilter === 'invoice' ? 'Factures' : typeFilter === 'quote' ? 'Devis' : 'Tous les documents';
+  const title = typeFilter === 'invoice' ? t('documents.invoicesTitle') : typeFilter === 'quote' ? t('documents.quotesTitle') : t('documents.title');
 
   return (
     <div className="page-container">
@@ -84,19 +85,19 @@ export default function Documents() {
         <div className="flex gap-2">
           {typeFilter === 'quote' ? (
             <Button asChild>
-              <Link to="/create/quote"><Plus className="w-4 h-4 mr-2" />Nouveau devis</Link>
+              <Link to="/create/quote"><Plus className="w-4 h-4 mr-2" />{t('documents.newQuote')}</Link>
             </Button>
           ) : typeFilter === 'invoice' ? (
             <Button asChild>
-              <Link to="/create/invoice"><Plus className="w-4 h-4 mr-2" />Nouvelle facture</Link>
+              <Link to="/create/invoice"><Plus className="w-4 h-4 mr-2" />{t('documents.newInvoice')}</Link>
             </Button>
           ) : (
             <>
               <Button asChild>
-                <Link to="/create/invoice"><FileText className="w-4 h-4 mr-2" />Nouvelle facture</Link>
+                <Link to="/create/invoice"><FileText className="w-4 h-4 mr-2" />{t('documents.newInvoice')}</Link>
               </Button>
               <Button asChild variant="outline">
-                <Link to="/create/quote"><FileCheck className="w-4 h-4 mr-2" />Nouveau devis</Link>
+                <Link to="/create/quote"><FileCheck className="w-4 h-4 mr-2" />{t('documents.newQuote')}</Link>
               </Button>
             </>
           )}
@@ -108,7 +109,7 @@ export default function Documents() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Rechercher par nom ou numéro..."
+              placeholder={t('documents.searchPlaceholder')}
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="pl-9"
@@ -116,12 +117,12 @@ export default function Documents() {
           </div>
           <Button variant="outline" size="sm" onClick={() => setSortAsc(!sortAsc)}>
             <ArrowUpDown className="w-4 h-4 mr-2" />
-            {sortAsc ? 'Plus ancien' : 'Plus récent'}
+            {sortAsc ? t('documents.oldest') : t('documents.newest')}
           </Button>
           <Select value={clientFilter} onValueChange={v => setClientFilter(v === 'all' ? '' : v)}>
-            <SelectTrigger className="w-full sm:w-[180px]"><SelectValue placeholder="Tous les clients" /></SelectTrigger>
+            <SelectTrigger className="w-full sm:w-[180px]"><SelectValue placeholder={t('documents.allClients')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Tous les clients</SelectItem>
+              <SelectItem value="all">{t('documents.allClients')}</SelectItem>
               {clientNames.map(name => (
                 <SelectItem key={name} value={name}>{name}</SelectItem>
               ))}
@@ -132,18 +133,18 @@ export default function Documents() {
 
       <div className="stat-card overflow-hidden">
         {filtered.length === 0 ? (
-          <p className="text-center py-8 text-muted-foreground">Aucun document trouvé</p>
+          <p className="text-center py-8 text-muted-foreground">{t('documents.noDocuments')}</p>
         ) : (
           <div className="overflow-x-auto -mx-4 sm:mx-0">
             <table className="w-full min-w-[600px]">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Numéro</th>
-                  <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Client</th>
-                  <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">Date</th>
-                  <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Statut</th>
-                  <th className="text-right py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Total</th>
-                  <th className="text-right py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">{t('documents.number')}</th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden sm:table-cell">{t('documents.client')}</th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">{t('common.date')}</th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">{t('common.status')}</th>
+                  <th className="text-right py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">{t('common.total')}</th>
+                  <th className="text-right py-3 px-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">{t('common.actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -164,7 +165,7 @@ export default function Documents() {
                       <td className="py-3 px-4 text-sm font-semibold text-foreground text-right">{displayAmount(doc.total, doc.company.currency)}</td>
                       <td className="py-3 px-4 text-right">
                         <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="sm" title="Envoyer par email" onClick={async () => {
+                          <Button variant="ghost" size="sm" title={t('documents.sendEmail')} onClick={async () => {
                             try {
                               const shareUrl = await getOrCreateShareUrl(doc.id);
                               sendDocumentByEmail({
@@ -175,11 +176,11 @@ export default function Documents() {
                                 companyName: doc.company?.name || 'SpeedWork',
                                 shareUrl,
                               });
-                            } catch { toast.error('Erreur lors de la génération du lien'); }
+                            } catch { toast.error(t('documents.linkError')); }
                           }}>
                             <Mail className="w-3.5 h-3.5" />
                           </Button>
-                          <Button variant="ghost" size="sm" title="Envoyer par WhatsApp" onClick={async () => {
+                          <Button variant="ghost" size="sm" title={t('documents.sendWhatsApp')} onClick={async () => {
                             try {
                               const shareUrl = await getOrCreateShareUrl(doc.id);
                               sendDocumentByWhatsApp({
@@ -190,27 +191,27 @@ export default function Documents() {
                                 companyName: doc.company?.name || 'SpeedWork',
                                 shareUrl,
                               });
-                            } catch { toast.error('Erreur lors de la génération du lien'); }
+                            } catch { toast.error(t('documents.linkError')); }
                           }}>
-                            <MessageCircle className="w-3.5 h-3.5 text-green-600" />
+                            <MessageCircle className="w-3.5 h-3.5 text-success" />
                           </Button>
-                          <Button variant="ghost" size="sm" onClick={() => handleDuplicate(doc.id)} title="Dupliquer">
+                          <Button variant="ghost" size="sm" onClick={() => handleDuplicate(doc.id)} title={t('common.duplicate')}>
                             <Copy className="w-3.5 h-3.5" />
                           </Button>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
-                              <Button variant="ghost" size="sm" title="Supprimer">
+                              <Button variant="ghost" size="sm" title={t('common.delete')}>
                                 <Trash2 className="w-3.5 h-3.5 text-destructive" />
                               </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Supprimer ce document ?</AlertDialogTitle>
-                                <AlertDialogDescription>Cette action est irréversible.</AlertDialogDescription>
+                                <AlertDialogTitle>{t('documents.deleteTitle')}</AlertDialogTitle>
+                                <AlertDialogDescription>{t('documents.deleteDesc')}</AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel>Annuler</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => handleDelete(doc.id)}>Supprimer</AlertDialogAction>
+                                <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleDelete(doc.id)}>{t('common.delete')}</AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
                           </AlertDialog>

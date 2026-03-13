@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useDocuments } from '@/contexts/DocumentsContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Link } from 'react-router-dom';
 import { Users, FileText, FileCheck, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -21,6 +22,7 @@ interface ClientSummary {
 export default function ClientsPage() {
   const { documents } = useDocuments();
   const { displayAmount, convertAmount, displayCurrency } = useCurrency();
+  const { t } = useLanguage();
 
   const clients = useMemo(() => {
     const map = new Map<string, ClientSummary>();
@@ -59,15 +61,15 @@ export default function ClientsPage() {
     <div className="page-container">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="section-title">Clients</h1>
-          <p className="text-muted-foreground text-sm mt-1">{clients.length} client(s) au total</p>
+          <h1 className="section-title">{t('clients.title')}</h1>
+          <p className="text-muted-foreground text-sm mt-1">{t('clients.count').replace('{count}', String(clients.length))}</p>
         </div>
       </div>
 
       {clients.length === 0 ? (
         <div className="stat-card text-center py-12">
           <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground">Aucun client trouvé. Créez une facture ou un devis pour ajouter un client.</p>
+          <p className="text-muted-foreground">{t('clients.noClients')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -88,20 +90,20 @@ export default function ClientsPage() {
 
               <div className="flex items-center gap-3 mb-3">
                 <Badge variant="outline" className="text-xs">
-                  <FileText className="w-3 h-3 mr-1" />{client.invoiceCount} facture(s)
+                  <FileText className="w-3 h-3 mr-1" />{t('clients.invoiceCount').replace('{count}', String(client.invoiceCount))}
                 </Badge>
                 <Badge variant="outline" className="text-xs">
-                  <FileCheck className="w-3 h-3 mr-1" />{client.quoteCount} devis
+                  <FileCheck className="w-3 h-3 mr-1" />{t('clients.quoteCount').replace('{count}', String(client.quoteCount))}
                 </Badge>
               </div>
 
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div>
-                  <p className="text-muted-foreground">Total encaissé</p>
+                  <p className="text-muted-foreground">{t('clients.totalCollected')}</p>
                   <p className="font-semibold text-success">{displayAmount(client.totalPaid, displayCurrency)}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Total dû</p>
+                  <p className="text-muted-foreground">{t('clients.totalDue')}</p>
                   <p className="font-semibold text-destructive">{displayAmount(client.totalUnpaid, displayCurrency)}</p>
                 </div>
               </div>
