@@ -80,7 +80,7 @@ export default function HeroSection() {
               className="w-full rounded-2xl shadow-2xl aspect-[2/3]"
               width={560}
               height={840}
-              loading="lazy"
+              fetchPriority="high"
               decoding="async"
             />
           </motion.div>

@@ -56,8 +56,8 @@ export default function PublicNavbar() {
           <Button size="sm" variant="ghost" asChild>
             <Link to="/login">Connexion</Link>
           </Button>
-          <button className="p-2" onClick={() => setOpen(!open)}>
-            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          <button className="p-2" onClick={() => setOpen(!open)} aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'} aria-expanded={open}>
+            {open ? <X className="w-5 h-5" aria-hidden="true" /> : <Menu className="w-5 h-5" aria-hidden="true" />}
           </button>
         </div>
       </div>
