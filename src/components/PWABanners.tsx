@@ -104,4 +104,4 @@ export function UpdateAvailableBanner() {
       </button>
     </div>
   );
-});
+}
