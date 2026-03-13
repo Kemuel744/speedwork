@@ -1260,6 +1260,7 @@ export type Database = {
           base_salary: number
           contract_type: string
           created_at: string
+          email: string | null
           first_name: string
           hire_date: string
           id: string
@@ -1276,6 +1277,7 @@ export type Database = {
           base_salary?: number
           contract_type?: string
           created_at?: string
+          email?: string | null
           first_name: string
           hire_date?: string
           id?: string
@@ -1292,6 +1294,7 @@ export type Database = {
           base_salary?: number
           contract_type?: string
           created_at?: string
+          email?: string | null
           first_name?: string
           hire_date?: string
           id?: string
