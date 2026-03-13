@@ -367,13 +367,20 @@ export default function Workers() {
                       <TableCell className="hidden md:table-cell text-sm capitalize">{CONTRACT_TYPES.find(c => c.value === w.contract_type)?.label || w.contract_type}</TableCell>
                       <TableCell className="hidden md:table-cell text-sm font-medium">{Number(w.base_salary).toLocaleString('fr-FR')} F</TableCell>
                       <TableCell>
-                        <Badge
-                          variant={w.status === 'active' ? 'default' : 'secondary'}
-                          className="cursor-pointer"
-                          onClick={() => toggleStatus(w)}
-                        >
-                          {w.status === 'active' ? 'Actif' : 'Inactif'}
-                        </Badge>
+                        <div className="flex items-center gap-1.5">
+                          <Badge
+                            variant={w.status === 'active' ? 'default' : 'secondary'}
+                            className="cursor-pointer"
+                            onClick={() => toggleStatus(w)}
+                          >
+                            {w.status === 'active' ? 'Actif' : 'Inactif'}
+                          </Badge>
+                          {w.linked_user_id ? (
+                            <Badge variant="outline" className="text-[10px] text-success border-success/30">Lié</Badge>
+                          ) : w.email ? (
+                            <Badge variant="outline" className="text-[10px] text-warning border-warning/30">Non lié</Badge>
+                          ) : null}
+                        </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
