@@ -172,11 +172,21 @@ Deno.serve(async (req) => {
         return new Response(JSON.stringify({ error: 'Impossible de vous retirer vous-même' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
       }
 
+      // Verify the user is actually a member of THIS organization before deleting
+      const { count: memberCount } = await adminClient
+        .from('organization_members')
+        .select('*', { count: 'exact', head: true })
+        .eq('organization_id', org.id)
+        .eq('user_id', user_id)
+
+      if (!memberCount || memberCount === 0) {
+        return new Response(JSON.stringify({ error: 'Utilisateur non trouvé dans l\'organisation' }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      }
+
       await adminClient.from('organization_members').delete()
         .eq('organization_id', org.id)
         .eq('user_id', user_id)
 
-      // Optionally delete the user account
       await adminClient.auth.admin.deleteUser(user_id)
       await adminClient.from('profiles').delete().eq('user_id', user_id)
       await adminClient.from('user_roles').delete().eq('user_id', user_id)
