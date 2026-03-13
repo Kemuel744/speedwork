@@ -44,7 +44,7 @@ export function OfflineBanner() {
   );
 }
 
-export const InstallPWABanner = forwardRef<HTMLDivElement>(function InstallPWABanner(_props, ref) {
+export function InstallPWABanner() {
   const { canInstall, isInstalled, promptInstall } = usePWA();
   const [dismissed, setDismissed] = useState(false);
 
