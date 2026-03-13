@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Printer, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
-import speedworkLogo from '@/assets/logo.webp';
+import speedworkLogo from '@/assets/logo-small.webp';
 import mockupInvoice from '@/assets/mockup-invoice.png';
 import mockupQuote from '@/assets/mockup-quote.png';
 import mtnLogo from '@/assets/mtn-momo.png';
