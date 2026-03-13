@@ -90,7 +90,7 @@ export default function Home() {
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" asChild className="h-13 px-8 text-base border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+                <Button size="lg" variant="outline" asChild className="h-13 px-6 sm:px-8 text-base border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
                   <Link to="/login">Se connecter</Link>
                 </Button>
               </div>
