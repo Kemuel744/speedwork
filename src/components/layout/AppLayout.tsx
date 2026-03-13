@@ -34,6 +34,12 @@ export default function AppLayout() {
     return <Navigate to="/client" replace />;
   }
 
+  // Workers can only access specific routes
+  const workerAllowedPaths = ['/worker-dashboard', '/worker-onboarding', '/missions', '/work-tasks', '/messages', '/profile', '/settings', '/guide'];
+  if (user.isWorker && !workerAllowedPaths.some(p => location.pathname.startsWith(p))) {
+    return <Navigate to="/worker-dashboard" replace />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <AppSidebar collapsed={collapsed} onToggle={() => setCollapsed(c => !c)} />
