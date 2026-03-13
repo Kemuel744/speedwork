@@ -1,7 +1,7 @@
 import { WifiOff, Wifi, Download, RefreshCw, X } from "lucide-react";
 import { usePWA } from "@/hooks/usePWA";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, forwardRef } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 export function OfflineBanner() {
@@ -44,7 +44,7 @@ export function OfflineBanner() {
   );
 }
 
-export const InstallPWABanner = forwardRef<HTMLDivElement>(function InstallPWABanner(_props, ref) {
+export function InstallPWABanner() {
   const { canInstall, isInstalled, promptInstall } = usePWA();
   const [dismissed, setDismissed] = useState(false);
 
@@ -61,7 +61,7 @@ export const InstallPWABanner = forwardRef<HTMLDivElement>(function InstallPWABa
   if (!canInstall || isInstalled || dismissed) return null;
 
   return (
-    <div ref={ref} className="fixed bottom-4 right-4 z-50 max-w-xs bg-card border border-border rounded-xl shadow-xl p-4">
+    <div className="fixed bottom-4 right-4 z-50 max-w-xs bg-card border border-border rounded-xl shadow-xl p-4">
       <button
         onClick={handleDismiss}
         className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
@@ -85,15 +85,15 @@ export const InstallPWABanner = forwardRef<HTMLDivElement>(function InstallPWABa
       </div>
     </div>
   );
-});
+}
 
-export const UpdateAvailableBanner = forwardRef<HTMLDivElement>(function UpdateAvailableBanner(_props, ref) {
+export function UpdateAvailableBanner() {
   const { isUpdateAvailable } = usePWA();
 
   if (!isUpdateAvailable) return null;
 
   return (
-    <div ref={ref} className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border bg-primary/10 border-primary/30 text-primary text-sm font-medium">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border bg-primary/10 border-primary/30 text-primary text-sm font-medium">
       <RefreshCw className="w-4 h-4" />
       Mise à jour disponible –{" "}
       <button
@@ -104,4 +104,4 @@ export const UpdateAvailableBanner = forwardRef<HTMLDivElement>(function UpdateA
       </button>
     </div>
   );
-});
+}
