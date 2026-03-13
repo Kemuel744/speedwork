@@ -7,10 +7,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Search, UserPlus, Trash2, Building2, Loader2, Users, KeyRound, Copy, Phone } from 'lucide-react';
+import { Search, UserPlus, Trash2, Building2, Loader2, Users, KeyRound, Copy, Phone, Eye, MapPin, Globe, Briefcase, Clock, Wrench, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 
 interface ClientProfile {
   user_id: string;
@@ -22,6 +24,37 @@ interface ClientProfile {
   trial_start: string | null;
   trial_docs_used: number | null;
   active_plan: string | null;
+  full_name?: string;
+  account_type?: string;
+  country?: string;
+  city?: string;
+  sector?: string;
+  employee_count?: string;
+  website?: string;
+  profession?: string;
+  experience_years?: string;
+  skills?: string;
+  availability?: string;
+}
+
+const accountTypeLabels: Record<string, string> = {
+  enterprise: 'Entreprise',
+  freelance: 'Freelance',
+  pme: 'PME / Startup',
+  ong: 'Organisation / ONG',
+};
+
+function DetailRow({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value?: string | null }) {
+  if (!value) return null;
+  return (
+    <div className="flex items-start gap-3 py-2">
+      <Icon className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+      <div className="min-w-0">
+        <p className="text-xs text-muted-foreground">{label}</p>
+        <p className="text-sm font-medium text-foreground break-words">{value}</p>
+      </div>
+    </div>
+  );
 }
 
 export default function AdminClients() {
@@ -34,6 +67,7 @@ export default function AdminClients() {
   const [activateTarget, setActivateTarget] = useState<ClientProfile | null>(null);
   const [generatedCode, setGeneratedCode] = useState('');
   const [activatingPlan, setActivatingPlan] = useState<string | null>(null);
+  const [detailClient, setDetailClient] = useState<ClientProfile | null>(null);
 
   const { data: clients = [], isLoading } = useQuery({
     queryKey: ['admin-clients'],
@@ -102,7 +136,8 @@ export default function AdminClients() {
 
   const filtered = clients.filter(c =>
     c.company_name.toLowerCase().includes(search.toLowerCase()) ||
-    c.email.toLowerCase().includes(search.toLowerCase())
+    c.email.toLowerCase().includes(search.toLowerCase()) ||
+    (c.full_name || '').toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -164,30 +199,31 @@ export default function AdminClients() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
-                  <TableHead>Entreprise</TableHead>
+                  <TableHead>Client</TableHead>
+                  <TableHead className="hidden md:table-cell">Type</TableHead>
                   <TableHead className="hidden md:table-cell">Téléphone</TableHead>
+                  <TableHead className="hidden lg:table-cell">Localisation</TableHead>
                   <TableHead className="hidden lg:table-cell">Inscription</TableHead>
-                  <TableHead className="hidden md:table-cell">Docs créés</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8">
+                    <TableCell colSpan={6} className="text-center py-8">
                       <Loader2 className="w-5 h-5 animate-spin mx-auto text-muted-foreground" />
                     </TableCell>
                   </TableRow>
                 ) : filtered.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Aucun client trouvé</TableCell>
+                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Aucun client trouvé</TableCell>
                   </TableRow>
                 ) : filtered.map(client => (
                   <TableRow key={client.user_id}>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <div>
-                          <p className="font-medium text-foreground">{client.company_name || '—'}</p>
+                          <p className="font-medium text-foreground">{client.company_name || client.full_name || '—'}</p>
                           <p className="text-xs text-muted-foreground">{client.email}</p>
                         </div>
                         {client.active_plan === 'enterprise' && (
@@ -201,29 +237,44 @@ export default function AdminClients() {
                         )}
                       </div>
                     </TableCell>
-                    <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{client.phone || '—'}</TableCell>
-                    <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">{new Date(client.created_at).toLocaleDateString('fr-FR')}</TableCell>
                     <TableCell className="hidden md:table-cell">
-                      <Badge variant="outline">{client.trial_docs_used ?? 0}</Badge>
+                      <Badge variant="secondary" className="text-[10px]">
+                        {accountTypeLabels[client.account_type || ''] || '—'}
+                      </Badge>
                     </TableCell>
-                    <TableCell className="text-right flex items-center justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => { setActivateTarget(client); setGeneratedCode(''); }}
-                        className="text-primary hover:text-primary"
-                        title="Activer abonnement"
-                      >
-                        <KeyRound className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setDeleteTarget(client)}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                    <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{client.phone || '—'}</TableCell>
+                    <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
+                      {[client.city, client.country].filter(Boolean).join(', ') || '—'}
+                    </TableCell>
+                    <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">{new Date(client.created_at).toLocaleDateString('fr-FR')}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setDetailClient(client)}
+                          title="Voir le profil"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => { setActivateTarget(client); setGeneratedCode(''); }}
+                          className="text-primary hover:text-primary"
+                          title="Activer abonnement"
+                        >
+                          <KeyRound className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setDeleteTarget(client)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -232,6 +283,66 @@ export default function AdminClients() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Client detail dialog */}
+      <Dialog open={!!detailClient} onOpenChange={() => setDetailClient(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <User className="w-5 h-5 text-primary" />
+              Fiche client
+            </DialogTitle>
+          </DialogHeader>
+          {detailClient && (
+            <ScrollArea className="max-h-[60vh]">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 mb-3">
+                  <Badge variant="secondary">
+                    {accountTypeLabels[detailClient.account_type || ''] || 'Non spécifié'}
+                  </Badge>
+                  {detailClient.active_plan && (
+                    <Badge className={
+                      detailClient.active_plan === 'enterprise' ? 'bg-amber-500/15 text-amber-700 border-amber-300' :
+                      detailClient.active_plan === 'annual' ? 'bg-emerald-500/15 text-emerald-700 border-emerald-300' :
+                      ''
+                    }>
+                      {detailClient.active_plan === 'enterprise' ? 'Entreprise' :
+                       detailClient.active_plan === 'annual' ? 'Annuel' : 'Mensuel'}
+                    </Badge>
+                  )}
+                </div>
+
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Informations générales</h3>
+                <DetailRow icon={User} label="Nom complet" value={detailClient.full_name} />
+                <DetailRow icon={Building2} label="Entreprise" value={detailClient.company_name} />
+                <DetailRow icon={Phone} label="Email" value={detailClient.email} />
+                <DetailRow icon={Phone} label="Téléphone" value={detailClient.phone} />
+                <DetailRow icon={Globe} label="Pays" value={detailClient.country} />
+                <DetailRow icon={MapPin} label="Ville" value={detailClient.city} />
+                <DetailRow icon={MapPin} label="Adresse" value={detailClient.address} />
+
+                <Separator className="my-3" />
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Détails professionnels</h3>
+                <DetailRow icon={Briefcase} label="Secteur d'activité" value={detailClient.sector} />
+                <DetailRow icon={Users} label="Nombre d'employés" value={detailClient.employee_count} />
+                <DetailRow icon={Globe} label="Site web" value={detailClient.website} />
+                <DetailRow icon={Wrench} label="Profession" value={detailClient.profession} />
+                <DetailRow icon={Clock} label="Années d'expérience" value={detailClient.experience_years} />
+                <DetailRow icon={Wrench} label="Compétences" value={detailClient.skills} />
+                <DetailRow icon={Clock} label="Disponibilité" value={detailClient.availability} />
+
+                <Separator className="my-3" />
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Compte</h3>
+                <DetailRow icon={Clock} label="Date d'inscription" value={new Date(detailClient.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })} />
+                <DetailRow icon={Clock} label="Documents créés" value={String(detailClient.trial_docs_used ?? 0)} />
+              </div>
+            </ScrollArea>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDetailClient(null)}>Fermer</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Add client dialog */}
       <Dialog open={showAdd} onOpenChange={setShowAdd}>
