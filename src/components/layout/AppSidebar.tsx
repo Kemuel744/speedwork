@@ -8,7 +8,7 @@ import {
   HardHat, ClipboardCheck, MapPin, TrendingUp, Briefcase, Timer, Calculator, Shield,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import speedworkLogo from '@/assets/logo.webp';
+import speedworkLogo from '@/assets/logo-small.webp';
 
 interface NavItem {
   labelKey: string;
