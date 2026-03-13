@@ -1,24 +1,26 @@
 import { Monitor, Globe, Sparkles, Clock } from 'lucide-react';
 import ScrollReveal, { StaggerContainer, StaggerItem } from './ScrollReveal';
-
-const points = [
-  { icon: Monitor, text: 'Fonctionne sur ordinateur, tablette et mobile' },
-  { icon: Globe, text: 'Adapté aux réalités des entreprises africaines' },
-  { icon: Sparkles, text: 'Interface intuitive, aucune formation requise' },
-  { icon: Clock, text: 'Opérationnel en moins de 5 minutes' },
-];
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function SimplicitySection() {
+  const { t } = useLanguage();
+
+  const points = [
+    { icon: Monitor, text: t('simplicity.1') },
+    { icon: Globe, text: t('simplicity.2') },
+    { icon: Sparkles, text: t('simplicity.3') },
+    { icon: Clock, text: t('simplicity.4') },
+  ];
+
   return (
     <section className="py-20 sm:py-28 bg-secondary/30 border-y border-border/50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
         <ScrollReveal>
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
-            Simple à utiliser, puissant à l'intérieur
+            {t('simplicity.title')}
           </h2>
           <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
-            Pas besoin d'être un expert en technologie. SpeedWork est conçu pour être utilisé 
-            par n'importe qui, dès le premier jour.
+            {t('simplicity.subtitle')}
           </p>
         </ScrollReveal>
         <StaggerContainer className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">

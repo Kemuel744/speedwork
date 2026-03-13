@@ -3,16 +3,19 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, FileText, Users, MapPin, BarChart3, Shield, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import promoHero from '@/assets/promo-hero-optimized.webp';
-
-const badges = [
-  { icon: FileText, label: 'Facturation' },
-  { icon: Users, label: 'Équipes' },
-  { icon: MapPin, label: 'Missions terrain' },
-  { icon: BarChart3, label: 'Analytics' },
-  { icon: Shield, label: 'Fiabilité' },
-];
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function HeroSection() {
+  const { t } = useLanguage();
+
+  const badges = [
+    { icon: FileText, label: t('hero.badgeInvoicing') },
+    { icon: Users, label: t('hero.badgeTeams') },
+    { icon: MapPin, label: t('hero.badgeMissions') },
+    { icon: BarChart3, label: t('hero.badgeAnalytics') },
+    { icon: Shield, label: t('hero.badgeReliability') },
+  ];
+
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-accent/8" />
@@ -25,16 +28,14 @@ export default function HeroSection() {
           >
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-1.5 text-sm font-medium mb-6">
               <Zap className="w-4 h-4" />
-              Plateforme tout-en-un pour entreprises
+              {t('hero.badge')}
             </div>
             <h1 className="text-4xl sm:text-5xl font-extrabold text-foreground leading-tight tracking-tight">
-              Gérez votre entreprise de A à Z avec{' '}
-              <span className="text-primary">une seule plateforme</span>
+              {t('hero.title1')}{' '}
+              <span className="text-primary">{t('hero.title2')}</span>
             </h1>
             <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-              Facturation, gestion d'équipes, missions terrain, suivi de présence, 
-              analyse de productivité et scores de fiabilité — tout ce dont votre entreprise 
-              a besoin, dans un outil simple et puissant.
+              {t('hero.subtitle')}
             </p>
 
             {/* Feature badges */}
@@ -56,16 +57,16 @@ export default function HeroSection() {
             <div className="mt-8 flex flex-col sm:flex-row items-start gap-4">
               <Button size="lg" asChild className="h-13 px-8 text-base font-semibold">
                 <Link to="/tarifs">
-                  Essayer gratuitement
+                  {t('hero.tryFree')}
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild className="h-13 px-8 text-base">
-                <Link to="/fonctionnalites">Découvrir les fonctionnalités</Link>
+                <Link to="/fonctionnalites">{t('hero.discoverFeatures')}</Link>
               </Button>
             </div>
             <p className="mt-4 text-sm text-muted-foreground">
-              ✓ Essai gratuit 3 jours · ✓ Aucune carte requise · ✓ Franc CFA natif
+              {t('hero.trialInfo')}
             </p>
           </motion.div>
           <motion.div

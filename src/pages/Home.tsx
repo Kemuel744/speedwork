@@ -2,11 +2,11 @@ import { lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
 import SEO from '@/components/SEO';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
 import HeroSection from '@/components/home/HeroSection';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Lazy-load below-fold sections to reduce initial JS
 const ProblemSection = lazy(() => import('@/components/home/ProblemSection'));
@@ -22,6 +22,8 @@ const ScrollReveal = lazy(() => import('@/components/home/ScrollReveal'));
 const SectionFallback = () => <div className="py-20" />;
 
 export default function Home() {
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen bg-background">
       <SEO
@@ -78,24 +80,24 @@ export default function Home() {
           <section className="py-20 bg-primary text-primary-foreground">
             <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
-                Prêt à piloter votre entreprise efficacement ?
+                {t('homeCta.title')}
               </h2>
               <p className="mt-4 text-primary-foreground/80 text-lg">
-                Rejoignez +120 entreprises qui gèrent tout avec SpeedWork.
+                {t('homeCta.subtitle')}
               </p>
               <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button size="lg" variant="secondary" asChild className="h-13 px-8 text-base font-semibold">
                   <Link to="/tarifs">
-                    Créer mon compte gratuitement
+                    {t('homeCta.button')}
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild className="h-13 px-6 sm:px-8 text-base border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
-                  <Link to="/login">Se connecter</Link>
+                  <Link to="/login">{t('homeCta.login')}</Link>
                 </Button>
               </div>
               <p className="mt-4 text-sm text-primary-foreground/60">
-                3 jours gratuits • Sans engagement • Aucune carte requise
+                {t('homeCta.trial')}
               </p>
             </div>
           </section>

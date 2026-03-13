@@ -1,24 +1,26 @@
 import { Smartphone, Globe, Zap, Lock } from 'lucide-react';
 import ScrollReveal, { StaggerContainer, StaggerItem } from './ScrollReveal';
-
-const points = [
-  { icon: Globe, label: 'Conçu pour l\'Afrique', desc: 'FCFA natif, réalités locales' },
-  { icon: Smartphone, label: 'Mobile-first', desc: 'Fonctionne partout, même sur le terrain' },
-  { icon: Zap, label: 'Ultra rapide', desc: 'Interface fluide, sans temps de chargement' },
-  { icon: Lock, label: 'Sécurisé', desc: 'Données protégées dans le cloud' },
-];
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function PositioningSection() {
+  const { t } = useLanguage();
+
+  const points = [
+    { icon: Globe, label: t('positioning.1'), desc: t('positioning.1d') },
+    { icon: Smartphone, label: t('positioning.2'), desc: t('positioning.2d') },
+    { icon: Zap, label: t('positioning.3'), desc: t('positioning.3d') },
+    { icon: Lock, label: t('positioning.4'), desc: t('positioning.4d') },
+  ];
+
   return (
     <section className="py-20 sm:py-28 bg-secondary/30 border-y border-border/50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
         <ScrollReveal>
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
-            La digitalisation des entreprises africaines commence ici
+            {t('positioning.title')}
           </h2>
           <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            SpeedWork aide les entrepreneurs à passer du papier au numérique — de la facturation 
-            à la gestion complète des opérations terrain.
+            {t('positioning.subtitle')}
           </p>
         </ScrollReveal>
         <StaggerContainer className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">

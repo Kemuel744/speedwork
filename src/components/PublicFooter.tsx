@@ -1,16 +1,19 @@
 import { Link } from 'react-router-dom';
 import speedworkLogo from '@/assets/logo-small.webp';
-
-const navLinks = [
-  { label: 'Accueil', to: '/' },
-  { label: 'Fonctionnalités', to: '/fonctionnalites' },
-  { label: 'Tarifs', to: '/tarifs' },
-  { label: 'Guide d\'utilisation', to: '/guide' },
-  { label: 'Contact', to: '/contact' },
-  { label: 'Connexion', to: '/login' },
-];
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function PublicFooter() {
+  const { t } = useLanguage();
+
+  const navLinks = [
+    { label: t('pub.home'), to: '/' },
+    { label: t('pub.features'), to: '/fonctionnalites' },
+    { label: t('pub.pricing'), to: '/tarifs' },
+    { label: t('footer.userGuide'), to: '/guide' },
+    { label: t('pub.contact'), to: '/contact' },
+    { label: t('pub.login'), to: '/login' },
+  ];
+
   return (
     <footer className="bg-card border-t border-border mt-auto">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
@@ -22,13 +25,13 @@ export default function PublicFooter() {
               <span className="text-lg font-bold text-foreground">SpeedWork</span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Plateforme de gestion d'entreprise tout-en-un : facturation, équipes, missions terrain, pointage, analytics, fiabilité et paie. Conçue pour les PME en Afrique.
+              {t('footer.description')}
             </p>
           </div>
 
           {/* Navigation */}
           <nav aria-label="Footer navigation">
-            <h3 className="text-sm font-semibold text-foreground mb-3">Navigation</h3>
+            <h3 className="text-sm font-semibold text-foreground mb-3">{t('footer.navigation')}</h3>
             <ul className="space-y-2">
               {navLinks.map((l) => (
                 <li key={l.to}>
@@ -42,7 +45,7 @@ export default function PublicFooter() {
 
           {/* Contact */}
           <div>
-            <h3 className="text-sm font-semibold text-foreground mb-3">Contact</h3>
+            <h3 className="text-sm font-semibold text-foreground mb-3">{t('footer.contact')}</h3>
             <address className="not-italic text-sm text-muted-foreground space-y-1">
               <p>Oyo, Congo-Brazzaville</p>
               <p>
@@ -55,7 +58,7 @@ export default function PublicFooter() {
         </div>
 
         <div className="mt-8 pt-6 border-t border-border text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} SpeedWork. Tous droits réservés.
+          © {new Date().getFullYear()} SpeedWork. {t('footer.rights')}
         </div>
       </div>
     </footer>
