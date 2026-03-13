@@ -28,7 +28,7 @@ function extractYouTubeId(url: string): string | null {
 }
 
 export default function LearningSection({ isAdmin = false, userId }: { isAdmin?: boolean; userId?: string }) {
-  const safeUserId = userId || 'anonymous';
+  
   const [resources, setResources] = useState<LearningResource[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
