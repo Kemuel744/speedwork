@@ -100,6 +100,7 @@ export default function Workers() {
         first_name: form.first_name.trim(),
         last_name: form.last_name.trim(),
         phone: form.phone.trim(),
+        email: form.email.trim(),
         position: form.position,
         base_salary: Number(form.base_salary) || 0,
         status: form.status,
