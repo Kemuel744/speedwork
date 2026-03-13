@@ -180,7 +180,7 @@ export default function WorkerDetail() {
   const daysWorkedMonth = countArrivals(monthEntries);
 
   const totalMissionsCompleted = completedMissions.length;
-  const totalProofs = workProofs.length;
+  const _totalProofs = workProofs.length;
 
   // Reliability score approximation
   const lastPayroll = payroll[0];
