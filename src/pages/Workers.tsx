@@ -19,6 +19,7 @@ interface Worker {
   first_name: string;
   last_name: string;
   phone: string;
+  email: string;
   position: string;
   base_salary: number;
   status: string;
@@ -26,6 +27,7 @@ interface Worker {
   contract_type: string;
   hire_date: string;
   created_at: string;
+  linked_user_id: string | null;
 }
 
 const CONTRACT_TYPES = [
