@@ -51,6 +51,7 @@ const emptyForm = {
 
 export default function Workers() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [workers, setWorkers] = useState<Worker[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
