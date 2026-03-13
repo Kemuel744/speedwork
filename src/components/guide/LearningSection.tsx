@@ -71,7 +71,7 @@ export default function LearningSection({ isAdmin = false, userId }: { isAdmin?:
       description: description.trim(),
       url: url.trim(),
       resource_type: resourceType,
-      created_by: user!.id,
+      created_by: userId || 'anonymous',
     });
     setSubmitting(false);
     if (error) {
