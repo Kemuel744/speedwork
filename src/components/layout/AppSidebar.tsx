@@ -137,7 +137,7 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
   const { user, logout } = useAuth();
   const { t } = useLanguage();
   const location = useLocation();
-  const sections = user?.role === 'admin' ? adminSections : clientSections;
+  const sections = user?.role === 'admin' ? adminSections : user?.isWorker ? workerSections : clientSections;
 
   const isActive = (to: string) => {
     const [path] = to.split('?');
