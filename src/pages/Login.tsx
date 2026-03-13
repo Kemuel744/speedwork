@@ -78,10 +78,32 @@ export default function Login() {
             <img src={speedworkLogo} alt="SpeedWork" className="h-12 w-auto" />
             <span className="text-2xl font-bold">SpeedWork</span>
           </div>
-          <h1 className="text-4xl font-bold mb-4 leading-tight">Gérez vos factures et devis en toute simplicité</h1>
-          <p className="text-primary-foreground/80 text-lg">
-            Une solution professionnelle pour créer, suivre et gérer tous vos documents commerciaux.
+           <h1 className="text-4xl font-bold mb-4 leading-tight">La plateforme tout-en-un pour piloter votre entreprise</h1>
+          <p className="text-primary-foreground/80 text-lg mb-6">
+            Rejoignez +120 entreprises qui digitalisent leur gestion avec SpeedWork.
           </p>
+          <ul className="space-y-3 text-primary-foreground/90 text-sm">
+            <li className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary-foreground/60 shrink-0" />
+              Facturation & devis PDF professionnels en 1 clic
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary-foreground/60 shrink-0" />
+              Gestion d'équipes, missions terrain & carte interactive
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary-foreground/60 shrink-0" />
+              Pointage, scores de fiabilité & analyse de productivité
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary-foreground/60 shrink-0" />
+              Paie automatique & bilans annuels générés par IA
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary-foreground/60 shrink-0" />
+              Multi-devises avec support natif du Franc CFA
+            </li>
+          </ul>
         </div>
         <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-primary-foreground/5" />
         <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-primary-foreground/5" />
