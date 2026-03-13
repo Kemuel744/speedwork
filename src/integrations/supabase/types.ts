@@ -809,43 +809,76 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_type: string
           address: string | null
+          availability: string
+          city: string
           company_name: string
+          country: string
           created_at: string
           email: string
+          employee_count: string
+          experience_years: string
+          full_name: string
           id: string
           logo_url: string | null
           phone: string | null
+          profession: string
+          sector: string
+          skills: string
           trial_docs_used: number | null
           trial_start: string | null
           updated_at: string
           user_id: string
+          website: string
         }
         Insert: {
+          account_type?: string
           address?: string | null
+          availability?: string
+          city?: string
           company_name?: string
+          country?: string
           created_at?: string
           email?: string
+          employee_count?: string
+          experience_years?: string
+          full_name?: string
           id?: string
           logo_url?: string | null
           phone?: string | null
+          profession?: string
+          sector?: string
+          skills?: string
           trial_docs_used?: number | null
           trial_start?: string | null
           updated_at?: string
           user_id: string
+          website?: string
         }
         Update: {
+          account_type?: string
           address?: string | null
+          availability?: string
+          city?: string
           company_name?: string
+          country?: string
           created_at?: string
           email?: string
+          employee_count?: string
+          experience_years?: string
+          full_name?: string
           id?: string
           logo_url?: string | null
           phone?: string | null
+          profession?: string
+          sector?: string
+          skills?: string
           trial_docs_used?: number | null
           trial_start?: string | null
           updated_at?: string
           user_id?: string
+          website?: string
         }
         Relationships: []
       }
