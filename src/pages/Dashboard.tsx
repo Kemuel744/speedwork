@@ -10,6 +10,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { monthlyRevenue } from '@/lib/mockData';
 import CurrencyConverter from '@/components/CurrencyConverter';
 import TrialBanner from '@/components/TrialBanner';
+import SubscriptionCard from '@/components/SubscriptionCard';
 
 function StatCard({ icon: Icon, label, value, sub, color }: { icon: any; label: string; value: string; sub?: string; color: string }) {
   return (
@@ -62,6 +63,9 @@ export default function Dashboard() {
       </div>
 
       <TrialBanner />
+      <div className="mb-6">
+        <SubscriptionCard />
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatCard icon={FileText} label={t('dashboard.invoices')} value={String(invoices.length)} sub={t('dashboard.unpaidCount').replace('{count}', String(unpaid.length))} color="bg-primary/10 text-primary" />
