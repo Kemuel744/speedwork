@@ -85,9 +85,9 @@ export function InstallPWABanner() {
       </div>
     </div>
   );
-});
+}
 
-export const UpdateAvailableBanner = forwardRef<HTMLDivElement>(function UpdateAvailableBanner(_props, ref) {
+export function UpdateAvailableBanner() {
   const { isUpdateAvailable } = usePWA();
 
   if (!isUpdateAvailable) return null;
