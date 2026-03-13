@@ -25,27 +25,23 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 async function fetchUserProfile(supabaseUser: SupabaseUser): Promise<UserProfile | null> {
-  // Fetch profile
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('user_id', supabaseUser.id)
-    .single();
+  // Fetch profile, role, and worker status in parallel
+  const [profileRes, roleRes, workerRes] = await Promise.all([
+    supabase.from('profiles').select('*').eq('user_id', supabaseUser.id).single(),
+    supabase.from('user_roles').select('role').eq('user_id', supabaseUser.id).single(),
+    supabase.from('workers').select('id').eq('linked_user_id', supabaseUser.id).limit(1),
+  ]);
 
-  // Fetch role
-  const { data: roleData } = await supabase
-    .from('user_roles')
-    .select('role')
-    .eq('user_id', supabaseUser.id)
-    .single();
-
-  const role = (roleData?.role as 'admin' | 'client') || 'client';
+  const profile = profileRes.data;
+  const role = (roleRes.data?.role as 'admin' | 'client') || 'client';
+  const isWorker = (workerRes.data && workerRes.data.length > 0) || false;
 
   return {
     id: supabaseUser.id,
     email: supabaseUser.email || '',
     name: profile?.company_name || supabaseUser.email || '',
     role,
+    isWorker,
     company: profile?.company_name || '',
     phone: profile?.phone || '',
     address: profile?.address || '',
