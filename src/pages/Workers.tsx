@@ -46,7 +46,7 @@ const POSITIONS = [
 ];
 
 const emptyForm = {
-  first_name: '', last_name: '', phone: '', position: 'Ouvrier',
+  first_name: '', last_name: '', phone: '', email: '', position: 'Ouvrier',
   base_salary: 0, status: 'active', contract_type: 'journalier',
   hire_date: new Date().toISOString().split('T')[0],
 };
