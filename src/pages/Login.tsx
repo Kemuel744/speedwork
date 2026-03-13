@@ -4,10 +4,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import speedworkLogo from '@/assets/logo-small.webp';
 import { toast } from 'sonner';
 import SEO from '@/components/SEO';
+import RegisterForm from '@/components/auth/RegisterForm';
 
 export default function Login() {
   const { user, login, register, isLoading: authLoading } = useAuth();
@@ -15,40 +16,24 @@ export default function Login() {
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   React.useEffect(() => {
     if (user) navigate(user.role === 'admin' ? '/dashboard' : '/client', { replace: true });
   }, [user, navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      if (isRegister) {
-        const result = await register(email, password, name);
-        if (!result.success) {
-          toast.error(result.error || 'Erreur lors de l\'inscription');
-          setLoading(false);
-          return;
-        }
-        if (result.needsConfirmation) {
-          toast.success('Un email de confirmation vous a été envoyé. Vérifiez votre boîte de réception.');
-          setIsRegister(false);
-          setLoading(false);
-          return;
-        }
-        toast.success('Compte créé avec succès !');
-      } else {
-        const result = await login(email, password);
-        if (!result.success) {
-          toast.error(result.error || 'Email ou mot de passe incorrect');
-          setLoading(false);
-          return;
-        }
-        toast.success('Connexion réussie !');
+      const result = await login(email, password);
+      if (!result.success) {
+        toast.error(result.error || 'Email ou mot de passe incorrect');
+        setLoading(false);
+        return;
       }
+      toast.success('Connexion réussie !');
     } catch {
       toast.error('Une erreur est survenue');
     }
@@ -66,7 +51,7 @@ export default function Login() {
   return (
     <main className="min-h-screen flex">
       <SEO
-        title="Connexion"
+        title={isRegister ? "Inscription" : "Connexion"}
         description="Connectez-vous à votre espace SpeedWork pour gérer vos factures et devis professionnels."
         path="/login"
       />
@@ -78,7 +63,7 @@ export default function Login() {
             <img src={speedworkLogo} alt="SpeedWork" className="h-12 w-auto" />
             <span className="text-2xl font-bold">SpeedWork</span>
           </div>
-           <h1 className="text-4xl font-bold mb-4 leading-tight">La plateforme tout-en-un pour piloter votre entreprise</h1>
+          <h1 className="text-4xl font-bold mb-4 leading-tight">La plateforme tout-en-un pour piloter votre entreprise</h1>
           <p className="text-primary-foreground/80 text-lg mb-6">
             Rejoignez +120 entreprises qui digitalisent leur gestion avec SpeedWork.
           </p>
@@ -110,55 +95,74 @@ export default function Login() {
       </div>
 
       {/* Right panel */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
-        <div className="w-full max-w-md">
+      <div className="flex-1 flex items-center justify-center p-6 lg:p-12 overflow-y-auto">
+        <div className="w-full max-w-lg">
           <div className="lg:hidden flex items-center gap-3 mb-8">
             <img src={speedworkLogo} alt="SpeedWork" className="h-10 w-auto" />
             <span className="text-xl font-bold text-foreground">SpeedWork</span>
           </div>
 
-          <h2 className="text-2xl font-bold text-foreground mb-2">
-            {isRegister ? 'Créer un compte' : 'Bienvenue'}
-          </h2>
-          <p className="text-muted-foreground mb-8">
-            {isRegister ? 'Remplissez les informations ci-dessous' : 'Connectez-vous à votre espace'}
-          </p>
+          {isRegister ? (
+            <RegisterForm
+              onRegister={register}
+              onSwitchToLogin={() => setIsRegister(false)}
+              loading={loading}
+              setLoading={setLoading}
+            />
+          ) : (
+            <>
+              <h2 className="text-2xl font-bold text-foreground mb-2">Bienvenue</h2>
+              <p className="text-muted-foreground mb-8">Connectez-vous à votre espace</p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {isRegister && (
-              <div className="space-y-2">
-                <Label htmlFor="name">Nom de l'entreprise</Label>
-                <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Mon Entreprise SARL" required />
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="vous@exemple.com" required className="pl-10" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Mot de passe</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      required
+                      minLength={6}
+                      className="pl-10 pr-10"
+                    />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? 'Chargement...' : 'Se connecter'}
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </form>
+
+              <div className="mt-6 text-center space-y-2">
+                <button
+                  type="button"
+                  onClick={() => setIsRegister(true)}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Pas de compte ? S'inscrire
+                </button>
+                <div>
+                  <Link to="/subscription" className="text-sm text-muted-foreground hover:underline">
+                    Voir les abonnements
+                  </Link>
+                </div>
               </div>
-            )}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="vous@exemple.com" required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
-              <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required minLength={6} />
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Chargement...' : isRegister ? "S'inscrire" : 'Se connecter'}
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center space-y-2">
-            <button
-              type="button"
-              onClick={() => setIsRegister(!isRegister)}
-              className="text-sm text-primary hover:underline"
-            >
-              {isRegister ? 'Déjà un compte ? Se connecter' : "Pas de compte ? S'inscrire"}
-            </button>
-            <div>
-              <Link to="/subscription" className="text-sm text-muted-foreground hover:underline">
-                Voir les abonnements
-              </Link>
-            </div>
-          </div>
+            </>
+          )}
         </div>
       </div>
     </main>
