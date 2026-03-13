@@ -29,6 +29,7 @@ const Teams = lazy(() => import("@/pages/Teams"));
 const TeamDetail = lazy(() => import("@/pages/TeamDetail"));
 const TeamsMap = lazy(() => import("@/pages/TeamsMap"));
 const Workers = lazy(() => import("@/pages/Workers"));
+const WorkerDetail = lazy(() => import("@/pages/WorkerDetail"));
 const WorkerDashboard = lazy(() => import("@/pages/WorkerDashboard"));
 const WorkTasks = lazy(() => import("@/pages/WorkTasks"));
 const ProductivityMap = lazy(() => import("@/pages/ProductivityMap"));
@@ -78,6 +79,7 @@ export default function AuthenticatedRoutes() {
                   <Route path="/teams/:teamId" element={<EnterpriseGuard><TeamDetail /></EnterpriseGuard>} />
                   <Route path="/teams-map" element={<Navigate to="/missions-map" replace />} />
                   <Route path="/workers" element={<EnterpriseGuard><Workers /></EnterpriseGuard>} />
+                  <Route path="/workers/:workerId" element={<EnterpriseGuard><WorkerDetail /></EnterpriseGuard>} />
                   <Route path="/worker-dashboard" element={<EnterpriseGuard><WorkerDashboard /></EnterpriseGuard>} />
                   <Route path="/work-tasks" element={<EnterpriseGuard><WorkTasks /></EnterpriseGuard>} />
                   <Route path="/productivity" element={<EnterpriseGuard><ProductivityMap /></EnterpriseGuard>} />

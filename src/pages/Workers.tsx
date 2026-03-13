@@ -10,7 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Search, Edit, Trash2, UserPlus, Users, UserCheck, UserX, Camera } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, UserPlus, Users, UserCheck, UserX, Camera, Eye } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 
 interface Worker {
@@ -50,6 +51,7 @@ const emptyForm = {
 
 export default function Workers() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [workers, setWorkers] = useState<Worker[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -344,6 +346,9 @@ export default function Workers() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
+                          <Button variant="ghost" size="sm" onClick={() => navigate(`/workers/${w.id}`)} title="Voir dashboard">
+                            <Eye className="w-4 h-4" />
+                          </Button>
                           <Button variant="ghost" size="sm" onClick={() => handleEdit(w)}>
                             <Edit className="w-4 h-4" />
                           </Button>
