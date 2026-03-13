@@ -26,7 +26,7 @@ export default function PublicNavbar() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-1" aria-label="Navigation principale">
           {links.map((l) => (
             <Link
               key={l.to}
@@ -56,8 +56,8 @@ export default function PublicNavbar() {
           <Button size="sm" variant="ghost" asChild>
             <Link to="/login">Connexion</Link>
           </Button>
-          <button className="p-2" onClick={() => setOpen(!open)}>
-            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          <button className="p-2" onClick={() => setOpen(!open)} aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'} aria-expanded={open}>
+            {open ? <X className="w-5 h-5" aria-hidden="true" /> : <Menu className="w-5 h-5" aria-hidden="true" />}
           </button>
         </div>
       </div>
