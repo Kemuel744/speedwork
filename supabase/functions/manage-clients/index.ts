@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
       // List all client profiles
       const { data: profiles, error } = await adminClient
         .from('profiles')
-        .select('user_id, company_name, email, phone, address, created_at, trial_start, trial_docs_used')
+        .select('user_id, company_name, email, phone, address, created_at, trial_start, trial_docs_used, full_name, account_type, country, city, sector, employee_count, website, profession, experience_years, skills, availability')
         .order('created_at', { ascending: false })
 
       if (error) throw error
