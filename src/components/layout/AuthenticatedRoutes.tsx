@@ -22,7 +22,7 @@ const Reminders = lazy(() => import("@/pages/Reminders"));
 const Reports = lazy(() => import("@/pages/Reports"));
 const Messages = lazy(() => import("@/pages/Messages"));
 const TeamManagement = lazy(() => import("@/pages/TeamManagement"));
-const Learning = lazy(() => import("@/pages/Learning"));
+
 const AdminBlog = lazy(() => import("@/pages/AdminBlog"));
 const Teams = lazy(() => import("@/pages/Teams"));
 const TeamDetail = lazy(() => import("@/pages/TeamDetail"));

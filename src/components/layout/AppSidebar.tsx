@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   LayoutDashboard, FileText, FilePlus, FileCheck, User, Settings,
-  LogOut, ChevronLeft, Users, CreditCard, BarChart3, Bell, PieChart, MessageCircle, Smartphone, BookOpen, GraduationCap, Newspaper,
+  LogOut, ChevronLeft, Users, CreditCard, BarChart3, Bell, PieChart, MessageCircle, Smartphone, BookOpen, Newspaper,
   HardHat, ClipboardCheck, Map, MapPin, TrendingUp, Briefcase, Timer, Calculator, Shield,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
