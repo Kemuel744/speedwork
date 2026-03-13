@@ -346,6 +346,9 @@ export default function Workers() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
+                          <Button variant="ghost" size="sm" onClick={() => navigate(`/workers/${w.id}`)} title="Voir dashboard">
+                            <Eye className="w-4 h-4" />
+                          </Button>
                           <Button variant="ghost" size="sm" onClick={() => handleEdit(w)}>
                             <Edit className="w-4 h-4" />
                           </Button>
