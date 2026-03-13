@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Check, Crown, ArrowRight, Smartphone, Zap, CheckCircle2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import speedworkLogo from '@/assets/logo.webp';
 import mtnLogo from '@/assets/mtn-momo.png';
 import airtelLogo from '@/assets/airtel-money.png';
@@ -231,7 +232,12 @@ export default function Subscription() {
       ) : (
       <>
       {/* Header */}
-      <div className="bg-primary text-primary-foreground py-12 px-6">
+      <motion.div
+        className="bg-primary text-primary-foreground py-12 px-6"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
         <div className="max-w-4xl mx-auto text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
             <img src={speedworkLogo} alt="SpeedWork" className="h-10 w-auto" />
@@ -242,7 +248,7 @@ export default function Subscription() {
             Facturation, équipes, missions terrain, pointage, analytics et paie. Tout-en-un.
           </p>
         </div>
-      </div>
+      </motion.div>
 
       <div className="max-w-4xl mx-auto px-6 -mt-8">
         {/* Step indicator */}
@@ -273,7 +279,10 @@ export default function Subscription() {
             {plans.map((plan) => {
               const Icon = plan.icon;
               return (
-                <button
+                <motion.button
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: plans.indexOf(plan) * 0.12, ease: "easeOut" }}
                   key={plan.id}
                   onClick={() => handlePlanSelect(plan.id)}
                   className={`relative text-left rounded-2xl border-2 p-6 transition-all duration-200 border-border bg-card hover:border-primary/40 hover:shadow-md`}
@@ -311,7 +320,7 @@ export default function Subscription() {
                       </li>
                     ))}
                   </ul>
-                </button>
+                </motion.button>
               );
             })}
           </div>
