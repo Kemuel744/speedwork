@@ -27,18 +27,7 @@ function extractYouTubeId(url: string): string | null {
   return match ? match[1] : null;
 }
 
-function useOptionalAuth() {
-  try {
-    const mod = require('@/contexts/AuthContext');
-    return mod.useAuth();
-  } catch {
-    return { user: null };
-  }
-}
-
-export default function LearningSection() {
-  const [user, setUser] = useState<{ id: string; role?: string } | null>(null);
-  const isAdmin = user?.role === 'admin';
+export default function LearningSection({ isAdmin = false, userId }: { isAdmin?: boolean; userId?: string }) {
   const [resources, setResources] = useState<LearningResource[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
