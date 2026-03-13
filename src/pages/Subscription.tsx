@@ -232,7 +232,12 @@ export default function Subscription() {
       ) : (
       <>
       {/* Header */}
-      <div className="bg-primary text-primary-foreground py-12 px-6">
+      <motion.div
+        className="bg-primary text-primary-foreground py-12 px-6"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
         <div className="max-w-4xl mx-auto text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
             <img src={speedworkLogo} alt="SpeedWork" className="h-10 w-auto" />
@@ -243,7 +248,7 @@ export default function Subscription() {
             Facturation, équipes, missions terrain, pointage, analytics et paie. Tout-en-un.
           </p>
         </div>
-      </div>
+      </motion.div>
 
       <div className="max-w-4xl mx-auto px-6 -mt-8">
         {/* Step indicator */}
