@@ -279,7 +279,10 @@ export default function Subscription() {
             {plans.map((plan) => {
               const Icon = plan.icon;
               return (
-                <button
+                <motion.button
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: plans.indexOf(plan) * 0.12, ease: "easeOut" }}
                   key={plan.id}
                   onClick={() => handlePlanSelect(plan.id)}
                   className={`relative text-left rounded-2xl border-2 p-6 transition-all duration-200 border-border bg-card hover:border-primary/40 hover:shadow-md`}
