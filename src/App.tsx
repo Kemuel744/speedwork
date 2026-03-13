@@ -33,6 +33,8 @@ const PageLoader = () => (
 
 const App = () => (
   <HelmetProvider>
+  <ThemeProvider>
+  <LanguageProvider>
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
