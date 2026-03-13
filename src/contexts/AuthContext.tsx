@@ -7,6 +7,7 @@ interface UserProfile {
   email: string;
   name: string;
   role: 'admin' | 'client';
+  isWorker: boolean;
   company?: string;
   phone?: string;
   address?: string;
