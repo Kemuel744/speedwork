@@ -1,7 +1,6 @@
-import { useState, useEffect, createContext, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -28,8 +27,17 @@ function extractYouTubeId(url: string): string | null {
   return match ? match[1] : null;
 }
 
+function useOptionalAuth() {
+  try {
+    const mod = require('@/contexts/AuthContext');
+    return mod.useAuth();
+  } catch {
+    return { user: null };
+  }
+}
+
 export default function LearningSection() {
-  const { user } = useAuth();
+  const [user, setUser] = useState<{ id: string; role?: string } | null>(null);
   const isAdmin = user?.role === 'admin';
   const [resources, setResources] = useState<LearningResource[]>([]);
   const [loading, setLoading] = useState(true);
