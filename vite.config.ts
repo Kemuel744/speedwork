@@ -72,11 +72,26 @@ export default defineConfig(({ mode }) => ({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,svg,woff,woff2}", "**/*.{png,webp}"],
-        globIgnores: ["**/promo-revolution*.png", "**/promo-hero*.webp", "**/promo-comparison*.webp", "**/logo*.webp"],
+        globIgnores: [
+          "**/promo-revolution*.png", "**/promo-hero*.webp", "**/promo-comparison*.webp", "**/logo*.webp",
+          "**/vendor-charts*.js", "**/vendor-supabase*.js",
+        ],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MiB
         navigateFallback: null,
         navigateFallbackDenylist: [/^\/~oauth/, /^\/share\//],
         runtimeCaching: [
+          {
+            // Cache lazy-loaded vendor JS chunks on demand
+            urlPattern: /\/assets\/vendor-(?:charts|supabase)-.*\.js$/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "lazy-vendor-js",
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+              },
+            },
+          },
           {
             // Cache Supabase API calls for offline reading
             urlPattern: /^https:\/\/.*\.supabase\.co\/rest\/v1\/.*/i,
