@@ -17,7 +17,7 @@ export default function HeroSection() {
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-accent/8" />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 relative">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
