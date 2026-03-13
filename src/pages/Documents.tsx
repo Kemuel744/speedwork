@@ -81,10 +81,25 @@ export default function Documents() {
     <div className="page-container">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <h1 className="section-title">{title}</h1>
-        <div className="flex gap-3">
-          <Button asChild>
-            <Link to={`/create/${typeFilter || 'invoice'}`}><Plus className="w-4 h-4 mr-2" />Créer</Link>
-          </Button>
+        <div className="flex gap-2">
+          {typeFilter === 'quote' ? (
+            <Button asChild>
+              <Link to="/create/quote"><Plus className="w-4 h-4 mr-2" />Nouveau devis</Link>
+            </Button>
+          ) : typeFilter === 'invoice' ? (
+            <Button asChild>
+              <Link to="/create/invoice"><Plus className="w-4 h-4 mr-2" />Nouvelle facture</Link>
+            </Button>
+          ) : (
+            <>
+              <Button asChild>
+                <Link to="/create/invoice"><FileText className="w-4 h-4 mr-2" />Nouvelle facture</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link to="/create/quote"><FileCheck className="w-4 h-4 mr-2" />Nouveau devis</Link>
+              </Button>
+            </>
+          )}
         </div>
       </div>
 
