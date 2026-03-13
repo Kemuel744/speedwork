@@ -64,7 +64,7 @@ export default function PublicNavbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden border-t border-border bg-background px-4 pb-4 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="lg:hidden border-t border-border bg-background px-4 pb-4 animate-in fade-in slide-in-from-top-2 duration-200">
           {links.map((l) => (
             <Link
               key={l.to}
