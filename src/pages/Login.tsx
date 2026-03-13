@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
