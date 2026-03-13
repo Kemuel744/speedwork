@@ -69,7 +69,7 @@ export default function HeroSection() {
             </p>
           </motion.div>
           <motion.div
-            className="relative hidden lg:block"
+            className="relative hidden md:block"
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
@@ -77,7 +77,7 @@ export default function HeroSection() {
             <img
               src={promoHero}
               alt="SpeedWork – Plateforme de gestion d'entreprise tout-en-un pour PME et freelances en Afrique"
-              className="w-full rounded-2xl shadow-2xl aspect-[2/3]"
+              className="w-full rounded-2xl shadow-2xl object-cover aspect-[4/5] md:aspect-[3/4] lg:aspect-[2/3]"
               width={560}
               height={840}
               fetchPriority="high"
