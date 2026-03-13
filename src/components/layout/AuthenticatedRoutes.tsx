@@ -4,6 +4,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { DocumentsProvider } from "@/contexts/DocumentsContext";
 import { CompanyProvider } from "@/contexts/CompanyContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
+import EnterpriseGuard from "@/components/layout/EnterpriseGuard";
 
 const AppLayout = lazy(() => import("@/components/layout/AppLayout"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
