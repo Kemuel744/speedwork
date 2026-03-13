@@ -71,7 +71,7 @@ export default function AuthenticatedRoutes() {
                   <Route path="/reports" element={<Reports />} />
                   <Route path="/messages" element={<Messages />} />
                   <Route path="/team" element={<TeamManagement />} />
-                  <Route path="/learning" element={<Learning />} />
+                  <Route path="/learning" element={<Navigate to="/guide" replace />} />
                   <Route path="/admin/blog" element={<AdminBlog />} />
                   <Route path="/teams" element={<Teams />} />
                   <Route path="/teams/:teamId" element={<TeamDetail />} />

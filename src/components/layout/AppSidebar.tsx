@@ -56,8 +56,7 @@ const clientNav = [
 const bottomNav = [
   { label: 'Profil', to: '/profile', icon: User },
   { label: 'Paramètres', to: '/settings', icon: Settings },
-  { label: 'Apprentissage', to: '/learning', icon: GraduationCap },
-  { label: 'Guide d\'utilisation', to: '/guide', icon: BookOpen },
+  { label: 'Guide & Apprentissage', to: '/guide', icon: BookOpen },
   { label: 'Application mobile', to: '/installer', icon: Smartphone },
 ];
 
