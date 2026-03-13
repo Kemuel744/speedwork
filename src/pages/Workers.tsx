@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Search, Edit, Trash2, UserPlus, Users, UserCheck, UserX, Camera, Eye } from 'lucide-react';
+import { Search, Edit, Trash2, UserPlus, Users, UserCheck, UserX, Camera, Eye, Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 
@@ -19,6 +19,7 @@ interface Worker {
   first_name: string;
   last_name: string;
   phone: string;
+  email: string;
   position: string;
   base_salary: number;
   status: string;
@@ -26,6 +27,7 @@ interface Worker {
   contract_type: string;
   hire_date: string;
   created_at: string;
+  linked_user_id: string | null;
 }
 
 const CONTRACT_TYPES = [
@@ -44,7 +46,7 @@ const POSITIONS = [
 ];
 
 const emptyForm = {
-  first_name: '', last_name: '', phone: '', position: 'Ouvrier',
+  first_name: '', last_name: '', phone: '', email: '', position: 'Ouvrier',
   base_salary: 0, status: 'active', contract_type: 'journalier',
   hire_date: new Date().toISOString().split('T')[0],
 };
@@ -61,6 +63,7 @@ export default function Workers() {
   const [form, setForm] = useState(emptyForm);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
+  const [inviting, setInviting] = useState<string | null>(null);
 
   const fetchWorkers = useCallback(async () => {
     const { data, error } = await (supabase as any).from('workers').select('*').order('created_at', { ascending: false });
@@ -97,6 +100,7 @@ export default function Workers() {
         first_name: form.first_name.trim(),
         last_name: form.last_name.trim(),
         phone: form.phone.trim(),
+        email: form.email.trim(),
         position: form.position,
         base_salary: Number(form.base_salary) || 0,
         status: form.status,
@@ -135,6 +139,7 @@ export default function Workers() {
       first_name: w.first_name,
       last_name: w.last_name,
       phone: w.phone,
+      email: w.email || '',
       position: w.position,
       base_salary: w.base_salary,
       status: w.status,
@@ -143,6 +148,31 @@ export default function Workers() {
     });
     setPhotoFile(null);
     setOpen(true);
+  };
+
+  const handleInvite = async (w: Worker) => {
+    if (!w.email) {
+      toast({ title: 'Email requis', description: 'Ajoutez l\'email du travailleur avant de l\'inviter.', variant: 'destructive' });
+      return;
+    }
+    if (w.linked_user_id) {
+      toast({ title: 'Déjà lié', description: 'Ce travailleur a déjà un compte associé.' });
+      return;
+    }
+    setInviting(w.id);
+    try {
+      const { data, error } = await supabase.functions.invoke('invite-worker', {
+        body: { worker_id: w.id, email: w.email },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast({ title: 'Invitation envoyée ✓', description: data?.message || `Email envoyé à ${w.email}` });
+      fetchWorkers();
+    } catch (err: any) {
+      toast({ title: 'Erreur', description: err.message, variant: 'destructive' });
+    } finally {
+      setInviting(null);
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -213,6 +243,7 @@ export default function Workers() {
                 <div><Label>Nom *</Label><Input value={form.last_name} onChange={e => setForm(f => ({ ...f, last_name: e.target.value }))} placeholder="Nom" /></div>
               </div>
               <div><Label>Téléphone</Label><Input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="+242 06 000 0000" /></div>
+              <div><Label>Email</Label><Input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="travailleur@email.com" /></div>
               <div>
                 <Label>Poste / Métier</Label>
                 <Select value={form.position} onValueChange={v => setForm(f => ({ ...f, position: v }))}>
@@ -328,6 +359,7 @@ export default function Workers() {
                           <div>
                             <p className="font-medium text-sm">{w.first_name} {w.last_name}</p>
                             <p className="text-xs text-muted-foreground sm:hidden">{w.phone || '—'}</p>
+                            {w.email && <p className="text-xs text-muted-foreground hidden sm:block">{w.email}</p>}
                           </div>
                         </div>
                       </TableCell>
@@ -336,19 +368,31 @@ export default function Workers() {
                       <TableCell className="hidden md:table-cell text-sm capitalize">{CONTRACT_TYPES.find(c => c.value === w.contract_type)?.label || w.contract_type}</TableCell>
                       <TableCell className="hidden md:table-cell text-sm font-medium">{Number(w.base_salary).toLocaleString('fr-FR')} F</TableCell>
                       <TableCell>
-                        <Badge
-                          variant={w.status === 'active' ? 'default' : 'secondary'}
-                          className="cursor-pointer"
-                          onClick={() => toggleStatus(w)}
-                        >
-                          {w.status === 'active' ? 'Actif' : 'Inactif'}
-                        </Badge>
+                        <div className="flex items-center gap-1.5">
+                          <Badge
+                            variant={w.status === 'active' ? 'default' : 'secondary'}
+                            className="cursor-pointer"
+                            onClick={() => toggleStatus(w)}
+                          >
+                            {w.status === 'active' ? 'Actif' : 'Inactif'}
+                          </Badge>
+                          {w.linked_user_id ? (
+                            <Badge variant="outline" className="text-[10px] text-success border-success/30">Lié</Badge>
+                          ) : w.email ? (
+                            <Badge variant="outline" className="text-[10px] text-warning border-warning/30">Non lié</Badge>
+                          ) : null}
+                        </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
                           <Button variant="ghost" size="sm" onClick={() => navigate(`/workers/${w.id}`)} title="Voir dashboard">
                             <Eye className="w-4 h-4" />
                           </Button>
+                          {!w.linked_user_id && w.email && (
+                            <Button variant="ghost" size="sm" onClick={() => handleInvite(w)} title="Envoyer invitation" disabled={inviting === w.id}>
+                              <Send className={`w-4 h-4 text-primary ${inviting === w.id ? 'animate-pulse' : ''}`} />
+                            </Button>
+                          )}
                           <Button variant="ghost" size="sm" onClick={() => handleEdit(w)}>
                             <Edit className="w-4 h-4" />
                           </Button>
