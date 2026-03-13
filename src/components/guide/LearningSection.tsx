@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,9 +27,8 @@ function extractYouTubeId(url: string): string | null {
   return match ? match[1] : null;
 }
 
-export default function LearningSection() {
-  const { user } = useAuth();
-  const isAdmin = user?.role === 'admin';
+export default function LearningSection({ isAdmin = false, userId }: { isAdmin?: boolean; userId?: string }) {
+  
   const [resources, setResources] = useState<LearningResource[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -73,7 +71,7 @@ export default function LearningSection() {
       description: description.trim(),
       url: url.trim(),
       resource_type: resourceType,
-      created_by: user!.id,
+      created_by: userId || 'anonymous',
     });
     setSubmitting(false);
     if (error) {
