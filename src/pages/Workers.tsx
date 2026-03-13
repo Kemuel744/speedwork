@@ -243,7 +243,7 @@ export default function Workers() {
                 <div><Label>Nom *</Label><Input value={form.last_name} onChange={e => setForm(f => ({ ...f, last_name: e.target.value }))} placeholder="Nom" /></div>
               </div>
               <div><Label>Téléphone</Label><Input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="+242 06 000 0000" /></div>
-              <div>
+              <div><Label>Email</Label><Input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="travailleur@email.com" /></div>
                 <Label>Poste / Métier</Label>
                 <Select value={form.position} onValueChange={v => setForm(f => ({ ...f, position: v }))}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
