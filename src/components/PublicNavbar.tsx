@@ -26,7 +26,7 @@ export default function PublicNavbar() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-1" aria-label="Navigation principale">
           {links.map((l) => (
             <Link
               key={l.to}
