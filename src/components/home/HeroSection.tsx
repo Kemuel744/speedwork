@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, FileText, Users, MapPin, BarChart3, Shield, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
-import promoHero from '@/assets/promo-hero.webp';
+import promoHero from '@/assets/promo-hero-small.webp';
 
 const badges = [
   { icon: FileText, label: 'Facturation' },
@@ -78,8 +78,8 @@ export default function HeroSection() {
               src={promoHero}
               alt="SpeedWork – Plateforme de gestion d'entreprise tout-en-un pour PME et freelances en Afrique"
               className="w-full rounded-2xl shadow-2xl aspect-[2/3]"
-              width={1024}
-              height={1536}
+              width={560}
+              height={840}
               fetchPriority="high"
             />
           </motion.div>
