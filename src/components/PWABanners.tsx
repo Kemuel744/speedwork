@@ -44,11 +44,10 @@ export function OfflineBanner() {
   );
 }
 
-export function InstallPWABanner() {
+export const InstallPWABanner = forwardRef<HTMLDivElement>(function InstallPWABanner(_props, ref) {
   const { canInstall, isInstalled, promptInstall } = usePWA();
   const [dismissed, setDismissed] = useState(false);
 
-  // Check localStorage to avoid showing again after dismiss
   useEffect(() => {
     const wasDismissed = localStorage.getItem("pwa-install-dismissed");
     if (wasDismissed) setDismissed(true);
@@ -62,7 +61,7 @@ export function InstallPWABanner() {
   if (!canInstall || isInstalled || dismissed) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 max-w-xs bg-card border border-border rounded-xl shadow-xl p-4">
+    <div ref={ref} className="fixed bottom-4 right-4 z-50 max-w-xs bg-card border border-border rounded-xl shadow-xl p-4">
       <button
         onClick={handleDismiss}
         className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
@@ -86,7 +85,7 @@ export function InstallPWABanner() {
       </div>
     </div>
   );
-}
+});
 
 export function UpdateAvailableBanner() {
   const { isUpdateAvailable } = usePWA();
