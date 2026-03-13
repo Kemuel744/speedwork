@@ -320,7 +320,7 @@ export default function Subscription() {
                       </li>
                     ))}
                   </ul>
-                </button>
+                </motion.button>
               );
             })}
           </div>
