@@ -52,7 +52,7 @@ export default function PublicNavbar() {
         </div>
 
         {/* Mobile actions */}
-        <div className="flex md:hidden items-center gap-2">
+        <div className="flex lg:hidden items-center gap-2">
           <Button size="sm" variant="ghost" asChild>
             <Link to="/login">Connexion</Link>
           </Button>
