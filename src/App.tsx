@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import Home from "@/pages/Home";
 import { OfflineBanner, InstallPWABanner, UpdateAvailableBanner } from "@/components/PWABanners";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 // Lazy-loaded pages for code splitting
 const AuthenticatedRoutes = lazy(() => import("@/components/layout/AuthenticatedRoutes"));
@@ -31,6 +33,8 @@ const PageLoader = () => (
 
 const App = () => (
   <HelmetProvider>
+  <ThemeProvider>
+  <LanguageProvider>
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
@@ -65,6 +69,8 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
+  </LanguageProvider>
+  </ThemeProvider>
   </HelmetProvider>
 );
 
