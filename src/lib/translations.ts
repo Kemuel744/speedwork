@@ -478,6 +478,10 @@ export const translations: Record<Language, Record<string, string>> = {
     'enterprise.feat5': 'Pointage & paie automatisée',
     'enterprise.feat6': '3 collaborateurs inclus',
     'enterprise.cta': "Souscrire à l'abonnement Entreprise",
+    'enterprise.trial_ended': "Votre essai gratuit de 3 jours est terminé. Souscrivez à l'abonnement Entreprise pour continuer à utiliser ces fonctionnalités.",
+    'enterprise.trial_badge': 'Essai gratuit Entreprise',
+    'enterprise.trial_days_left': 'jour(s) restant(s)',
+    'enterprise.subscribe_now': "S'abonner maintenant",
 
     // Features Page
     'features.heroBadge': 'SaaS de facturation • Gestion intelligente',
