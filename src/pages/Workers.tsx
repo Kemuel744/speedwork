@@ -358,6 +358,7 @@ export default function Workers() {
                           <div>
                             <p className="font-medium text-sm">{w.first_name} {w.last_name}</p>
                             <p className="text-xs text-muted-foreground sm:hidden">{w.phone || '—'}</p>
+                            {w.email && <p className="text-xs text-muted-foreground hidden sm:block">{w.email}</p>}
                           </div>
                         </div>
                       </TableCell>
