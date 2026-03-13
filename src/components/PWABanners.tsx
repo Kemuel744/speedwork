@@ -61,7 +61,7 @@ export function InstallPWABanner() {
   if (!canInstall || isInstalled || dismissed) return null;
 
   return (
-    <div ref={ref} className="fixed bottom-4 right-4 z-50 max-w-xs bg-card border border-border rounded-xl shadow-xl p-4">
+    <div className="fixed bottom-4 right-4 z-50 max-w-xs bg-card border border-border rounded-xl shadow-xl p-4">
       <button
         onClick={handleDismiss}
         className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
