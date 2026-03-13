@@ -100,6 +100,28 @@ const clientSections: NavSection[] = [
   },
 ];
 
+const workerSections: NavSection[] = [
+  {
+    titleKey: 'nav.principal',
+    items: [
+      { labelKey: 'nav.myDashboard', to: '/worker-dashboard', icon: HardHat },
+    ],
+  },
+  {
+    titleKey: 'nav.terrain',
+    items: [
+      { labelKey: 'nav.missions', to: '/missions', icon: Briefcase },
+      { labelKey: 'nav.tasksProofs', to: '/work-tasks', icon: ClipboardCheck },
+    ],
+  },
+  {
+    titleKey: 'nav.communication',
+    items: [
+      { labelKey: 'nav.messages', to: '/messages', icon: MessageCircle },
+    ],
+  },
+];
+
 const bottomNavKeys: NavItem[] = [
   { labelKey: 'nav.profile', to: '/profile', icon: User },
   { labelKey: 'nav.settings', to: '/settings', icon: Settings },
