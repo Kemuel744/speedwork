@@ -3,31 +3,27 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Check } from 'lucide-react';
 import ScrollReveal from './ScrollReveal';
 import promoComparison from '@/assets/promo-comparison.webp';
-
-const benefits = [
-  'Fini les factures manuscrites et les erreurs de calcul',
-  'Vos devis se convertissent en facture en 1 clic',
-  'Dashboard avec revenus, impayés et tendances en temps réel',
-  'Carte interactive des missions et équipes terrain',
-  'Scores de fiabilité et analyse de productivité automatiques',
-  'Paie calculée avec primes, retards et absences',
-  'Bilans annuels générés par intelligence artificielle',
-  'Application responsive, accessible partout sur mobile',
-];
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function WhySpeedWorkSection() {
+  const { t } = useLanguage();
+
+  const benefits = [
+    t('why.1'), t('why.2'), t('why.3'), t('why.4'),
+    t('why.5'), t('why.6'), t('why.7'), t('why.8'),
+  ];
+
   return (
     <section className="py-20 sm:py-28">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
           <ScrollReveal direction="left">
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
-              Passez de la gestion manuelle à la{' '}
-              <span className="text-primary">digitalisation complète</span>
+              {t('why.title1')}{' '}
+              <span className="text-primary">{t('why.title2')}</span>
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              SpeedWork est la plateforme tout-en-un conçue pour les réalités du marché africain. 
-              Remplacez les cahiers, tableurs et WhatsApp par un outil professionnel qui travaille pour vous.
+              {t('why.subtitle')}
             </p>
             <ul className="mt-8 space-y-3">
               {benefits.map((item) => (
@@ -41,7 +37,7 @@ export default function WhySpeedWorkSection() {
             </ul>
             <Button size="lg" asChild className="mt-8 h-13 px-8 text-base font-semibold">
               <Link to="/tarifs">
-                Tester SpeedWork maintenant
+                {t('why.cta')}
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
             </Button>

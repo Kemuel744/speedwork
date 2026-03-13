@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 type AccountType = 'enterprise' | 'freelance' | 'pme' | 'ong';
 
@@ -23,48 +24,6 @@ interface RegisterFormProps {
   loading: boolean;
   setLoading: (v: boolean) => void;
 }
-
-const accountTypes: { value: AccountType; label: string; icon: React.ReactNode; desc: string }[] = [
-  { value: 'enterprise', label: 'Entreprise', icon: <Building2 className="w-6 h-6" />, desc: 'Société établie avec des employés' },
-  { value: 'freelance', label: 'Freelance', icon: <User className="w-6 h-6" />, desc: 'Travailleur indépendant' },
-  { value: 'pme', label: 'PME / Startup', icon: <Briefcase className="w-6 h-6" />, desc: 'Petite ou moyenne entreprise' },
-  { value: 'ong', label: 'Organisation / ONG', icon: <Heart className="w-6 h-6" />, desc: 'Organisation non gouvernementale' },
-];
-
-const sectors = ['BTP', 'Agriculture', 'Logistique', 'Nettoyage / Assainissement', 'Transport', 'Autre'];
-const employeeCounts = ['1-10', '11-50', '51-200', '200+'];
-const professions = ['Maçon', 'Électricien', 'Soudeur', "Conducteur d'engins", 'Technicien', 'Autre'];
-const availabilities = ['Temps plein', 'Missions ponctuelles', 'Freelance'];
-
-const stepLabels = ['Type de compte', 'Informations', 'Détails', 'Sécurité'];
-
-// Validation schemas per step
-const step1Schema = z.object({ accountType: z.string().min(1) });
-const step2Schema = z.object({
-  fullName: z.string().trim().min(2, 'Nom requis (min 2 caractères)').max(100),
-  email: z.string().trim().email('Email invalide').max(255),
-  phone: z.string().trim().min(6, 'Numéro requis').max(20),
-  country: z.string().trim().min(2, 'Pays requis').max(60),
-  city: z.string().trim().min(2, 'Ville requise').max(60),
-  address: z.string().trim().max(200).optional(),
-});
-const step3EntSchema = z.object({
-  companyName: z.string().trim().min(2, "Nom d'entreprise requis").max(100),
-  sector: z.string().min(1, "Secteur requis"),
-  employeeCount: z.string().min(1, "Nombre d'employés requis"),
-  website: z.string().max(200).optional(),
-});
-const step3FreelanceSchema = z.object({
-  profession: z.string().min(1, 'Profession requise'),
-  experienceYears: z.string().min(1, "Années d'expérience requises"),
-  skills: z.string().trim().min(2, 'Compétences requises').max(500),
-  availability: z.string().min(1, 'Disponibilité requise'),
-});
-const step4Schema = z.object({
-  password: z.string().min(6, 'Min 6 caractères'),
-  confirmPassword: z.string().min(6, 'Confirmez le mot de passe'),
-  acceptTerms: z.literal(true, { errorMap: () => ({ message: 'Vous devez accepter les conditions' }) }),
-}).refine(d => d.password === d.confirmPassword, { message: 'Les mots de passe ne correspondent pas', path: ['confirmPassword'] });
 
 interface FormData {
   accountType: AccountType;
@@ -106,31 +65,87 @@ function FieldError({ message }: { message?: string }) {
 }
 
 export default function RegisterForm({ onRegister, onSwitchToLogin, loading, setLoading }: RegisterFormProps) {
+  const { t } = useLanguage();
   const [step, setStep] = useState(0);
   const [data, setData] = useState<FormData>(initialData);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [direction, setDirection] = useState(1);
+
+  const accountTypes: { value: AccountType; label: string; icon: React.ReactNode; desc: string }[] = [
+    { value: 'enterprise', label: t('register.typeEnterprise'), icon: <Building2 className="w-6 h-6" />, desc: t('register.typeEnterpriseDesc') },
+    { value: 'freelance', label: t('register.typeFreelance'), icon: <User className="w-6 h-6" />, desc: t('register.typeFreelanceDesc') },
+    { value: 'pme', label: t('register.typePme'), icon: <Briefcase className="w-6 h-6" />, desc: t('register.typePmeDesc') },
+    { value: 'ong', label: t('register.typeOng'), icon: <Heart className="w-6 h-6" />, desc: t('register.typeOngDesc') },
+  ];
+
+  const sectors = [
+    { value: 'BTP', label: t('register.sectorBTP') },
+    { value: 'Agriculture', label: t('register.sectorAgriculture') },
+    { value: 'Logistique', label: t('register.sectorLogistics') },
+    { value: 'Nettoyage / Assainissement', label: t('register.sectorCleaning') },
+    { value: 'Transport', label: t('register.sectorTransport') },
+    { value: 'Autre', label: t('register.sectorOther') },
+  ];
+  const employeeCounts = ['1-10', '11-50', '51-200', '200+'];
+  const professions = [
+    { value: 'Maçon', label: t('register.profMason') },
+    { value: 'Électricien', label: t('register.profElectrician') },
+    { value: 'Soudeur', label: t('register.profWelder') },
+    { value: "Conducteur d'engins", label: t('register.profOperator') },
+    { value: 'Technicien', label: t('register.profTechnician') },
+    { value: 'Autre', label: t('register.profOther') },
+  ];
+  const availabilities = [
+    { value: 'Temps plein', label: t('register.availFullTime') },
+    { value: 'Missions ponctuelles', label: t('register.availMissions') },
+    { value: 'Freelance', label: t('register.availFreelance') },
+  ];
+
+  const stepLabels = [t('register.stepType'), t('register.stepInfo'), t('register.stepDetails'), t('register.stepSecurity')];
 
   const update = useCallback((field: keyof FormData, value: string | boolean) => {
     setData(d => ({ ...d, [field]: value }));
-    setErrors(e => {
-      const { [field]: _, ...rest } = e;
-      return rest;
-    });
+    setErrors(e => { const { [field]: _, ...rest } = e; return rest; });
   }, []);
 
   const isEnterprise = data.accountType === 'enterprise' || data.accountType === 'pme' || data.accountType === 'ong';
   const progress = ((step + 1) / 4) * 100;
 
   const validateStep = (): boolean => {
+    const step1Schema = z.object({ accountType: z.string().min(1) });
+    const step2Schema = z.object({
+      fullName: z.string().trim().min(2, t('register.nameRequired')).max(100),
+      email: z.string().trim().email(t('register.emailInvalid')).max(255),
+      phone: z.string().trim().min(6, t('register.phoneRequired')).max(20),
+      country: z.string().trim().min(2, t('register.countryRequired')).max(60),
+      city: z.string().trim().min(2, t('register.cityRequired')).max(60),
+      address: z.string().trim().max(200).optional(),
+    });
+    const step3EntSchema = z.object({
+      companyName: z.string().trim().min(2, t('register.companyRequired')).max(100),
+      sector: z.string().min(1, t('register.sectorRequired')),
+      employeeCount: z.string().min(1, t('register.employeeRequired')),
+      website: z.string().max(200).optional(),
+    });
+    const step3FreelanceSchema = z.object({
+      profession: z.string().min(1, t('register.professionRequired')),
+      experienceYears: z.string().min(1, t('register.experienceRequired')),
+      skills: z.string().trim().min(2, t('register.skillsRequired')).max(500),
+      availability: z.string().min(1, t('register.availabilityRequired')),
+    });
+    const step4Schema = z.object({
+      password: z.string().min(6, t('register.pwMin')),
+      confirmPassword: z.string().min(6, t('register.pwConfirm')),
+      acceptTerms: z.literal(true, { errorMap: () => ({ message: t('register.termsRequired') }) }),
+    }).refine(d => d.password === d.confirmPassword, { message: t('register.pwMismatch'), path: ['confirmPassword'] });
+
     let result: z.SafeParseReturnType<any, any>;
     if (step === 0) result = step1Schema.safeParse({ accountType: data.accountType });
     else if (step === 1) result = step2Schema.safeParse(data);
     else if (step === 2) {
-      result = isEnterprise
-        ? step3EntSchema.safeParse(data)
-        : step3FreelanceSchema.safeParse(data);
+      result = isEnterprise ? step3EntSchema.safeParse(data) : step3FreelanceSchema.safeParse(data);
     } else {
       result = step4Schema.safeParse(data);
     }
@@ -148,11 +163,10 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
     return true;
   };
 
-  const next = () => {
-    if (validateStep()) setStep(s => Math.min(s + 1, 3));
-  };
-
+  const next = () => { if (validateStep()) setStep(s => Math.min(s + 1, 3)); };
   const prev = () => setStep(s => Math.max(s - 1, 0));
+  const goNext = () => { setDirection(1); next(); };
+  const goPrev = () => { setDirection(-1); prev(); };
 
   const handleSubmit = async () => {
     if (!validateStep()) return;
@@ -161,12 +175,11 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
       const displayName = isEnterprise ? data.companyName : data.fullName;
       const result = await onRegister(data.email, data.password, displayName);
       if (!result.success) {
-        toast.error(result.error || "Erreur lors de l'inscription");
+        toast.error(result.error || t('register.errorGeneric'));
         setLoading(false);
         return;
       }
 
-      // Update profile with extra fields
       const { supabase } = await import('@/integrations/supabase/client');
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
@@ -189,12 +202,12 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
       }
 
       if (result.needsConfirmation) {
-        toast.success('Un email de confirmation vous a été envoyé.');
+        toast.success(t('register.emailSent'));
       } else {
-        toast.success('Compte créé avec succès !');
+        toast.success(t('register.success'));
       }
     } catch {
-      toast.error('Une erreur est survenue');
+      toast.error(t('register.genericError'));
     }
     setLoading(false);
   };
@@ -204,10 +217,6 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
     center: { x: 0, opacity: 1 },
     exit: (dir: number) => ({ x: dir > 0 ? -80 : 80, opacity: 0 }),
   };
-
-  const [direction, setDirection] = useState(1);
-  const goNext = () => { setDirection(1); next(); };
-  const goPrev = () => { setDirection(-1); prev(); };
 
   return (
     <div className="w-full max-w-lg mx-auto">
@@ -244,30 +253,30 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
           {step === 0 && (
             <div className="space-y-4">
               <div>
-                <h2 className="text-xl font-bold text-foreground">Type de compte</h2>
-                <p className="text-sm text-muted-foreground">Sélectionnez le type qui correspond à votre activité</p>
+                <h2 className="text-xl font-bold text-foreground">{t('register.stepType')}</h2>
+                <p className="text-sm text-muted-foreground">{t('register.selectType')}</p>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                {accountTypes.map(t => (
+                {accountTypes.map(at => (
                   <button
-                    key={t.value}
+                    key={at.value}
                     type="button"
-                    onClick={() => update('accountType', t.value)}
+                    onClick={() => update('accountType', at.value)}
                     className={`p-4 rounded-xl border-2 text-left transition-all hover:shadow-md ${
-                      data.accountType === t.value
+                      data.accountType === at.value
                         ? 'border-primary bg-primary/5 shadow-sm'
                         : 'border-border hover:border-primary/40'
                     }`}
                   >
-                    <div className={`mb-2 ${data.accountType === t.value ? 'text-primary' : 'text-muted-foreground'}`}>
-                      {t.icon}
+                    <div className={`mb-2 ${data.accountType === at.value ? 'text-primary' : 'text-muted-foreground'}`}>
+                      {at.icon}
                     </div>
-                    <p className="font-semibold text-sm text-foreground">{t.label}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{t.desc}</p>
+                    <p className="font-semibold text-sm text-foreground">{at.label}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{at.desc}</p>
                   </button>
                 ))}
               </div>
-              <FieldError message={errors.accountType && 'Veuillez sélectionner un type de compte'} />
+              <FieldError message={errors.accountType && t('register.selectTypeError')} />
             </div>
           )}
 
@@ -275,12 +284,12 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
           {step === 1 && (
             <div className="space-y-4">
               <div>
-                <h2 className="text-xl font-bold text-foreground">Informations principales</h2>
-                <p className="text-sm text-muted-foreground">Renseignez vos coordonnées</p>
+                <h2 className="text-xl font-bold text-foreground">{t('register.mainInfo')}</h2>
+                <p className="text-sm text-muted-foreground">{t('register.mainInfoDesc')}</p>
               </div>
               <div className="space-y-3">
                 <div>
-                  <Label htmlFor="fullName">Nom complet</Label>
+                  <Label htmlFor="fullName">{t('register.fullName')}</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input id="fullName" value={data.fullName} onChange={e => update('fullName', e.target.value)} placeholder="Jean Dupont" className="pl-10" />
@@ -288,15 +297,15 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
                   <FieldError message={errors.fullName} />
                 </div>
                 <div>
-                  <Label htmlFor="email">Email professionnel</Label>
+                  <Label htmlFor="email">{t('register.proEmail')}</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input id="email" type="email" value={data.email} onChange={e => update('email', e.target.value)} placeholder="vous@entreprise.com" className="pl-10" />
+                    <Input id="email" type="email" value={data.email} onChange={e => update('email', e.target.value)} placeholder="you@company.com" className="pl-10" />
                   </div>
                   <FieldError message={errors.email} />
                 </div>
                 <div>
-                  <Label htmlFor="phone">Numéro de téléphone</Label>
+                  <Label htmlFor="phone">{t('register.phone')}</Label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input id="phone" value={data.phone} onChange={e => update('phone', e.target.value)} placeholder="+225 07 00 00 00" className="pl-10" />
@@ -305,71 +314,71 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <Label htmlFor="country">Pays</Label>
+                    <Label htmlFor="country">{t('register.country')}</Label>
                     <div className="relative">
                       <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input id="country" value={data.country} onChange={e => update('country', e.target.value)} placeholder="Côte d'Ivoire" className="pl-10" />
+                      <Input id="country" value={data.country} onChange={e => update('country', e.target.value)} placeholder="Congo" className="pl-10" />
                     </div>
                     <FieldError message={errors.country} />
                   </div>
                   <div>
-                    <Label htmlFor="city">Ville</Label>
+                    <Label htmlFor="city">{t('register.city')}</Label>
                     <div className="relative">
                       <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input id="city" value={data.city} onChange={e => update('city', e.target.value)} placeholder="Abidjan" className="pl-10" />
+                      <Input id="city" value={data.city} onChange={e => update('city', e.target.value)} placeholder="Brazzaville" className="pl-10" />
                     </div>
                     <FieldError message={errors.city} />
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="address">Adresse complète <span className="text-muted-foreground">(optionnel)</span></Label>
+                  <Label htmlFor="address">{t('register.fullAddress')} <span className="text-muted-foreground">({t('register.optional')})</span></Label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input id="address" value={data.address} onChange={e => update('address', e.target.value)} placeholder="Rue, quartier..." className="pl-10" />
+                    <Input id="address" value={data.address} onChange={e => update('address', e.target.value)} placeholder="..." className="pl-10" />
                   </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Step 2: Specific Info */}
+          {/* Step 2: Enterprise */}
           {step === 2 && isEnterprise && (
             <div className="space-y-4">
               <div>
-                <h2 className="text-xl font-bold text-foreground">Informations entreprise</h2>
-                <p className="text-sm text-muted-foreground">Détails sur votre organisation</p>
+                <h2 className="text-xl font-bold text-foreground">{t('register.enterpriseInfo')}</h2>
+                <p className="text-sm text-muted-foreground">{t('register.enterpriseInfoDesc')}</p>
               </div>
               <div className="space-y-3">
                 <div>
-                  <Label htmlFor="companyName">Nom de l'entreprise</Label>
+                  <Label htmlFor="companyName">{t('register.companyName')}</Label>
                   <div className="relative">
                     <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input id="companyName" value={data.companyName} onChange={e => update('companyName', e.target.value)} placeholder="Mon Entreprise SARL" className="pl-10" />
+                    <Input id="companyName" value={data.companyName} onChange={e => update('companyName', e.target.value)} placeholder="My Company SARL" className="pl-10" />
                   </div>
                   <FieldError message={errors.companyName} />
                 </div>
                 <div>
-                  <Label>Secteur d'activité</Label>
+                  <Label>{t('register.sector')}</Label>
                   <Select value={data.sector} onValueChange={v => update('sector', v)}>
                     <SelectTrigger className="w-full">
                       <div className="flex items-center gap-2">
                         <Factory className="w-4 h-4 text-muted-foreground" />
-                        <SelectValue placeholder="Sélectionner un secteur" />
+                        <SelectValue placeholder={t('register.selectSector')} />
                       </div>
                     </SelectTrigger>
                     <SelectContent>
-                      {sectors.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                      {sectors.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
                     </SelectContent>
                   </Select>
                   <FieldError message={errors.sector} />
                 </div>
                 <div>
-                  <Label>Nombre d'employés</Label>
+                  <Label>{t('register.employeeCount')}</Label>
                   <Select value={data.employeeCount} onValueChange={v => update('employeeCount', v)}>
                     <SelectTrigger className="w-full">
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4 text-muted-foreground" />
-                        <SelectValue placeholder="Sélectionner" />
+                        <SelectValue placeholder={t('register.select')} />
                       </div>
                     </SelectTrigger>
                     <SelectContent>
@@ -379,59 +388,60 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
                   <FieldError message={errors.employeeCount} />
                 </div>
                 <div>
-                  <Label htmlFor="website">Site web <span className="text-muted-foreground">(optionnel)</span></Label>
+                  <Label htmlFor="website">{t('register.website')} <span className="text-muted-foreground">({t('register.optional')})</span></Label>
                   <div className="relative">
                     <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input id="website" value={data.website} onChange={e => update('website', e.target.value)} placeholder="https://monentreprise.com" className="pl-10" />
+                    <Input id="website" value={data.website} onChange={e => update('website', e.target.value)} placeholder="https://mycompany.com" className="pl-10" />
                   </div>
                 </div>
               </div>
             </div>
           )}
 
+          {/* Step 2: Freelance */}
           {step === 2 && !isEnterprise && (
             <div className="space-y-4">
               <div>
-                <h2 className="text-xl font-bold text-foreground">Informations freelance</h2>
-                <p className="text-sm text-muted-foreground">Détails sur votre profil professionnel</p>
+                <h2 className="text-xl font-bold text-foreground">{t('register.freelanceInfo')}</h2>
+                <p className="text-sm text-muted-foreground">{t('register.freelanceInfoDesc')}</p>
               </div>
               <div className="space-y-3">
                 <div>
-                  <Label>Profession</Label>
+                  <Label>{t('register.profession')}</Label>
                   <Select value={data.profession} onValueChange={v => update('profession', v)}>
                     <SelectTrigger className="w-full">
                       <div className="flex items-center gap-2">
                         <Wrench className="w-4 h-4 text-muted-foreground" />
-                        <SelectValue placeholder="Sélectionner votre métier" />
+                        <SelectValue placeholder={t('register.selectProfession')} />
                       </div>
                     </SelectTrigger>
                     <SelectContent>
-                      {professions.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                      {professions.map(p => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
                     </SelectContent>
                   </Select>
                   <FieldError message={errors.profession} />
                 </div>
                 <div>
-                  <Label htmlFor="experienceYears">Années d'expérience</Label>
+                  <Label htmlFor="experienceYears">{t('register.experience')}</Label>
                   <Input id="experienceYears" value={data.experienceYears} onChange={e => update('experienceYears', e.target.value)} placeholder="Ex: 5" />
                   <FieldError message={errors.experienceYears} />
                 </div>
                 <div>
-                  <Label htmlFor="skills">Compétences principales</Label>
-                  <Input id="skills" value={data.skills} onChange={e => update('skills', e.target.value)} placeholder="Ex: Soudure, électricité industrielle..." />
+                  <Label htmlFor="skills">{t('register.skills')}</Label>
+                  <Input id="skills" value={data.skills} onChange={e => update('skills', e.target.value)} placeholder={t('register.skillsPlaceholder')} />
                   <FieldError message={errors.skills} />
                 </div>
                 <div>
-                  <Label>Disponibilité</Label>
+                  <Label>{t('register.availability')}</Label>
                   <Select value={data.availability} onValueChange={v => update('availability', v)}>
                     <SelectTrigger className="w-full">
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4 text-muted-foreground" />
-                        <SelectValue placeholder="Sélectionner" />
+                        <SelectValue placeholder={t('register.select')} />
                       </div>
                     </SelectTrigger>
                     <SelectContent>
-                      {availabilities.map(a => <SelectItem key={a} value={a}>{a}</SelectItem>)}
+                      {availabilities.map(a => <SelectItem key={a.value} value={a.value}>{a.label}</SelectItem>)}
                     </SelectContent>
                   </Select>
                   <FieldError message={errors.availability} />
@@ -444,12 +454,12 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
           {step === 3 && (
             <div className="space-y-4">
               <div>
-                <h2 className="text-xl font-bold text-foreground">Sécurité du compte</h2>
-                <p className="text-sm text-muted-foreground">Créez un mot de passe sécurisé</p>
+                <h2 className="text-xl font-bold text-foreground">{t('register.securityTitle')}</h2>
+                <p className="text-sm text-muted-foreground">{t('register.securityDesc')}</p>
               </div>
               <div className="space-y-3">
                 <div>
-                  <Label htmlFor="password">Mot de passe</Label>
+                  <Label htmlFor="password">{t('register.password')}</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
@@ -467,7 +477,7 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
                   <FieldError message={errors.password} />
                 </div>
                 <div>
-                  <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
+                  <Label htmlFor="confirmPassword">{t('register.confirmPassword')}</Label>
                   <div className="relative">
                     <Shield className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
@@ -485,7 +495,6 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
                   <FieldError message={errors.confirmPassword} />
                 </div>
 
-                {/* Password strength indicator */}
                 {data.password && (
                   <div className="space-y-1">
                     <div className="flex gap-1">
@@ -499,7 +508,7 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
                       ))}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {data.password.length < 6 ? 'Trop court' : data.password.length < 8 ? 'Faible' : data.password.length < 12 ? 'Moyen' : 'Fort'}
+                      {data.password.length < 6 ? t('register.pwTooShort') : data.password.length < 8 ? t('register.pwWeak') : data.password.length < 12 ? t('register.pwMedium') : t('register.pwStrong')}
                     </p>
                   </div>
                 )}
@@ -511,7 +520,7 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
                     onCheckedChange={v => update('acceptTerms', !!v)}
                   />
                   <label htmlFor="terms" className="text-sm text-muted-foreground leading-tight cursor-pointer">
-                    J'accepte les <span className="text-primary underline">conditions d'utilisation</span> et la <span className="text-primary underline">politique de confidentialité</span>.
+                    {t('register.acceptTerms')} <span className="text-primary underline">{t('register.terms')}</span> {t('register.and')} <span className="text-primary underline">{t('register.privacy')}</span>.
                   </label>
                 </div>
                 <FieldError message={errors.acceptTerms} />
@@ -526,29 +535,29 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
         {step > 0 && (
           <Button type="button" variant="outline" onClick={goPrev} className="flex-1" disabled={loading}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Retour
+            {t('register.back')}
           </Button>
         )}
         {step < 3 ? (
           <Button type="button" onClick={goNext} className="flex-1">
-            Continuer
+            {t('common.continue')}
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         ) : (
           <Button type="button" onClick={handleSubmit} className="flex-1" disabled={loading}>
-            {loading ? 'Création...' : 'Créer mon compte'}
+            {loading ? t('register.creating') : t('register.createAccount')}
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         )}
       </div>
 
       <p className="text-xs text-center text-muted-foreground mt-4">
-        En créant un compte, vous pourrez gérer vos équipes, missions et paiements sur SpeedWork.
+        {t('register.accountFooter')}
       </p>
 
       <div className="text-center mt-4">
         <button type="button" onClick={onSwitchToLogin} className="text-sm text-primary hover:underline">
-          Déjà un compte ? Se connecter
+          {t('register.hasAccount')}
         </button>
       </div>
     </div>

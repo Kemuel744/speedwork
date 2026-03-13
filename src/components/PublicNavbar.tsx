@@ -3,19 +3,21 @@ import { Button } from '@/components/ui/button';
 import speedworkLogo from '@/assets/logo-small.webp';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
-
-const links = [
-  { label: 'Accueil', to: '/' },
-  { label: 'Fonctionnalités', to: '/fonctionnalites' },
-  { label: 'Tarifs', to: '/tarifs' },
-  { label: 'Blog', to: '/blog' },
-  { label: 'Guide', to: '/guide' },
-  { label: 'Contact', to: '/contact' },
-];
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function PublicNavbar() {
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
+  const { t } = useLanguage();
+
+  const links = [
+    { label: t('pub.home'), to: '/' },
+    { label: t('pub.features'), to: '/fonctionnalites' },
+    { label: t('pub.pricing'), to: '/tarifs' },
+    { label: t('pub.blog'), to: '/blog' },
+    { label: t('pub.guide'), to: '/guide' },
+    { label: t('pub.contact'), to: '/contact' },
+  ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
@@ -44,19 +46,19 @@ export default function PublicNavbar() {
 
         <div className="hidden lg:flex items-center gap-3">
           <Button variant="ghost" asChild>
-            <Link to="/login">Connexion</Link>
+            <Link to="/login">{t('pub.login')}</Link>
           </Button>
           <Button asChild>
-            <Link to="/tarifs">Commencer</Link>
+            <Link to="/tarifs">{t('pub.start')}</Link>
           </Button>
         </div>
 
         {/* Mobile actions */}
         <div className="flex lg:hidden items-center gap-2">
           <Button size="sm" variant="ghost" asChild>
-            <Link to="/login">Connexion</Link>
+            <Link to="/login">{t('pub.login')}</Link>
           </Button>
-          <button className="p-2" onClick={() => setOpen(!open)} aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'} aria-expanded={open}>
+          <button className="p-2" onClick={() => setOpen(!open)} aria-label={open ? t('pub.closeMenu') : t('pub.openMenu')} aria-expanded={open}>
             {open ? <X className="w-5 h-5" aria-hidden="true" /> : <Menu className="w-5 h-5" aria-hidden="true" />}
           </button>
         </div>
@@ -79,10 +81,10 @@ export default function PublicNavbar() {
           ))}
           <div className="flex flex-col gap-2 mt-3">
             <Button variant="outline" asChild>
-              <Link to="/login" onClick={() => setOpen(false)}>Connexion</Link>
+              <Link to="/login" onClick={() => setOpen(false)}>{t('pub.login')}</Link>
             </Button>
             <Button asChild>
-              <Link to="/tarifs" onClick={() => setOpen(false)}>Commencer</Link>
+              <Link to="/tarifs" onClick={() => setOpen(false)}>{t('pub.start')}</Link>
             </Button>
           </div>
         </div>

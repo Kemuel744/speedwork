@@ -4,36 +4,38 @@ import {
   Calculator, Bell, Globe,
 } from 'lucide-react';
 import ScrollReveal, { StaggerContainer, StaggerItem } from './ScrollReveal';
-
-const features = [
-  { icon: FileText, title: 'Facturation & Devis Pro', description: 'Créez des factures et devis PDF professionnels en quelques clics. Numérotation automatique, calcul TVA, conversion devis → facture en 1 clic.', color: 'text-blue-600 bg-blue-500/10', link: '/fonctionnalites' },
-  { icon: Users, title: 'Gestion d\'équipes & RH', description: 'Organisez vos équipes par chantier, gérez les travailleurs, calculez les salaires automatiquement avec primes et pénalités.', color: 'text-emerald-600 bg-emerald-500/10', link: '/fonctionnalites' },
-  { icon: MapPin, title: 'Missions & Carte terrain', description: 'Assignez des missions géolocalisées, suivez leur avancement en temps réel sur une carte interactive avec marqueurs colorés.', color: 'text-orange-600 bg-orange-500/10', link: '/fonctionnalites' },
-  { icon: Clock, title: 'Pointage & Présence', description: 'Suivi de présence avec géolocalisation, détection des retards, historique complet et preuves photo de travail.', color: 'text-violet-600 bg-violet-500/10', link: '/fonctionnalites' },
-  { icon: BarChart3, title: 'Analyse de productivité', description: 'Dashboard analytique avec KPI, graphiques interactifs : missions terminées, rendement par équipe, taux de présence.', color: 'text-pink-600 bg-pink-500/10', link: '/fonctionnalites' },
-  { icon: Shield, title: 'Scores de fiabilité', description: 'Chaque travailleur reçoit un score automatique basé sur sa ponctualité, ses missions, la qualité du travail et sa présence.', color: 'text-amber-600 bg-amber-500/10', link: '/fonctionnalites' },
-  { icon: Calculator, title: 'Bilan annuel par IA', description: 'Génération automatique de bilans financiers par intelligence artificielle avec recommandations personnalisées.', color: 'text-cyan-600 bg-cyan-500/10', link: '/fonctionnalites' },
-  { icon: Bell, title: 'Relances automatiques', description: 'Détection des factures en retard et envoi de relances email paramétrables. L\'IA rédige vos messages de suivi.', color: 'text-red-600 bg-red-500/10', link: '/fonctionnalites' },
-  { icon: Globe, title: 'Multi-devises & FCFA', description: 'Support natif du Franc CFA (XAF/XOF), convertisseur de devises en temps réel. Pensé pour le marché africain.', color: 'text-teal-600 bg-teal-500/10', link: '/fonctionnalites' },
-];
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function PowerFeaturesSection() {
+  const { t } = useLanguage();
+
+  const features = [
+    { icon: FileText, titleKey: 'power.f1.title', descKey: 'power.f1.desc', color: 'text-blue-600 bg-blue-500/10', link: '/fonctionnalites' },
+    { icon: Users, titleKey: 'power.f2.title', descKey: 'power.f2.desc', color: 'text-emerald-600 bg-emerald-500/10', link: '/fonctionnalites' },
+    { icon: MapPin, titleKey: 'power.f3.title', descKey: 'power.f3.desc', color: 'text-orange-600 bg-orange-500/10', link: '/fonctionnalites' },
+    { icon: Clock, titleKey: 'power.f4.title', descKey: 'power.f4.desc', color: 'text-violet-600 bg-violet-500/10', link: '/fonctionnalites' },
+    { icon: BarChart3, titleKey: 'power.f5.title', descKey: 'power.f5.desc', color: 'text-pink-600 bg-pink-500/10', link: '/fonctionnalites' },
+    { icon: Shield, titleKey: 'power.f6.title', descKey: 'power.f6.desc', color: 'text-amber-600 bg-amber-500/10', link: '/fonctionnalites' },
+    { icon: Calculator, titleKey: 'power.f7.title', descKey: 'power.f7.desc', color: 'text-cyan-600 bg-cyan-500/10', link: '/fonctionnalites' },
+    { icon: Bell, titleKey: 'power.f8.title', descKey: 'power.f8.desc', color: 'text-red-600 bg-red-500/10', link: '/fonctionnalites' },
+    { icon: Globe, titleKey: 'power.f9.title', descKey: 'power.f9.desc', color: 'text-teal-600 bg-teal-500/10', link: '/fonctionnalites' },
+  ];
+
   return (
     <section className="py-20 sm:py-28">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <ScrollReveal className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
-            9 modules puissants pour piloter votre entreprise
+            {t('power.title')}
           </h2>
           <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-            SpeedWork va bien au-delà de la simple facturation. C'est une plateforme complète 
-            de gestion d'entreprise conçue pour les réalités du terrain africain.
+            {t('power.subtitle')}
           </p>
         </ScrollReveal>
 
         <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" stagger={0.08}>
           {features.map((f) => (
-            <StaggerItem key={f.title}>
+            <StaggerItem key={f.titleKey}>
               <Link
                 to={f.link}
                 className="group rounded-2xl border border-border/60 bg-card p-6 hover:shadow-lg hover:border-primary/30 transition-all duration-300 block h-full"
@@ -42,10 +44,10 @@ export default function PowerFeaturesSection() {
                   <f.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
-                  {f.title}
+                  {t(f.titleKey)}
                 </h3>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  {f.description}
+                  {t(f.descKey)}
                 </p>
               </Link>
             </StaggerItem>

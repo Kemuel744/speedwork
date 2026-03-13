@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,6 +13,7 @@ import RegisterForm from '@/components/auth/RegisterForm';
 
 export default function Login() {
   const { user, login, register, isLoading: authLoading } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
@@ -29,13 +31,13 @@ export default function Login() {
     try {
       const result = await login(email, password);
       if (!result.success) {
-        toast.error(result.error || 'Email ou mot de passe incorrect');
+        toast.error(result.error || t('login.error'));
         setLoading(false);
         return;
       }
-      toast.success('Connexion réussie !');
+      toast.success(t('login.success'));
     } catch {
-      toast.error('Une erreur est survenue');
+      toast.error(t('login.genericError'));
     }
     setLoading(false);
   };
@@ -51,7 +53,7 @@ export default function Login() {
   return (
     <main className="min-h-screen flex">
       <SEO
-        title={isRegister ? "Inscription" : "Connexion"}
+        title={isRegister ? t('register.title') : t('pub.login')}
         description="Connectez-vous à votre espace SpeedWork pour gérer vos factures et devis professionnels."
         path="/login"
       />
@@ -63,31 +65,17 @@ export default function Login() {
             <img src={speedworkLogo} alt="SpeedWork" className="h-12 w-auto" />
             <span className="text-2xl font-bold">SpeedWork</span>
           </div>
-          <h1 className="text-4xl font-bold mb-4 leading-tight">La plateforme tout-en-un pour piloter votre entreprise</h1>
+          <h1 className="text-4xl font-bold mb-4 leading-tight">{t('login.leftTitle')}</h1>
           <p className="text-primary-foreground/80 text-lg mb-6">
-            Rejoignez +120 entreprises qui digitalisent leur gestion avec SpeedWork.
+            {t('login.leftSubtitle')}
           </p>
           <ul className="space-y-3 text-primary-foreground/90 text-sm">
-            <li className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary-foreground/60 shrink-0" />
-              Facturation & devis PDF professionnels en 1 clic
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary-foreground/60 shrink-0" />
-              Gestion d'équipes, missions terrain & carte interactive
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary-foreground/60 shrink-0" />
-              Pointage, scores de fiabilité & analyse de productivité
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary-foreground/60 shrink-0" />
-              Paie automatique & bilans annuels générés par IA
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary-foreground/60 shrink-0" />
-              Multi-devises avec support natif du Franc CFA
-            </li>
+            {[t('login.feat1'), t('login.feat2'), t('login.feat3'), t('login.feat4'), t('login.feat5')].map((feat) => (
+              <li key={feat} className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary-foreground/60 shrink-0" />
+                {feat}
+              </li>
+            ))}
           </ul>
         </div>
         <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-primary-foreground/5" />
@@ -111,19 +99,19 @@ export default function Login() {
             />
           ) : (
             <>
-              <h2 className="text-2xl font-bold text-foreground mb-2">Bienvenue</h2>
-              <p className="text-muted-foreground mb-8">Connectez-vous à votre espace</p>
+              <h2 className="text-2xl font-bold text-foreground mb-2">{t('login.title')}</h2>
+              <p className="text-muted-foreground mb-8">{t('login.subtitle')}</p>
 
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('login.email')}</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="vous@exemple.com" required className="pl-10" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Mot de passe</Label>
+                  <Label htmlFor="password">{t('login.password')}</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
@@ -142,7 +130,7 @@ export default function Login() {
                   </div>
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Chargement...' : 'Se connecter'}
+                  {loading ? t('login.loading') : t('login.submit')}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </form>
@@ -153,11 +141,11 @@ export default function Login() {
                   onClick={() => setIsRegister(true)}
                   className="text-sm text-primary hover:underline"
                 >
-                  Pas de compte ? S'inscrire
+                  {t('login.noAccount')}
                 </button>
                 <div>
                   <Link to="/subscription" className="text-sm text-muted-foreground hover:underline">
-                    Voir les abonnements
+                    {t('login.viewPlans')}
                   </Link>
                 </div>
               </div>
