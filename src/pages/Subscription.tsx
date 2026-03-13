@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Check, Crown, ArrowRight, Smartphone, Zap, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import speedworkLogo from '@/assets/logo.webp';
+import speedworkLogo from '@/assets/logo-small.webp';
 import mtnLogo from '@/assets/mtn-momo.png';
 import airtelLogo from '@/assets/airtel-money.png';
 import { toast } from 'sonner';
