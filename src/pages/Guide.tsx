@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Printer, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 import speedworkLogo from '@/assets/logo.webp';
 import mockupInvoice from '@/assets/mockup-invoice.png';
 import mockupQuote from '@/assets/mockup-quote.png';
@@ -9,6 +10,8 @@ import airtelLogo from '@/assets/airtel-money.png';
 import SEO from '@/components/SEO';
 import { useAdSense } from '@/hooks/useAdSense';
 import AdSenseSlot from '@/components/blog/AdSenseSlot';
+
+const LearningSection = lazy(() => import('@/components/guide/LearningSection'));
 
 export default function Guide() {
   useAdSense();
