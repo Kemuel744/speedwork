@@ -4,6 +4,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { DocumentsProvider } from "@/contexts/DocumentsContext";
 import { CompanyProvider } from "@/contexts/CompanyContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
+import EnterpriseGuard from "@/components/layout/EnterpriseGuard";
 
 const AppLayout = lazy(() => import("@/components/layout/AppLayout"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
@@ -70,22 +71,22 @@ export default function AuthenticatedRoutes() {
                   <Route path="/reminders" element={<Reminders />} />
                   <Route path="/reports" element={<Reports />} />
                   <Route path="/messages" element={<Messages />} />
-                  <Route path="/team" element={<TeamManagement />} />
+                  <Route path="/team" element={<EnterpriseGuard><TeamManagement /></EnterpriseGuard>} />
                   <Route path="/learning" element={<Navigate to="/guide" replace />} />
                   <Route path="/admin/blog" element={<AdminBlog />} />
-                  <Route path="/teams" element={<Teams />} />
-                  <Route path="/teams/:teamId" element={<TeamDetail />} />
+                  <Route path="/teams" element={<EnterpriseGuard><Teams /></EnterpriseGuard>} />
+                  <Route path="/teams/:teamId" element={<EnterpriseGuard><TeamDetail /></EnterpriseGuard>} />
                   <Route path="/teams-map" element={<Navigate to="/missions-map" replace />} />
-                  <Route path="/workers" element={<Workers />} />
-                  <Route path="/worker-dashboard" element={<WorkerDashboard />} />
-                  <Route path="/work-tasks" element={<WorkTasks />} />
-                  <Route path="/productivity" element={<ProductivityMap />} />
-                  <Route path="/missions" element={<Missions />} />
-                  <Route path="/attendance" element={<Attendance />} />
-                  <Route path="/payroll" element={<Payroll />} />
-                  <Route path="/analytics" element={<ProductivityAnalytics />} />
-                  <Route path="/reliability" element={<ReliabilityScores />} />
-                  <Route path="/missions-map" element={<MissionsMap />} />
+                  <Route path="/workers" element={<EnterpriseGuard><Workers /></EnterpriseGuard>} />
+                  <Route path="/worker-dashboard" element={<EnterpriseGuard><WorkerDashboard /></EnterpriseGuard>} />
+                  <Route path="/work-tasks" element={<EnterpriseGuard><WorkTasks /></EnterpriseGuard>} />
+                  <Route path="/productivity" element={<EnterpriseGuard><ProductivityMap /></EnterpriseGuard>} />
+                  <Route path="/missions" element={<EnterpriseGuard><Missions /></EnterpriseGuard>} />
+                  <Route path="/attendance" element={<EnterpriseGuard><Attendance /></EnterpriseGuard>} />
+                  <Route path="/payroll" element={<EnterpriseGuard><Payroll /></EnterpriseGuard>} />
+                  <Route path="/analytics" element={<EnterpriseGuard><ProductivityAnalytics /></EnterpriseGuard>} />
+                  <Route path="/reliability" element={<EnterpriseGuard><ReliabilityScores /></EnterpriseGuard>} />
+                  <Route path="/missions-map" element={<EnterpriseGuard><MissionsMap /></EnterpriseGuard>} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>
