@@ -77,7 +77,7 @@ export default function Home() {
         <ScrollReveal>
           <section className="py-20 bg-primary text-primary-foreground">
             <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-              <h2 className="text-3xl sm:text-4xl font-bold">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
                 Prêt à piloter votre entreprise efficacement ?
               </h2>
               <p className="mt-4 text-primary-foreground/80 text-lg">

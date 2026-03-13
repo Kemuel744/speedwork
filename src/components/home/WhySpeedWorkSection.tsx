@@ -50,7 +50,7 @@ export default function WhySpeedWorkSection() {
             <img
               src={promoComparison}
               alt="Digitalisation des PME – Avant/après avec SpeedWork"
-              className="w-full rounded-2xl shadow-xl aspect-[2/3]"
+              className="w-full rounded-2xl shadow-xl object-cover aspect-[4/5] md:aspect-[3/4] lg:aspect-[2/3]"
               width={1024}
               height={1536}
               loading="lazy"

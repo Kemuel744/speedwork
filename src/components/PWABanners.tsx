@@ -87,13 +87,13 @@ export const InstallPWABanner = forwardRef<HTMLDivElement>(function InstallPWABa
   );
 });
 
-export function UpdateAvailableBanner() {
+export const UpdateAvailableBanner = forwardRef<HTMLDivElement>(function UpdateAvailableBanner(_props, ref) {
   const { isUpdateAvailable } = usePWA();
 
   if (!isUpdateAvailable) return null;
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border bg-primary/10 border-primary/30 text-primary text-sm font-medium">
+    <div ref={ref} className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border bg-primary/10 border-primary/30 text-primary text-sm font-medium">
       <RefreshCw className="w-4 h-4" />
       Mise à jour disponible –{" "}
       <button
@@ -104,4 +104,4 @@ export function UpdateAvailableBanner() {
       </button>
     </div>
   );
-}
+});
