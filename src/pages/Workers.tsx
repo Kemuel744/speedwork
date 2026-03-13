@@ -387,6 +387,11 @@ export default function Workers() {
                           <Button variant="ghost" size="sm" onClick={() => navigate(`/workers/${w.id}`)} title="Voir dashboard">
                             <Eye className="w-4 h-4" />
                           </Button>
+                          {!w.linked_user_id && w.email && (
+                            <Button variant="ghost" size="sm" onClick={() => handleInvite(w)} title="Envoyer invitation" disabled={inviting === w.id}>
+                              <Send className={`w-4 h-4 text-primary ${inviting === w.id ? 'animate-pulse' : ''}`} />
+                            </Button>
+                          )}
                           <Button variant="ghost" size="sm" onClick={() => handleEdit(w)}>
                             <Edit className="w-4 h-4" />
                           </Button>
