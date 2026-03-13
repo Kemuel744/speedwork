@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Printer, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 import speedworkLogo from '@/assets/logo.webp';
 import mockupInvoice from '@/assets/mockup-invoice.png';
 import mockupQuote from '@/assets/mockup-quote.png';
@@ -9,6 +10,8 @@ import airtelLogo from '@/assets/airtel-money.png';
 import SEO from '@/components/SEO';
 import { useAdSense } from '@/hooks/useAdSense';
 import AdSenseSlot from '@/components/blog/AdSenseSlot';
+
+const LearningSection = lazy(() => import('@/components/guide/LearningSection'));
 
 export default function Guide() {
   useAdSense();
@@ -479,6 +482,19 @@ export default function Guide() {
           <p style={{ fontSize: '12px', color: '#9ca3af', margin: '4px 0 0', fontFamily: 'Arial, sans-serif' }}>
             Support : 06 444 6047 (MTN) | 05 303 9818 (Airtel)
           </p>
+        </div>
+      </div>
+
+      {/* Learning Section – interactive, hidden from print */}
+      <div className="no-print" style={{ maxWidth: '820px', margin: '0 auto', padding: '40px 20px' }}>
+        <div className="border-t border-border pt-8">
+          <Suspense fallback={
+            <div className="flex justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+            </div>
+          }>
+            <LearningSection />
+          </Suspense>
         </div>
       </div>
 

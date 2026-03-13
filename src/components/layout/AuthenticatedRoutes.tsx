@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { DocumentsProvider } from "@/contexts/DocumentsContext";
 import { CompanyProvider } from "@/contexts/CompanyContext";
@@ -22,7 +22,7 @@ const Reminders = lazy(() => import("@/pages/Reminders"));
 const Reports = lazy(() => import("@/pages/Reports"));
 const Messages = lazy(() => import("@/pages/Messages"));
 const TeamManagement = lazy(() => import("@/pages/TeamManagement"));
-const Learning = lazy(() => import("@/pages/Learning"));
+
 const AdminBlog = lazy(() => import("@/pages/AdminBlog"));
 const Teams = lazy(() => import("@/pages/Teams"));
 const TeamDetail = lazy(() => import("@/pages/TeamDetail"));
@@ -71,7 +71,7 @@ export default function AuthenticatedRoutes() {
                   <Route path="/reports" element={<Reports />} />
                   <Route path="/messages" element={<Messages />} />
                   <Route path="/team" element={<TeamManagement />} />
-                  <Route path="/learning" element={<Learning />} />
+                  <Route path="/learning" element={<Navigate to="/guide" replace />} />
                   <Route path="/admin/blog" element={<AdminBlog />} />
                   <Route path="/teams" element={<Teams />} />
                   <Route path="/teams/:teamId" element={<TeamDetail />} />
