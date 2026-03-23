@@ -11,6 +11,7 @@ export default function PublicFooter() {
     { label: t('pub.pricing'), to: '/tarifs' },
     { label: t('footer.userGuide'), to: '/guide' },
     { label: t('pub.contact'), to: '/contact' },
+    { label: t('pub.about'), to: '/a-propos' },
     { label: t('pub.login'), to: '/login' },
   ];
 
