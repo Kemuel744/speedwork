@@ -736,6 +736,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'pub.blog': 'Blog',
     'pub.guide': 'Guide',
     'pub.contact': 'Contact',
+    'pub.about': 'About',
     'pub.login': 'Login',
     'pub.start': 'Get Started',
     'pub.openMenu': 'Open menu',
