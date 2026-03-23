@@ -55,6 +55,7 @@ const App = () => (
             <Route path="/guide" element={<Guide />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogArticle />} />
+            <Route path="/a-propos" element={<About />} />
 
             {/* Login needs AuthProvider */}
             <Route path="/login" element={<LoginWithAuth />} />
