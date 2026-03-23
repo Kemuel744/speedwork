@@ -17,6 +17,7 @@ export default function PublicNavbar() {
     { label: t('pub.blog'), to: '/blog' },
     { label: t('pub.guide'), to: '/guide' },
     { label: t('pub.contact'), to: '/contact' },
+    { label: t('pub.about'), to: '/a-propos' },
   ];
 
   return (

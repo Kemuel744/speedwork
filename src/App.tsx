@@ -22,6 +22,7 @@ const InstallApp = lazy(() => import("@/pages/InstallApp"));
 const Guide = lazy(() => import("@/pages/Guide"));
 const Blog = lazy(() => import("@/pages/Blog"));
 const BlogArticle = lazy(() => import("@/pages/BlogArticle"));
+const About = lazy(() => import("@/pages/About"));
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ const App = () => (
             <Route path="/guide" element={<Guide />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogArticle />} />
+            <Route path="/a-propos" element={<About />} />
 
             {/* Login needs AuthProvider */}
             <Route path="/login" element={<LoginWithAuth />} />
