@@ -22,6 +22,7 @@ const InstallApp = lazy(() => import("@/pages/InstallApp"));
 const Guide = lazy(() => import("@/pages/Guide"));
 const Blog = lazy(() => import("@/pages/Blog"));
 const BlogArticle = lazy(() => import("@/pages/BlogArticle"));
+const About = lazy(() => import("@/pages/About"));
 
 const queryClient = new QueryClient();
 
