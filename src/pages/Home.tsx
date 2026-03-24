@@ -107,6 +107,7 @@ export default function Home() {
         </ScrollReveal>
       </Suspense>
 
+      <AdSenseSlot slot="home-bottom" className="mt-6" />
       <PublicFooter />
     </div>
   );

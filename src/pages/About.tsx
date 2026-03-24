@@ -208,6 +208,7 @@ export default function About() {
         </section>
       </ScrollReveal>
 
+      <AdSenseSlot slot="about-bottom" className="mt-6" />
       <PublicFooter />
     </div>
   );
