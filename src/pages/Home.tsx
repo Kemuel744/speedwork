@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import SEO from '@/components/SEO';
+import { useAdSense } from '@/hooks/useAdSense';
+import AdSenseSlot from '@/components/blog/AdSenseSlot';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
 import HeroSection from '@/components/home/HeroSection';
