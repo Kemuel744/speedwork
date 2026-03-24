@@ -1,5 +1,7 @@
 import SEO from '@/components/SEO';
 import PublicNavbar from '@/components/PublicNavbar';
+import { useAdSense } from '@/hooks/useAdSense';
+import AdSenseSlot from '@/components/blog/AdSenseSlot';
 import PublicFooter from '@/components/PublicFooter';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
