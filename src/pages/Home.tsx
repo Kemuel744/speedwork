@@ -25,6 +25,7 @@ const SectionFallback = () => <div className="py-20" />;
 
 export default function Home() {
   const { t } = useLanguage();
+  useAdSense();
 
   return (
     <div className="min-h-screen bg-background">
