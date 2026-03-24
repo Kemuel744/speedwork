@@ -14,6 +14,7 @@ const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, tra
 
 export default function About() {
   const { t } = useLanguage();
+  useAdSense();
 
   const values = [
     { icon: Lightbulb, title: t('about.valueInnovation'), desc: t('about.valueInnovationDesc') },
