@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import SEO from '@/components/SEO';
+import { useAdSense } from '@/hooks/useAdSense';
+import AdSenseSlot from '@/components/blog/AdSenseSlot';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
 import HeroSection from '@/components/home/HeroSection';
@@ -23,6 +25,7 @@ const SectionFallback = () => <div className="py-20" />;
 
 export default function Home() {
   const { t } = useLanguage();
+  useAdSense();
 
   return (
     <div className="min-h-screen bg-background">
@@ -104,6 +107,7 @@ export default function Home() {
         </ScrollReveal>
       </Suspense>
 
+      <AdSenseSlot slot="home-bottom" className="mt-6" />
       <PublicFooter />
     </div>
   );
