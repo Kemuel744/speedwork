@@ -7,10 +7,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isWithinInterval, parseISO, subMonths } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import {
-  TrendingUp, TrendingDown, DollarSign, FileText, FileCheck, Users,
+  TrendingUp, TrendingDown, DollarSign, FileCheck, Users,
   Plus, Trash2, Download, Printer, BarChart3, ArrowUpRight, ArrowDownRight, Wallet, Target,
   Calendar, Package, AlertTriangle, ArrowRightLeft, Lock, Crown,
 } from 'lucide-react';
+import SalesTab from '@/components/reports/SalesTab';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -25,7 +26,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, AreaChart, Area,
 } from 'recharts';
-import FieldReportsList from '@/components/reports/FieldReportsList';
+
 
 const EXPENSE_CATEGORIES = [
   { value: 'salaires', label: 'Salaires', color: 'hsl(var(--chart-1))' },
@@ -319,7 +320,7 @@ export default function Reports() {
         <StatCard icon={Wallet} label="Bénéfice net" value={displayAmount(stats.netProfit, currency)} sub={`Marge: ${stats.grossMargin.toFixed(1)}%`} color="bg-amber-500/10 text-amber-600 dark:text-amber-400" />
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
-        <StatCard icon={FileText} label="Factures émises" value={String(stats.invoiceCount)} color="bg-primary/10 text-primary" />
+        <StatCard icon={FileCheck} label="Factures émises" value={String(stats.invoiceCount)} color="bg-primary/10 text-primary" />
         <StatCard icon={FileCheck} label="Devis créés" value={String(stats.quoteCount)} sub={displayAmount(stats.totalQuotes, currency)} color="bg-blue-500/10 text-blue-600 dark:text-blue-400" />
         <StatCard icon={Target} label="Conversion" value={`${stats.conversionRate.toFixed(0)}%`} sub="Devis → Facture" color="bg-violet-500/10 text-violet-600 dark:text-violet-400" />
         <StatCard icon={Package} label="Valeur du stock" value={displayAmount(stats.totalStockValue, currency)} sub={`${products.length} produit(s)`} color="bg-cyan-500/10 text-cyan-600 dark:text-cyan-400" />
@@ -345,13 +346,11 @@ export default function Reports() {
         <TabsList className="mb-6 flex-wrap h-auto gap-1">
           <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
           <TabsTrigger value="expenses">Dépenses</TabsTrigger>
-          <TabsTrigger value="field-reports">
-            <FileText className="w-3.5 h-3.5 mr-1" />Rapports terrain
-          </TabsTrigger>
           <TabsTrigger value="stock">
-            <Package className="w-3.5 h-3.5 mr-1" />Stock
+            <Package className="w-3.5 h-3.5 mr-1" />Produits & Stock
             {!hasProAccess && <Lock className="w-3 h-3 ml-1 text-muted-foreground" />}
           </TabsTrigger>
+          <TabsTrigger value="sales">Ventes</TabsTrigger>
           <TabsTrigger value="clients">Clients</TabsTrigger>
         </TabsList>
 
@@ -510,9 +509,9 @@ export default function Reports() {
           </Card>
         </TabsContent>
 
-        {/* Field Reports */}
-        <TabsContent value="field-reports">
-          <FieldReportsList />
+        {/* Sales Tab */}
+        <TabsContent value="sales">
+          <SalesTab products={products} movements={movements} displayAmount={displayAmount} currency={currency} />
         </TabsContent>
 
         {/* Stock Tab - Pro only */}

@@ -9,9 +9,9 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ArrowLeft, Plus, Trash2, Star, Users, MapPin, Building2, Calendar, UserPlus, Search } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Star, Users, MapPin, Building2, Calendar, UserPlus, Search, FileText } from 'lucide-react';
+import FieldReportsList from '@/components/reports/FieldReportsList';
 import { toast } from '@/hooks/use-toast';
 
 interface Team {
@@ -279,6 +279,19 @@ export default function TeamDetail() {
               </Table>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Field Reports Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <FileText className="w-5 h-5 text-primary" />
+            Rapports d'intervention
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <FieldReportsList />
         </CardContent>
       </Card>
     </div>
