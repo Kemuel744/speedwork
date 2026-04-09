@@ -9,7 +9,7 @@ import { fr } from 'date-fns/locale';
 import {
   TrendingUp, TrendingDown, DollarSign, FileCheck, Users,
   Plus, Trash2, Download, Printer, BarChart3, ArrowUpRight, ArrowDownRight, Wallet, Target,
-  Calendar, Package, AlertTriangle, ArrowRightLeft, Lock, Crown, ShoppingCart, Store,
+  Calendar, Package, AlertTriangle, ArrowRightLeft, Lock, Crown, ShoppingCart,
 } from 'lucide-react';
 import SalesTab from '@/components/reports/SalesTab';
 import POSCart from '@/components/reports/POSCart';

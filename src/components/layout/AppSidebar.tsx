@@ -5,7 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import {
   LayoutDashboard, FileText, User, Settings,
   LogOut, ChevronLeft, Users, CreditCard, BarChart3, Bell, PieChart, MessageCircle, BookOpen, Newspaper,
-  HardHat, ClipboardCheck, MapPin, TrendingUp, Briefcase, Timer, Calculator, Shield,
+  HardHat, ClipboardCheck, MapPin, TrendingUp, Briefcase, Timer, Calculator, Shield, Store,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo-small.webp';
@@ -56,7 +56,7 @@ const adminSections: NavSection[] = [
     items: [
       { labelKey: 'nav.messages', to: '/messages', icon: MessageCircle },
       { labelKey: 'nav.reminders', to: '/reminders', icon: Bell },
-      { labelKey: 'nav.reports', to: '/reports', icon: PieChart },
+      { labelKey: 'nav.shop', to: '/reports', icon: Store },
     ],
   },
   {
@@ -94,7 +94,7 @@ const clientSections: NavSection[] = [
     items: [
       { labelKey: 'nav.messages', to: '/messages', icon: MessageCircle },
       { labelKey: 'nav.myTeam', to: '/team', icon: Users },
-      { labelKey: 'nav.reports', to: '/reports', icon: PieChart },
+      { labelKey: 'nav.shop', to: '/reports', icon: Store },
       { labelKey: 'nav.annualReview', to: '/annual-review', icon: BarChart3 },
     ],
   },
