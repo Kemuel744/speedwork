@@ -320,7 +320,7 @@ export default function Reports() {
         <StatCard icon={Wallet} label="Bénéfice net" value={displayAmount(stats.netProfit, currency)} sub={`Marge: ${stats.grossMargin.toFixed(1)}%`} color="bg-amber-500/10 text-amber-600 dark:text-amber-400" />
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
-        <StatCard icon={FileText} label="Factures émises" value={String(stats.invoiceCount)} color="bg-primary/10 text-primary" />
+        <StatCard icon={FileCheck} label="Factures émises" value={String(stats.invoiceCount)} color="bg-primary/10 text-primary" />
         <StatCard icon={FileCheck} label="Devis créés" value={String(stats.quoteCount)} sub={displayAmount(stats.totalQuotes, currency)} color="bg-blue-500/10 text-blue-600 dark:text-blue-400" />
         <StatCard icon={Target} label="Conversion" value={`${stats.conversionRate.toFixed(0)}%`} sub="Devis → Facture" color="bg-violet-500/10 text-violet-600 dark:text-violet-400" />
         <StatCard icon={Package} label="Valeur du stock" value={displayAmount(stats.totalStockValue, currency)} sub={`${products.length} produit(s)`} color="bg-cyan-500/10 text-cyan-600 dark:text-cyan-400" />

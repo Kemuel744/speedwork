@@ -283,6 +283,19 @@ export default function TeamDetail() {
           )}
         </CardContent>
       </Card>
+
+      {/* Field Reports Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <FileText className="w-5 h-5 text-primary" />
+            Rapports d'intervention
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <FieldReportsList />
+        </CardContent>
+      </Card>
     </div>
   );
 }
