@@ -11,7 +11,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ArrowLeft, Plus, Trash2, Star, Users, MapPin, Building2, Calendar, UserPlus, Search } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ArrowLeft, Plus, Trash2, Star, Users, MapPin, Building2, Calendar, UserPlus, Search, FileText } from 'lucide-react';
+import FieldReportsList from '@/components/reports/FieldReportsList';
 import { toast } from '@/hooks/use-toast';
 
 interface Team {

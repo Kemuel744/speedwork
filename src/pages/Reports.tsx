@@ -7,10 +7,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isWithinInterval, parseISO, subMonths } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import {
-  TrendingUp, TrendingDown, DollarSign, FileText, FileCheck, Users,
+  TrendingUp, TrendingDown, DollarSign, FileCheck, Users,
   Plus, Trash2, Download, Printer, BarChart3, ArrowUpRight, ArrowDownRight, Wallet, Target,
   Calendar, Package, AlertTriangle, ArrowRightLeft, Lock, Crown,
 } from 'lucide-react';
+import SalesTab from '@/components/reports/SalesTab';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
