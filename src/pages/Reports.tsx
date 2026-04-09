@@ -358,6 +358,32 @@ export default function Reports() {
           <TabsTrigger value="clients">Clients</TabsTrigger>
         </TabsList>
 
+        {/* POS */}
+        <TabsContent value="pos">
+          <POSCart
+            products={products}
+            displayAmount={displayAmount}
+            currency={currency}
+            onSaleComplete={async (cartItems) => {
+              if (!user) return;
+              for (const item of cartItems) {
+                await supabase.from('stock_movements').insert({
+                  user_id: user.id,
+                  product_id: item.product.id,
+                  movement_type: 'exit',
+                  quantity: item.quantity,
+                  reason: 'Vente en caisse',
+                } as any);
+                await supabase.from('products').update({
+                  quantity_in_stock: item.product.quantity_in_stock - item.quantity,
+                } as any).eq('id', item.product.id);
+              }
+              toast({ title: 'Vente enregistrée', description: `${cartItems.length} article(s) vendus` });
+              fetchAll();
+            }}
+          />
+        </TabsContent>
+
         {/* Overview */}
         <TabsContent value="overview">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
