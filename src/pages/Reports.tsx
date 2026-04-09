@@ -9,9 +9,10 @@ import { fr } from 'date-fns/locale';
 import {
   TrendingUp, TrendingDown, DollarSign, FileCheck, Users,
   Plus, Trash2, Download, Printer, BarChart3, ArrowUpRight, ArrowDownRight, Wallet, Target,
-  Calendar, Package, AlertTriangle, ArrowRightLeft, Lock, Crown,
+  Calendar, Package, AlertTriangle, ArrowRightLeft, Lock, Crown, ShoppingCart,
 } from 'lucide-react';
 import SalesTab from '@/components/reports/SalesTab';
+import POSCart from '@/components/reports/POSCart';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -118,7 +119,7 @@ export default function Reports() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [productDialogOpen, setProductDialogOpen] = useState(false);
   const [movementDialogOpen, setMovementDialogOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('pos');
 
   // Fetch data
   const fetchAll = useCallback(async () => {
@@ -284,11 +285,11 @@ export default function Reports() {
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <BarChart3 className="w-5 h-5 text-primary" />
+            <BarChart3 className="w-5 h-5 text-primary" />
             </div>
-            Rapports & Analyse
+            Ma Boutique
           </h1>
-          <p className="text-muted-foreground text-sm mt-1.5">Suivi détaillé de votre performance financière</p>
+          <p className="text-muted-foreground text-sm mt-1.5">Gestion des ventes, stock et suivi financier</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Select value={period} onValueChange={(v) => setPeriod(v as Period)}>
@@ -344,6 +345,9 @@ export default function Reports() {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-6 flex-wrap h-auto gap-1">
+          <TabsTrigger value="pos">
+            <ShoppingCart className="w-3.5 h-3.5 mr-1" />Caisse
+          </TabsTrigger>
           <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
           <TabsTrigger value="expenses">Dépenses</TabsTrigger>
           <TabsTrigger value="stock">
@@ -353,6 +357,32 @@ export default function Reports() {
           <TabsTrigger value="sales">Ventes</TabsTrigger>
           <TabsTrigger value="clients">Clients</TabsTrigger>
         </TabsList>
+
+        {/* POS */}
+        <TabsContent value="pos">
+          <POSCart
+            products={products}
+            displayAmount={displayAmount}
+            currency={currency}
+            onSaleComplete={async (cartItems) => {
+              if (!user) return;
+              for (const item of cartItems) {
+                await supabase.from('stock_movements').insert({
+                  user_id: user.id,
+                  product_id: item.product.id,
+                  movement_type: 'exit',
+                  quantity: item.quantity,
+                  reason: 'Vente en caisse',
+                } as any);
+                await supabase.from('products').update({
+                  quantity_in_stock: item.product.quantity_in_stock - item.quantity,
+                } as any).eq('id', item.product.id);
+              }
+              toast({ title: 'Vente enregistrée', description: `${cartItems.length} article(s) vendus` });
+              fetchAll();
+            }}
+          />
+        </TabsContent>
 
         {/* Overview */}
         <TabsContent value="overview">
