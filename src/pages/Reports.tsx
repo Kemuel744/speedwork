@@ -370,22 +370,43 @@ export default function Reports() {
             currency={currency}
             onSaleComplete={async (cartItems) => {
               if (!user) return;
+              const receiptNo = `REC-${Date.now().toString(36).toUpperCase()}`;
+              const total = cartItems.reduce((s, i) => s + i.product.unit_price * i.quantity, 0);
+              
+              // Save sale to database
+              await supabase.from('sales').insert({
+                user_id: user.id,
+                receipt_number: receiptNo,
+                items: cartItems.map(i => ({
+                  name: i.product.name,
+                  quantity: i.quantity,
+                  unit_price: i.product.unit_price,
+                  total: i.product.unit_price * i.quantity,
+                })),
+                total,
+              } as any);
+
               for (const item of cartItems) {
                 await supabase.from('stock_movements').insert({
                   user_id: user.id,
                   product_id: item.product.id,
                   movement_type: 'exit',
                   quantity: item.quantity,
-                  reason: 'Vente en caisse',
+                  reason: `Vente ${receiptNo}`,
                 } as any);
                 await supabase.from('products').update({
                   quantity_in_stock: item.product.quantity_in_stock - item.quantity,
                 } as any).eq('id', item.product.id);
               }
-              toast({ title: 'Vente enregistrée', description: `${cartItems.length} article(s) vendus` });
+              toast({ title: 'Vente enregistrée', description: `${receiptNo} — ${cartItems.length} article(s)` });
               fetchAll();
             }}
           />
+        </TabsContent>
+
+        {/* Sales History */}
+        <TabsContent value="history">
+          <SalesHistory displayAmount={displayAmount} currency={currency} />
         </TabsContent>
 
         {/* Overview */}
