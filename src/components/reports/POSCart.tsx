@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react';
-import { ShoppingCart, Plus, Minus, Trash2, Receipt, Printer, X } from 'lucide-react';
+import React, { useState, useRef, useCallback } from 'react';
+import { ShoppingCart, Plus, Minus, Trash2, Receipt, Printer, X, ScanLine } from 'lucide-react';
+import QRScanner from './QRScanner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -37,11 +38,7 @@ export default function POSCart({ products, displayAmount, currency, onSaleCompl
   const [search, setSearch] = useState('');
   const [receiptData, setReceiptData] = useState<{ items: CartItem[]; total: number; date: Date; receiptNo: string } | null>(null);
   const [processing, setProcessing] = useState(false);
-
-  const filteredProducts = products.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase()) ||
-    p.category.toLowerCase().includes(search.toLowerCase())
-  );
+  const [scannerOpen, setScannerOpen] = useState(false);
 
   const addToCart = (product: Product) => {
     setCart(prev => {
@@ -54,6 +51,19 @@ export default function POSCart({ products, displayAmount, currency, onSaleCompl
       return [...prev, { product, quantity: 1 }];
     });
   };
+
+  const handleQRScan = useCallback((productId: string) => {
+    const product = products.find(p => p.id === productId);
+    if (product) {
+      addToCart(product);
+      setScannerOpen(false);
+    }
+  }, [products]);
+
+  const filteredProducts = products.filter(p =>
+    p.name.toLowerCase().includes(search.toLowerCase()) ||
+    p.category.toLowerCase().includes(search.toLowerCase())
+  );
 
   const updateQty = (productId: string, delta: number) => {
     setCart(prev => prev.map(i => {
@@ -140,12 +150,17 @@ export default function POSCart({ products, displayAmount, currency, onSaleCompl
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Product catalog */}
       <div className="lg:col-span-2 space-y-4">
-        <Input
-          placeholder="Rechercher un produit..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="max-w-sm"
-        />
+        <div className="flex gap-2">
+          <Input
+            placeholder="Rechercher un produit..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="flex-1 max-w-sm"
+          />
+          <Button variant="outline" size="icon" onClick={() => setScannerOpen(true)} title="Scanner QR">
+            <ScanLine className="w-4 h-4" />
+          </Button>
+        </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {filteredProducts.length === 0 ? (
             <p className="col-span-full text-center text-muted-foreground py-8 text-sm">
@@ -279,6 +294,12 @@ export default function POSCart({ products, displayAmount, currency, onSaleCompl
           )}
         </DialogContent>
       </Dialog>
+
+      <QRScanner
+        open={scannerOpen}
+        onClose={() => setScannerOpen(false)}
+        onScan={handleQRScan}
+      />
     </div>
   );
 }
