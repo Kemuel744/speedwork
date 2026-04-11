@@ -882,6 +882,36 @@ export type Database = {
         }
         Relationships: []
       }
+      sales: {
+        Row: {
+          created_at: string
+          id: string
+          items: Json
+          receipt_number: string
+          sale_date: string
+          total: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          items?: Json
+          receipt_number: string
+          sale_date?: string
+          total?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          items?: Json
+          receipt_number?: string
+          sale_date?: string
+          total?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       stock_movements: {
         Row: {
           created_at: string
