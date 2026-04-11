@@ -18,6 +18,8 @@ const STORES = [
   'field_reports',
   'workers',
   'time_entries',
+  'sales',
+  'stock_movements',
   'sync_queue',
   'meta',
 ] as const;
