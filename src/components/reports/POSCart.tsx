@@ -38,6 +38,15 @@ export default function POSCart({ products, displayAmount, currency, onSaleCompl
   const [search, setSearch] = useState('');
   const [receiptData, setReceiptData] = useState<{ items: CartItem[]; total: number; date: Date; receiptNo: string } | null>(null);
   const [processing, setProcessing] = useState(false);
+  const [scannerOpen, setScannerOpen] = useState(false);
+
+  const handleQRScan = useCallback((productId: string) => {
+    const product = products.find(p => p.id === productId);
+    if (product) {
+      addToCart(product);
+      setScannerOpen(false);
+    }
+  }, [products]);
 
   const filteredProducts = products.filter(p =>
     p.name.toLowerCase().includes(search.toLowerCase()) ||
