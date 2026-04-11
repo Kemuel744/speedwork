@@ -1,7 +1,7 @@
 // IndexedDB wrapper for offline data caching
 
 const DB_NAME = 'speedwork-offline';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 const STORES = [
   'documents',
