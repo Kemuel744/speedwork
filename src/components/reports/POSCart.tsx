@@ -150,12 +150,17 @@ export default function POSCart({ products, displayAmount, currency, onSaleCompl
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Product catalog */}
       <div className="lg:col-span-2 space-y-4">
-        <Input
-          placeholder="Rechercher un produit..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="max-w-sm"
-        />
+        <div className="flex gap-2">
+          <Input
+            placeholder="Rechercher un produit..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="flex-1 max-w-sm"
+          />
+          <Button variant="outline" size="icon" onClick={() => setScannerOpen(true)} title="Scanner QR">
+            <ScanLine className="w-4 h-4" />
+          </Button>
+        </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {filteredProducts.length === 0 ? (
             <p className="col-span-full text-center text-muted-foreground py-8 text-sm">
