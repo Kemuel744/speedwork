@@ -294,6 +294,12 @@ export default function POSCart({ products, displayAmount, currency, onSaleCompl
           )}
         </DialogContent>
       </Dialog>
+
+      <QRScanner
+        open={scannerOpen}
+        onClose={() => setScannerOpen(false)}
+        onScan={handleQRScan}
+      />
     </div>
   );
 }
