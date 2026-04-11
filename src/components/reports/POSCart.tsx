@@ -65,18 +65,6 @@ export default function POSCart({ products, displayAmount, currency, onSaleCompl
     p.category.toLowerCase().includes(search.toLowerCase())
   );
 
-  const addToCart = (product: Product) => {
-    setCart(prev => {
-      const existing = prev.find(i => i.product.id === product.id);
-      if (existing) {
-        if (existing.quantity >= product.quantity_in_stock) return prev;
-        return prev.map(i => i.product.id === product.id ? { ...i, quantity: i.quantity + 1 } : i);
-      }
-      if (product.quantity_in_stock <= 0) return prev;
-      return [...prev, { product, quantity: 1 }];
-    });
-  };
-
   const updateQty = (productId: string, delta: number) => {
     setCart(prev => prev.map(i => {
       if (i.product.id !== productId) return i;
