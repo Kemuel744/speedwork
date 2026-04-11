@@ -9,10 +9,11 @@ import { fr } from 'date-fns/locale';
 import {
   TrendingUp, TrendingDown, DollarSign, FileCheck, Users,
   Plus, Trash2, Download, Printer, BarChart3, ArrowUpRight, ArrowDownRight, Wallet, Target,
-  Calendar, Package, AlertTriangle, ArrowRightLeft, Lock, Crown, ShoppingCart,
+  Calendar, Package, AlertTriangle, ArrowRightLeft, Lock, Crown, ShoppingCart, Receipt,
 } from 'lucide-react';
 import SalesTab from '@/components/reports/SalesTab';
 import POSCart from '@/components/reports/POSCart';
+import SalesHistory from '@/components/reports/SalesHistory';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -348,6 +349,9 @@ export default function Reports() {
           <TabsTrigger value="pos">
             <ShoppingCart className="w-3.5 h-3.5 mr-1" />Caisse
           </TabsTrigger>
+          <TabsTrigger value="history">
+            <Receipt className="w-3.5 h-3.5 mr-1" />Historique
+          </TabsTrigger>
           <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
           <TabsTrigger value="expenses">Dépenses</TabsTrigger>
           <TabsTrigger value="stock">
@@ -366,22 +370,43 @@ export default function Reports() {
             currency={currency}
             onSaleComplete={async (cartItems) => {
               if (!user) return;
+              const receiptNo = `REC-${Date.now().toString(36).toUpperCase()}`;
+              const total = cartItems.reduce((s, i) => s + i.product.unit_price * i.quantity, 0);
+              
+              // Save sale to database
+              await supabase.from('sales').insert({
+                user_id: user.id,
+                receipt_number: receiptNo,
+                items: cartItems.map(i => ({
+                  name: i.product.name,
+                  quantity: i.quantity,
+                  unit_price: i.product.unit_price,
+                  total: i.product.unit_price * i.quantity,
+                })),
+                total,
+              } as any);
+
               for (const item of cartItems) {
                 await supabase.from('stock_movements').insert({
                   user_id: user.id,
                   product_id: item.product.id,
                   movement_type: 'exit',
                   quantity: item.quantity,
-                  reason: 'Vente en caisse',
+                  reason: `Vente ${receiptNo}`,
                 } as any);
                 await supabase.from('products').update({
                   quantity_in_stock: item.product.quantity_in_stock - item.quantity,
                 } as any).eq('id', item.product.id);
               }
-              toast({ title: 'Vente enregistrée', description: `${cartItems.length} article(s) vendus` });
+              toast({ title: 'Vente enregistrée', description: `${receiptNo} — ${cartItems.length} article(s)` });
               fetchAll();
             }}
           />
+        </TabsContent>
+
+        {/* Sales History */}
+        <TabsContent value="history">
+          <SalesHistory displayAmount={displayAmount} currency={currency} />
         </TabsContent>
 
         {/* Overview */}
