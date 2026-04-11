@@ -40,6 +40,18 @@ export default function POSCart({ products, displayAmount, currency, onSaleCompl
   const [processing, setProcessing] = useState(false);
   const [scannerOpen, setScannerOpen] = useState(false);
 
+  const addToCart = (product: Product) => {
+    setCart(prev => {
+      const existing = prev.find(i => i.product.id === product.id);
+      if (existing) {
+        if (existing.quantity >= product.quantity_in_stock) return prev;
+        return prev.map(i => i.product.id === product.id ? { ...i, quantity: i.quantity + 1 } : i);
+      }
+      if (product.quantity_in_stock <= 0) return prev;
+      return [...prev, { product, quantity: 1 }];
+    });
+  };
+
   const handleQRScan = useCallback((productId: string) => {
     const product = products.find(p => p.id === productId);
     if (product) {
