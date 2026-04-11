@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react';
-import { ShoppingCart, Plus, Minus, Trash2, Receipt, Printer, X } from 'lucide-react';
+import React, { useState, useRef, useCallback } from 'react';
+import { ShoppingCart, Plus, Minus, Trash2, Receipt, Printer, X, ScanLine } from 'lucide-react';
+import QRScanner from './QRScanner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
