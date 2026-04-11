@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import SalesTab from '@/components/reports/SalesTab';
 import POSCart from '@/components/reports/POSCart';
+import SalesHistory from '@/components/reports/SalesHistory';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
