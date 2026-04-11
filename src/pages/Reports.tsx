@@ -349,6 +349,9 @@ export default function Reports() {
           <TabsTrigger value="pos">
             <ShoppingCart className="w-3.5 h-3.5 mr-1" />Caisse
           </TabsTrigger>
+          <TabsTrigger value="history">
+            <Receipt className="w-3.5 h-3.5 mr-1" />Historique
+          </TabsTrigger>
           <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
           <TabsTrigger value="expenses">Dépenses</TabsTrigger>
           <TabsTrigger value="stock">
