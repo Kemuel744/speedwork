@@ -9,7 +9,7 @@ export default function SolutionSection() {
 
   const solutions = [
     t('solution.1'), t('solution.2'), t('solution.3'), t('solution.4'),
-    t('solution.5'), t('solution.6'), t('solution.7'), t('solution.8'),
+    t('solution.5'), t('solution.6'),
   ];
 
   return (
