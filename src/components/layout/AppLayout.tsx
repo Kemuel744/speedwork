@@ -31,13 +31,7 @@ export default function AppLayout() {
 
   // Block non-admin users from accessing admin routes
   if (user.role !== 'admin' && location.pathname.startsWith('/admin')) {
-    return <Navigate to="/client" replace />;
-  }
-
-  // Workers can only access specific routes
-  const workerAllowedPaths = ['/worker-dashboard', '/worker-onboarding', '/missions', '/work-tasks', '/messages', '/profile', '/settings', '/guide'];
-  if (user.isWorker && !workerAllowedPaths.some(p => location.pathname.startsWith(p))) {
-    return <Navigate to="/worker-dashboard" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return (

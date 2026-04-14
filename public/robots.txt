@@ -16,7 +16,10 @@ Disallow: /dashboard
 Disallow: /admin/
 Disallow: /profile
 Disallow: /settings
-Disallow: /create/
-Disallow: /edit/
+Disallow: /reports
+Disallow: /inventory
+Disallow: /sales-history
+Disallow: /statistics
+Disallow: /messages
 
 Sitemap: https://speedwork.pro/sitemap.xml

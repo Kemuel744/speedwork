@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, FileText, Users, MapPin, BarChart3, Shield, Zap } from 'lucide-react';
+import { ArrowRight, Store, Package, QrCode, BarChart3, Wifi, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import promoHero from '@/assets/promo-hero-optimized.webp';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -9,11 +9,11 @@ export default function HeroSection() {
   const { t } = useLanguage();
 
   const badges = [
-    { icon: FileText, label: t('hero.badgeInvoicing') },
-    { icon: Users, label: t('hero.badgeTeams') },
-    { icon: MapPin, label: t('hero.badgeMissions') },
-    { icon: BarChart3, label: t('hero.badgeAnalytics') },
-    { icon: Shield, label: t('hero.badgeReliability') },
+    { icon: Store, label: t('hero.badgePOS') },
+    { icon: Package, label: t('hero.badgeStock') },
+    { icon: QrCode, label: t('hero.badgeQR') },
+    { icon: BarChart3, label: t('hero.badgeStats') },
+    { icon: Wifi, label: t('hero.badgeOffline') },
   ];
 
   return (
@@ -38,7 +38,6 @@ export default function HeroSection() {
               {t('hero.subtitle')}
             </p>
 
-            {/* Feature badges */}
             <div className="mt-6 flex flex-wrap gap-2">
               {badges.map((b, i) => (
                 <motion.span
@@ -77,7 +76,7 @@ export default function HeroSection() {
           >
             <img
               src={promoHero}
-              alt="SpeedWork – Plateforme de gestion d'entreprise tout-en-un pour PME et freelances en Afrique"
+              alt="SpeedWork – Logiciel de gestion de boutique, dépôt et pharmacie en Afrique"
               className="w-full rounded-2xl shadow-2xl object-cover aspect-[4/5] md:aspect-[3/4] lg:aspect-[2/3]"
               width={560}
               height={840}

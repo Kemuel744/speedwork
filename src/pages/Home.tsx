@@ -10,7 +10,6 @@ import PublicFooter from '@/components/PublicFooter';
 import HeroSection from '@/components/home/HeroSection';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-// Lazy-load below-fold sections to reduce initial JS
 const ProblemSection = lazy(() => import('@/components/home/ProblemSection'));
 const PowerFeaturesSection = lazy(() => import('@/components/home/PowerFeaturesSection'));
 const SolutionSection = lazy(() => import('@/components/home/SolutionSection'));
@@ -30,8 +29,8 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title="SpeedWork – Gestion d'entreprise tout-en-un pour PME en Afrique"
-        description="Facturation, gestion d'équipes, missions terrain, analyse de productivité et scores de fiabilité. La plateforme complète pour piloter votre entreprise en Afrique."
+        title="SpeedWork – Logiciel de gestion pour boutiques, dépôts et pharmacies en Afrique"
+        description="Caisse POS, gestion de stock, scanner QR, reçus professionnels et mode hors ligne. Le logiciel simple et puissant pour gérer votre boutique ou pharmacie en Afrique."
         path="/"
         jsonLd={{
           "@context": "https://schema.org",
@@ -42,7 +41,7 @@ export default function Home() {
               "name": "Qu'est-ce que SpeedWork ?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "SpeedWork est une plateforme de gestion d'entreprise tout-en-un pour les PME en Afrique. Elle permet de gérer la facturation, les équipes, les missions terrain, le pointage, la productivité et les scores de fiabilité des travailleurs."
+                "text": "SpeedWork est un logiciel de gestion de boutique tout-en-un pour les commerces, dépôts et pharmacies en Afrique. Il permet de gérer les ventes (POS), le stock, les codes QR et les reçus professionnels."
               }
             },
             {
@@ -58,7 +57,7 @@ export default function Home() {
               "name": "Quelles fonctionnalités propose SpeedWork ?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "SpeedWork propose 9 modules : facturation et devis, gestion d'équipes, missions terrain géolocalisées, pointage de présence, analyse de productivité, scores de fiabilité, paie automatique, bilans IA et relances automatiques."
+                "text": "SpeedWork propose une caisse POS complète, la gestion de stock avec alertes, le scanner de codes QR, la génération de reçus professionnels, l'historique des ventes, les statistiques et le mode hors ligne."
               }
             }
           ]
@@ -78,7 +77,6 @@ export default function Home() {
         <BenefitsSection />
         <PositioningSection />
 
-        {/* CTA Final */}
         <ScrollReveal>
           <section className="py-20 bg-primary text-primary-foreground">
             <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">

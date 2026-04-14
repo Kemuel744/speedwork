@@ -10,13 +10,11 @@ import { OfflineBanner, InstallPWABanner, UpdateAvailableBanner } from "@/compon
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 
-// Lazy-loaded pages for code splitting
 const AuthenticatedRoutes = lazy(() => import("@/components/layout/AuthenticatedRoutes"));
 const LoginWithAuth = lazy(() => import("@/components/layout/LoginWithAuth"));
 const Features = lazy(() => import("@/pages/Features"));
 const Subscription = lazy(() => import("@/pages/Subscription"));
 const AccessCode = lazy(() => import("@/pages/AccessCode"));
-const SharedDocument = lazy(() => import("@/pages/SharedDocument"));
 const Contact = lazy(() => import("@/pages/Contact"));
 const InstallApp = lazy(() => import("@/pages/InstallApp"));
 const Guide = lazy(() => import("@/pages/Guide"));
@@ -43,12 +41,10 @@ const App = () => (
       <BrowserRouter>
         <Suspense fallback={<PageLoader />}>
           <Routes>
-            {/* Public routes – no heavy providers */}
             <Route path="/" element={<Home />} />
             <Route path="/fonctionnalites" element={<Features />} />
             <Route path="/tarifs" element={<Subscription />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/share/:token" element={<SharedDocument />} />
             <Route path="/subscription" element={<Navigate to="/tarifs" replace />} />
             <Route path="/access-code" element={<AccessCode />} />
             <Route path="/installer" element={<InstallApp />} />
@@ -56,15 +52,10 @@ const App = () => (
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogArticle />} />
             <Route path="/a-propos" element={<About />} />
-
-            {/* Login needs AuthProvider */}
             <Route path="/login" element={<LoginWithAuth />} />
-
-            {/* Authenticated routes – all providers lazy loaded */}
             <Route path="/*" element={<AuthenticatedRoutes />} />
           </Routes>
         </Suspense>
-        {/* PWA Banners – globally visible */}
         <OfflineBanner />
         <InstallPWABanner />
         <UpdateAvailableBanner />

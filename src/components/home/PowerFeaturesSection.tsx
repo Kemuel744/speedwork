@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import {
-  FileText, Users, MapPin, BarChart3, Shield, Clock,
-  Calculator, Bell, Globe,
+  Store, Package, QrCode, BarChart3, Receipt, Wifi,
 } from 'lucide-react';
 import ScrollReveal, { StaggerContainer, StaggerItem } from './ScrollReveal';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -10,15 +9,12 @@ export default function PowerFeaturesSection() {
   const { t } = useLanguage();
 
   const features = [
-    { icon: FileText, titleKey: 'power.f1.title', descKey: 'power.f1.desc', color: 'text-blue-600 bg-blue-500/10', link: '/fonctionnalites' },
-    { icon: Users, titleKey: 'power.f2.title', descKey: 'power.f2.desc', color: 'text-emerald-600 bg-emerald-500/10', link: '/fonctionnalites' },
-    { icon: MapPin, titleKey: 'power.f3.title', descKey: 'power.f3.desc', color: 'text-orange-600 bg-orange-500/10', link: '/fonctionnalites' },
-    { icon: Clock, titleKey: 'power.f4.title', descKey: 'power.f4.desc', color: 'text-violet-600 bg-violet-500/10', link: '/fonctionnalites' },
+    { icon: Store, titleKey: 'power.f1.title', descKey: 'power.f1.desc', color: 'text-blue-600 bg-blue-500/10', link: '/fonctionnalites' },
+    { icon: Package, titleKey: 'power.f2.title', descKey: 'power.f2.desc', color: 'text-emerald-600 bg-emerald-500/10', link: '/fonctionnalites' },
+    { icon: QrCode, titleKey: 'power.f3.title', descKey: 'power.f3.desc', color: 'text-orange-600 bg-orange-500/10', link: '/fonctionnalites' },
+    { icon: Receipt, titleKey: 'power.f4.title', descKey: 'power.f4.desc', color: 'text-violet-600 bg-violet-500/10', link: '/fonctionnalites' },
     { icon: BarChart3, titleKey: 'power.f5.title', descKey: 'power.f5.desc', color: 'text-pink-600 bg-pink-500/10', link: '/fonctionnalites' },
-    { icon: Shield, titleKey: 'power.f6.title', descKey: 'power.f6.desc', color: 'text-amber-600 bg-amber-500/10', link: '/fonctionnalites' },
-    { icon: Calculator, titleKey: 'power.f7.title', descKey: 'power.f7.desc', color: 'text-cyan-600 bg-cyan-500/10', link: '/fonctionnalites' },
-    { icon: Bell, titleKey: 'power.f8.title', descKey: 'power.f8.desc', color: 'text-red-600 bg-red-500/10', link: '/fonctionnalites' },
-    { icon: Globe, titleKey: 'power.f9.title', descKey: 'power.f9.desc', color: 'text-teal-600 bg-teal-500/10', link: '/fonctionnalites' },
+    { icon: Wifi, titleKey: 'power.f6.title', descKey: 'power.f6.desc', color: 'text-teal-600 bg-teal-500/10', link: '/fonctionnalites' },
   ];
 
   return (

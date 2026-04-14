@@ -3,9 +3,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import {
-  LayoutDashboard, FileText, User, Settings,
-  LogOut, ChevronLeft, Users, CreditCard, BarChart3, Bell, PieChart, MessageCircle, BookOpen, Newspaper,
-  HardHat, ClipboardCheck, MapPin, TrendingUp, Briefcase, Timer, Calculator, Shield, Store,
+  LayoutDashboard, User, Settings,
+  LogOut, ChevronLeft, CreditCard, BarChart3, Bell, MessageCircle, BookOpen, Newspaper,
+  Store, Package, History,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo-small.webp';
@@ -26,43 +26,26 @@ const adminSections: NavSection[] = [
     titleKey: 'nav.principal',
     items: [
       { labelKey: 'nav.dashboard', to: '/dashboard', icon: LayoutDashboard },
-      { labelKey: 'nav.documents', to: '/documents', icon: FileText },
-      { labelKey: 'nav.clients', to: '/clients', icon: Users },
+      { labelKey: 'nav.shop', to: '/reports', icon: Store },
     ],
   },
   {
-    titleKey: 'nav.terrain',
+    titleKey: 'nav.gestion',
     items: [
-      { labelKey: 'nav.workers', to: '/workers', icon: Users },
-      { labelKey: 'nav.teams', to: '/teams', icon: HardHat },
-      { labelKey: 'nav.missions', to: '/missions', icon: Briefcase },
-      { labelKey: 'nav.missionsMap', to: '/missions-map', icon: MapPin },
-      { labelKey: 'nav.tasksProofs', to: '/work-tasks', icon: ClipboardCheck },
-      { labelKey: 'nav.attendance', to: '/attendance', icon: Timer },
-    ],
-  },
-  {
-    titleKey: 'nav.performance',
-    items: [
-      { labelKey: 'nav.analytics', to: '/analytics', icon: BarChart3 },
-      { labelKey: 'nav.productivity', to: '/productivity', icon: TrendingUp },
-      { labelKey: 'nav.reliability', to: '/reliability', icon: Shield },
-      { labelKey: 'nav.payroll', to: '/payroll', icon: Calculator },
-      { labelKey: 'nav.annualReview', to: '/annual-review', icon: PieChart },
+      { labelKey: 'nav.products', to: '/inventory', icon: Package },
+      { labelKey: 'nav.salesHistory', to: '/sales-history', icon: History },
+      { labelKey: 'nav.statistics', to: '/statistics', icon: BarChart3 },
     ],
   },
   {
     titleKey: 'nav.communication',
     items: [
       { labelKey: 'nav.messages', to: '/messages', icon: MessageCircle },
-      { labelKey: 'nav.reminders', to: '/reminders', icon: Bell },
-      { labelKey: 'nav.shop', to: '/reports', icon: Store },
     ],
   },
   {
     titleKey: 'nav.administration',
     items: [
-      { labelKey: 'nav.clientMgmt', to: '/admin/clients', icon: Users },
       { labelKey: 'nav.subscriptions', to: '/admin/subscriptions', icon: CreditCard },
       { labelKey: 'nav.blog', to: '/admin/blog', icon: Newspaper },
     ],
@@ -73,45 +56,16 @@ const clientSections: NavSection[] = [
   {
     titleKey: 'nav.principal',
     items: [
-      { labelKey: 'nav.mySpace', to: '/client', icon: LayoutDashboard },
-      { labelKey: 'nav.myDashboard', to: '/worker-dashboard', icon: HardHat },
-      { labelKey: 'nav.documents', to: '/documents', icon: FileText },
-    ],
-  },
-  {
-    titleKey: 'nav.terrain',
-    items: [
-      { labelKey: 'nav.workers', to: '/workers', icon: Users },
-      { labelKey: 'nav.teams', to: '/teams', icon: HardHat },
-      { labelKey: 'nav.missions', to: '/missions', icon: Briefcase },
-      { labelKey: 'nav.tasksProofs', to: '/work-tasks', icon: ClipboardCheck },
-      { labelKey: 'nav.attendance', to: '/attendance', icon: Timer },
-      { labelKey: 'nav.payroll', to: '/payroll', icon: Calculator },
-    ],
-  },
-  {
-    titleKey: 'nav.communication',
-    items: [
-      { labelKey: 'nav.messages', to: '/messages', icon: MessageCircle },
-      { labelKey: 'nav.myTeam', to: '/team', icon: Users },
+      { labelKey: 'nav.dashboard', to: '/dashboard', icon: LayoutDashboard },
       { labelKey: 'nav.shop', to: '/reports', icon: Store },
-      { labelKey: 'nav.annualReview', to: '/annual-review', icon: BarChart3 },
-    ],
-  },
-];
-
-const workerSections: NavSection[] = [
-  {
-    titleKey: 'nav.principal',
-    items: [
-      { labelKey: 'nav.myDashboard', to: '/worker-dashboard', icon: HardHat },
     ],
   },
   {
-    titleKey: 'nav.terrain',
+    titleKey: 'nav.gestion',
     items: [
-      { labelKey: 'nav.missions', to: '/missions', icon: Briefcase },
-      { labelKey: 'nav.tasksProofs', to: '/work-tasks', icon: ClipboardCheck },
+      { labelKey: 'nav.products', to: '/inventory', icon: Package },
+      { labelKey: 'nav.salesHistory', to: '/sales-history', icon: History },
+      { labelKey: 'nav.statistics', to: '/statistics', icon: BarChart3 },
     ],
   },
   {
@@ -137,7 +91,7 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
   const { user, logout } = useAuth();
   const { t } = useLanguage();
   const location = useLocation();
-  const sections = user?.role === 'admin' ? adminSections : user?.isWorker ? workerSections : clientSections;
+  const sections = user?.role === 'admin' ? adminSections : clientSections;
 
   const isActive = (to: string) => {
     const [path] = to.split('?');
