@@ -26,35 +26,37 @@ export default function AuthenticatedRoutes() {
     <AuthProvider>
       <CompanyProvider>
         <CurrencyProvider>
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route element={<AppLayout />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/reports" element={<Reports />} />
-                <Route path="/inventory" element={<Reports />} />
-                <Route path="/sales-history" element={<Reports />} />
-                <Route path="/statistics" element={<Reports />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
-                <Route path="/admin/blog" element={<AdminBlog />} />
-                <Route path="/messages" element={<Messages />} />
-                {/* Redirects from old routes */}
-                <Route path="/documents" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/clients" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/workers" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/teams" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/missions" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/attendance" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/payroll" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/analytics" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/reliability" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/annual-review" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/reminders" element={<Navigate to="/dashboard" replace />} />
-              </Route>
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
+          <DocumentsProvider>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route element={<AppLayout />}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/reports" element={<Reports />} />
+                  <Route path="/inventory" element={<Reports />} />
+                  <Route path="/sales-history" element={<Reports />} />
+                  <Route path="/statistics" element={<Reports />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
+                  <Route path="/admin/blog" element={<AdminBlog />} />
+                  <Route path="/messages" element={<Messages />} />
+                  {/* Redirects from old routes */}
+                  <Route path="/documents" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/clients" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/workers" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/teams" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/missions" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/attendance" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/payroll" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/analytics" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/reliability" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/annual-review" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/reminders" element={<Navigate to="/dashboard" replace />} />
+                </Route>
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </DocumentsProvider>
         </CurrencyProvider>
       </CompanyProvider>
     </AuthProvider>
