@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CompanyProvider } from "@/contexts/CompanyContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
+import { DocumentsProvider } from "@/contexts/DocumentsContext";
 
 const AppLayout = lazy(() => import("@/components/layout/AppLayout"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
