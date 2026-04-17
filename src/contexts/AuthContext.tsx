@@ -54,36 +54,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setSession(session);
-      if (session?.user) {
-        // Use setTimeout to avoid potential deadlocks with Supabase client
-        setTimeout(async () => {
-          const profile = await fetchUserProfile(session.user);
-          setUser(profile);
-          setIsLoading(false);
-        }, 0);
-      } else {
+    let lastUserId: string | null = null;
+    let cancelled = false;
+
+    // Single source of truth: onAuthStateChange fires INITIAL_SESSION on mount,
+    // so we don't need a separate getSession() call (which caused duplicate
+    // profile fetches and rate-limit 429 loops).
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
+      if (cancelled) return;
+      setSession(newSession);
+
+      const newUserId = newSession?.user?.id ?? null;
+
+      // Skip TOKEN_REFRESHED events for the same user — no need to refetch profile
+      if (event === 'TOKEN_REFRESHED' && newUserId === lastUserId) {
+        return;
+      }
+
+      if (!newSession?.user) {
+        lastUserId = null;
         setUser(null);
         setIsLoading(false);
+        return;
       }
-    });
 
-    // THEN check existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session?.user) {
-        fetchUserProfile(session.user).then(profile => {
-          setUser(profile);
-          setIsLoading(false);
-        });
-      } else {
+      // Only refetch profile when user identity actually changes
+      if (newUserId === lastUserId && event !== 'INITIAL_SESSION' && event !== 'SIGNED_IN') {
+        return;
+      }
+
+      lastUserId = newUserId;
+      // Defer to avoid deadlocks with Supabase client
+      setTimeout(async () => {
+        if (cancelled) return;
+        const profile = await fetchUserProfile(newSession.user);
+        if (cancelled) return;
+        setUser(profile);
         setIsLoading(false);
-      }
+      }, 0);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
