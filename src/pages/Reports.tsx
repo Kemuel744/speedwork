@@ -576,27 +576,30 @@ export default function Reports() {
             <div className="space-y-6">
               {/* Products */}
               <div>
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
                   <h2 className="text-lg font-semibold flex items-center gap-2"><Package className="w-5 h-5 text-primary" />Catalogue Produits</h2>
-                  <Dialog open={productDialogOpen} onOpenChange={setProductDialogOpen}>
-                    <DialogTrigger asChild><Button size="sm"><Plus className="w-4 h-4 mr-1" />Nouveau produit</Button></DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader><DialogTitle>Ajouter un produit</DialogTitle></DialogHeader>
-                      <div className="space-y-4 mt-2">
-                        <div><Label>Nom</Label><Input value={productForm.name} onChange={e => setProductForm(f => ({ ...f, name: e.target.value }))} placeholder="Ex: Ciment CPA 45" /></div>
-                        <div><Label>Description</Label><Input value={productForm.description} onChange={e => setProductForm(f => ({ ...f, description: e.target.value }))} placeholder="Optionnel" /></div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div><Label>Prix unitaire ({currency})</Label><Input type="number" value={productForm.unit_price} onChange={e => setProductForm(f => ({ ...f, unit_price: e.target.value }))} /></div>
-                          <div><Label>Quantité initiale</Label><Input type="number" value={productForm.quantity_in_stock} onChange={e => setProductForm(f => ({ ...f, quantity_in_stock: e.target.value }))} /></div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <InventoryReport products={products} displayAmount={displayAmount} currency={currency} />
+                    <Dialog open={productDialogOpen} onOpenChange={setProductDialogOpen}>
+                      <DialogTrigger asChild><Button size="sm" variant="outline"><Plus className="w-4 h-4 mr-1" />Nouveau produit</Button></DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader><DialogTitle>Ajouter un produit</DialogTitle></DialogHeader>
+                        <div className="space-y-4 mt-2">
+                          <div><Label>Nom</Label><Input value={productForm.name} onChange={e => setProductForm(f => ({ ...f, name: e.target.value }))} placeholder="Ex: Ciment CPA 45" /></div>
+                          <div><Label>Description</Label><Input value={productForm.description} onChange={e => setProductForm(f => ({ ...f, description: e.target.value }))} placeholder="Optionnel" /></div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div><Label>Prix unitaire ({currency})</Label><Input type="number" value={productForm.unit_price} onChange={e => setProductForm(f => ({ ...f, unit_price: e.target.value }))} /></div>
+                            <div><Label>Quantité initiale</Label><Input type="number" value={productForm.quantity_in_stock} onChange={e => setProductForm(f => ({ ...f, quantity_in_stock: e.target.value }))} /></div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div><Label>Seuil d'alerte</Label><Input type="number" value={productForm.alert_threshold} onChange={e => setProductForm(f => ({ ...f, alert_threshold: e.target.value }))} /></div>
+                            <div><Label>Catégorie</Label><Input value={productForm.category} onChange={e => setProductForm(f => ({ ...f, category: e.target.value }))} placeholder="general" /></div>
+                          </div>
+                          <Button className="w-full" onClick={addProduct}>Enregistrer</Button>
                         </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div><Label>Seuil d'alerte</Label><Input type="number" value={productForm.alert_threshold} onChange={e => setProductForm(f => ({ ...f, alert_threshold: e.target.value }))} /></div>
-                          <div><Label>Catégorie</Label><Input value={productForm.category} onChange={e => setProductForm(f => ({ ...f, category: e.target.value }))} placeholder="general" /></div>
-                        </div>
-                        <Button className="w-full" onClick={addProduct}>Enregistrer</Button>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
