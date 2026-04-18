@@ -5,7 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import {
   LayoutDashboard, User, Settings,
   LogOut, ChevronLeft, CreditCard, BarChart3, Bell, MessageCircle, BookOpen, Newspaper,
-  Store, Package, History,
+  Store, Package, History, Truck, FolderTree,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo-small.webp';
@@ -33,6 +33,8 @@ const adminSections: NavSection[] = [
     titleKey: 'nav.gestion',
     items: [
       { labelKey: 'nav.products', to: '/inventory', icon: Package },
+      { labelKey: 'Catégories', to: '/categories', icon: FolderTree },
+      { labelKey: 'Fournisseurs', to: '/suppliers', icon: Truck },
       { labelKey: 'nav.salesHistory', to: '/sales-history', icon: History },
       { labelKey: 'nav.statistics', to: '/statistics', icon: BarChart3 },
     ],
@@ -64,6 +66,8 @@ const clientSections: NavSection[] = [
     titleKey: 'nav.gestion',
     items: [
       { labelKey: 'nav.products', to: '/inventory', icon: Package },
+      { labelKey: 'Catégories', to: '/categories', icon: FolderTree },
+      { labelKey: 'Fournisseurs', to: '/suppliers', icon: Truck },
       { labelKey: 'nav.salesHistory', to: '/sales-history', icon: History },
       { labelKey: 'nav.statistics', to: '/statistics', icon: BarChart3 },
     ],
