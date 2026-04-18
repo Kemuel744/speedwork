@@ -673,9 +673,6 @@ export default function Reports() {
                           <Button className="w-full" onClick={addProduct}>Enregistrer</Button>
                         </div>
                       </DialogContent>
-                          <Button className="w-full" onClick={addProduct}>Enregistrer</Button>
-                        </div>
-                      </DialogContent>
                     </Dialog>
                   </div>
                 </div>
