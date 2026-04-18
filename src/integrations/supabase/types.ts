@@ -768,44 +768,259 @@ export type Database = {
           },
         ]
       }
-      products: {
+      product_batches: {
         Row: {
-          alert_threshold: number
-          category: string
+          batch_number: string
+          cost_price: number
+          created_at: string
+          expiry_date: string | null
+          id: string
+          is_active: boolean
+          manufacture_date: string | null
+          notes: string
+          product_id: string
+          quantity: number
+          serial_number: string | null
+          supplier_id: string | null
+          updated_at: string
+          user_id: string
+          variant_id: string | null
+        }
+        Insert: {
+          batch_number: string
+          cost_price?: number
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          is_active?: boolean
+          manufacture_date?: string | null
+          notes?: string
+          product_id: string
+          quantity?: number
+          serial_number?: string | null
+          supplier_id?: string | null
+          updated_at?: string
+          user_id: string
+          variant_id?: string | null
+        }
+        Update: {
+          batch_number?: string
+          cost_price?: number
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          is_active?: boolean
+          manufacture_date?: string | null
+          notes?: string
+          product_id?: string
+          quantity?: number
+          serial_number?: string | null
+          supplier_id?: string | null
+          updated_at?: string
+          user_id?: string
+          variant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_batches_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_batches_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_batches_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_categories: {
+        Row: {
           created_at: string
           description: string
           id: string
           name: string
+          parent_id: string | null
+          sort_order: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          name: string
+          parent_id?: string | null
+          sort_order?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          parent_id?: string | null
+          sort_order?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_variants: {
+        Row: {
+          alert_threshold: number
+          attributes: Json
+          barcode: string | null
+          cost_price: number
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          product_id: string
           quantity_in_stock: number
+          sku: string | null
           unit_price: number
           updated_at: string
           user_id: string
         }
         Insert: {
           alert_threshold?: number
-          category?: string
+          attributes?: Json
+          barcode?: string | null
+          cost_price?: number
           created_at?: string
-          description?: string
           id?: string
+          is_active?: boolean
           name: string
+          product_id: string
           quantity_in_stock?: number
+          sku?: string | null
           unit_price?: number
           updated_at?: string
           user_id: string
         }
         Update: {
           alert_threshold?: number
-          category?: string
+          attributes?: Json
+          barcode?: string | null
+          cost_price?: number
           created_at?: string
-          description?: string
           id?: string
+          is_active?: boolean
           name?: string
+          product_id?: string
           quantity_in_stock?: number
+          sku?: string | null
           unit_price?: number
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          alert_threshold: number
+          barcode: string | null
+          category: string
+          category_id: string | null
+          cost_price: number
+          created_at: string
+          description: string
+          has_batches: boolean
+          has_variants: boolean
+          id: string
+          name: string
+          quantity_in_stock: number
+          sku: string | null
+          supplier_id: string | null
+          unit: string
+          unit_price: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alert_threshold?: number
+          barcode?: string | null
+          category?: string
+          category_id?: string | null
+          cost_price?: number
+          created_at?: string
+          description?: string
+          has_batches?: boolean
+          has_variants?: boolean
+          id?: string
+          name: string
+          quantity_in_stock?: number
+          sku?: string | null
+          supplier_id?: string | null
+          unit?: string
+          unit_price?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alert_threshold?: number
+          barcode?: string | null
+          category?: string
+          category_id?: string | null
+          cost_price?: number
+          created_at?: string
+          description?: string
+          has_batches?: boolean
+          has_variants?: boolean
+          id?: string
+          name?: string
+          quantity_in_stock?: number
+          sku?: string | null
+          supplier_id?: string | null
+          unit?: string
+          unit_price?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -990,6 +1205,60 @@ export type Database = {
           start_date?: string
           status?: Database["public"]["Enums"]["subscription_status"]
           transaction_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      suppliers: {
+        Row: {
+          address: string
+          city: string
+          contact_person: string
+          country: string
+          created_at: string
+          email: string
+          id: string
+          is_active: boolean
+          name: string
+          notes: string
+          payment_terms: string
+          phone: string
+          tax_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string
+          city?: string
+          contact_person?: string
+          country?: string
+          created_at?: string
+          email?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          notes?: string
+          payment_terms?: string
+          phone?: string
+          tax_id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          city?: string
+          contact_person?: string
+          country?: string
+          created_at?: string
+          email?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          notes?: string
+          payment_terms?: string
+          phone?: string
+          tax_id?: string
           updated_at?: string
           user_id?: string
         }
@@ -1460,6 +1729,7 @@ export type Database = {
       }
     }
     Functions: {
+      generate_ean13: { Args: { prefix?: string }; Returns: string }
       get_admin_contacts: {
         Args: never
         Returns: {

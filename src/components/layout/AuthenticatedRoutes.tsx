@@ -13,6 +13,8 @@ const SettingsPage = lazy(() => import("@/pages/Settings"));
 const AdminSubscriptions = lazy(() => import("@/pages/AdminSubscriptions"));
 const AdminBlog = lazy(() => import("@/pages/AdminBlog"));
 const Messages = lazy(() => import("@/pages/Messages"));
+const Suppliers = lazy(() => import("@/pages/Suppliers"));
+const Categories = lazy(() => import("@/pages/Categories"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 const PageLoader = () => (
@@ -40,6 +42,8 @@ export default function AuthenticatedRoutes() {
                   <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
                   <Route path="/admin/blog" element={<AdminBlog />} />
                   <Route path="/messages" element={<Messages />} />
+                  <Route path="/suppliers" element={<Suppliers />} />
+                  <Route path="/categories" element={<Categories />} />
                   {/* Redirects from old routes */}
                   <Route path="/documents" element={<Navigate to="/dashboard" replace />} />
                   <Route path="/clients" element={<Navigate to="/dashboard" replace />} />
