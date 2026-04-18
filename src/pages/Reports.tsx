@@ -610,19 +610,69 @@ export default function Reports() {
                     <InventoryReport products={products} displayAmount={displayAmount} currency={currency} />
                     <Dialog open={productDialogOpen} onOpenChange={setProductDialogOpen}>
                       <DialogTrigger asChild><Button size="sm" variant="outline"><Plus className="w-4 h-4 mr-1" />Nouveau produit</Button></DialogTrigger>
-                      <DialogContent>
+                      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
                         <DialogHeader><DialogTitle>Ajouter un produit</DialogTitle></DialogHeader>
                         <div className="space-y-4 mt-2">
-                          <div><Label>Nom</Label><Input value={productForm.name} onChange={e => setProductForm(f => ({ ...f, name: e.target.value }))} placeholder="Ex: Ciment CPA 45" /></div>
+                          <div><Label>Nom *</Label><Input value={productForm.name} onChange={e => setProductForm(f => ({ ...f, name: e.target.value }))} placeholder="Ex: Paracétamol 500mg" /></div>
                           <div><Label>Description</Label><Input value={productForm.description} onChange={e => setProductForm(f => ({ ...f, description: e.target.value }))} placeholder="Optionnel" /></div>
                           <div className="grid grid-cols-2 gap-3">
-                            <div><Label>Prix unitaire ({currency})</Label><Input type="number" value={productForm.unit_price} onChange={e => setProductForm(f => ({ ...f, unit_price: e.target.value }))} /></div>
-                            <div><Label>Quantité initiale</Label><Input type="number" value={productForm.quantity_in_stock} onChange={e => setProductForm(f => ({ ...f, quantity_in_stock: e.target.value }))} /></div>
+                            <div><Label>Prix de vente ({currency})</Label><Input type="number" value={productForm.unit_price} onChange={e => setProductForm(f => ({ ...f, unit_price: e.target.value }))} /></div>
+                            <div><Label>Prix d'achat ({currency})</Label><Input type="number" value={productForm.cost_price} onChange={e => setProductForm(f => ({ ...f, cost_price: e.target.value }))} placeholder="Pour calculer la marge" /></div>
                           </div>
                           <div className="grid grid-cols-2 gap-3">
+                            <div><Label>Quantité initiale</Label><Input type="number" value={productForm.quantity_in_stock} onChange={e => setProductForm(f => ({ ...f, quantity_in_stock: e.target.value }))} /></div>
                             <div><Label>Seuil d'alerte</Label><Input type="number" value={productForm.alert_threshold} onChange={e => setProductForm(f => ({ ...f, alert_threshold: e.target.value }))} /></div>
-                            <div><Label>Catégorie</Label><Input value={productForm.category} onChange={e => setProductForm(f => ({ ...f, category: e.target.value }))} placeholder="general" /></div>
                           </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <Label>Catégorie</Label>
+                              <Select value={productForm.category_id || 'none'} onValueChange={v => setProductForm(f => ({ ...f, category_id: v === 'none' ? '' : v }))}>
+                                <SelectTrigger><SelectValue placeholder="Aucune" /></SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="none">— Aucune —</SelectItem>
+                                  {categoriesList.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div>
+                              <Label>Fournisseur</Label>
+                              <Select value={productForm.supplier_id || 'none'} onValueChange={v => setProductForm(f => ({ ...f, supplier_id: v === 'none' ? '' : v }))}>
+                                <SelectTrigger><SelectValue placeholder="Aucun" /></SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="none">— Aucun —</SelectItem>
+                                  {suppliersList.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div><Label>SKU / Référence</Label><Input value={productForm.sku} onChange={e => setProductForm(f => ({ ...f, sku: e.target.value }))} placeholder="Ex: PAR-500-B30" /></div>
+                            <div>
+                              <Label>Unité</Label>
+                              <Select value={productForm.unit} onValueChange={v => setProductForm(f => ({ ...f, unit: v }))}>
+                                <SelectTrigger><SelectValue /></SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="unit">Unité</SelectItem>
+                                  <SelectItem value="kg">Kilogramme</SelectItem>
+                                  <SelectItem value="g">Gramme</SelectItem>
+                                  <SelectItem value="l">Litre</SelectItem>
+                                  <SelectItem value="ml">Millilitre</SelectItem>
+                                  <SelectItem value="box">Boîte</SelectItem>
+                                  <SelectItem value="pack">Paquet</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                          <div>
+                            <Label>Code-barres EAN-13</Label>
+                            <div className="flex gap-2">
+                              <Input value={productForm.barcode} onChange={e => setProductForm(f => ({ ...f, barcode: e.target.value }))} placeholder="Scannez ou générez" />
+                              <Button type="button" variant="outline" onClick={generateBarcode}>Générer</Button>
+                            </div>
+                          </div>
+                          <Button className="w-full" onClick={addProduct}>Enregistrer</Button>
+                        </div>
+                      </DialogContent>
                           <Button className="w-full" onClick={addProduct}>Enregistrer</Button>
                         </div>
                       </DialogContent>
