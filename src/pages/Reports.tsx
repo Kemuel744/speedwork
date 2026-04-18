@@ -116,7 +116,9 @@ export default function Reports() {
   const [products, setProducts] = useState<Product[]>([]);
   const [movements, setMovements] = useState<StockMovement[]>([]);
   const [expenseForm, setExpenseForm] = useState({ category: 'other', description: '', amount: '', expense_date: format(new Date(), 'yyyy-MM-dd') });
-  const [productForm, setProductForm] = useState({ name: '', description: '', unit_price: '', quantity_in_stock: '', alert_threshold: '5', category: 'general' });
+  const [productForm, setProductForm] = useState({ name: '', description: '', unit_price: '', cost_price: '', quantity_in_stock: '', alert_threshold: '5', category: 'general', category_id: '', supplier_id: '', barcode: '', sku: '', unit: 'unit' });
+  const [categoriesList, setCategoriesList] = useState<{ id: string; name: string }[]>([]);
+  const [suppliersList, setSuppliersList] = useState<{ id: string; name: string }[]>([]);
   const [movementForm, setMovementForm] = useState({ product_id: '', movement_type: 'entry', quantity: '', reason: '' });
   const [dialogOpen, setDialogOpen] = useState(false);
   const [productDialogOpen, setProductDialogOpen] = useState(false);
@@ -126,14 +128,18 @@ export default function Reports() {
   // Fetch data
   const fetchAll = useCallback(async () => {
     if (!user) return;
-    const [expRes, prodRes, movRes] = await Promise.all([
+    const [expRes, prodRes, movRes, catRes, supRes] = await Promise.all([
       supabase.from('expenses').select('*').order('expense_date', { ascending: false }),
       supabase.from('products').select('*').order('name'),
       supabase.from('stock_movements').select('*').order('created_at', { ascending: false }),
+      supabase.from('product_categories').select('id, name').order('name'),
+      supabase.from('suppliers').select('id, name').eq('is_active', true).order('name'),
     ]);
     if (expRes.data) setExpenses(expRes.data.map((e: any) => ({ id: e.id, category: e.category, description: e.description, amount: Number(e.amount), expense_date: e.expense_date })));
     if (prodRes.data) setProducts(prodRes.data.map((p: any) => ({ id: p.id, name: p.name, description: p.description, unit_price: Number(p.unit_price), quantity_in_stock: p.quantity_in_stock, alert_threshold: p.alert_threshold, category: p.category })));
     if (movRes.data) setMovements(movRes.data.map((m: any) => ({ id: m.id, product_id: m.product_id, movement_type: m.movement_type, quantity: m.quantity, reason: m.reason, created_at: m.created_at })));
+    if (catRes.data) setCategoriesList(catRes.data as { id: string; name: string }[]);
+    if (supRes.data) setSuppliersList(supRes.data as { id: string; name: string }[]);
   }, [user]);
 
   React.useEffect(() => { fetchAll(); }, [fetchAll]);
@@ -243,11 +249,33 @@ export default function Reports() {
 
   const addProduct = async () => {
     if (!user || !productForm.name) return;
-    const { error } = await supabase.from('products').insert({ user_id: user.id, name: productForm.name, description: productForm.description, unit_price: parseFloat(productForm.unit_price) || 0, quantity_in_stock: parseInt(productForm.quantity_in_stock) || 0, alert_threshold: parseInt(productForm.alert_threshold) || 5, category: productForm.category } as any);
+    const payload: any = {
+      user_id: user.id,
+      name: productForm.name,
+      description: productForm.description,
+      unit_price: parseFloat(productForm.unit_price) || 0,
+      cost_price: parseFloat(productForm.cost_price) || 0,
+      quantity_in_stock: parseInt(productForm.quantity_in_stock) || 0,
+      alert_threshold: parseInt(productForm.alert_threshold) || 5,
+      category: productForm.category || 'general',
+      category_id: productForm.category_id || null,
+      supplier_id: productForm.supplier_id || null,
+      barcode: productForm.barcode || null,
+      sku: productForm.sku || null,
+      unit: productForm.unit || 'unit',
+    };
+    const { error } = await supabase.from('products').insert(payload);
     if (error) { toast({ title: 'Erreur', description: error.message, variant: 'destructive' }); return; }
     toast({ title: 'Produit ajouté' });
-    setProductForm({ name: '', description: '', unit_price: '', quantity_in_stock: '', alert_threshold: '5', category: 'general' });
+    setProductForm({ name: '', description: '', unit_price: '', cost_price: '', quantity_in_stock: '', alert_threshold: '5', category: 'general', category_id: '', supplier_id: '', barcode: '', sku: '', unit: 'unit' });
     setProductDialogOpen(false); fetchAll();
+  };
+
+  const generateBarcode = async () => {
+    const { data, error } = await supabase.rpc('generate_ean13' as never, { prefix: '200' } as never);
+    if (error || !data) { toast({ title: 'Erreur génération code-barres', variant: 'destructive' }); return; }
+    setProductForm(f => ({ ...f, barcode: String(data) }));
+    toast({ title: 'Code-barres EAN-13 généré' });
   };
 
   const deleteProduct = async (id: string) => { await supabase.from('products').delete().eq('id', id); fetchAll(); };
