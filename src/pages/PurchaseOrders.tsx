@@ -57,7 +57,6 @@ export default function PurchaseOrders() {
   const { locations } = useLocations();
   const { toast } = useToast();
   const [orders, setOrders] = useState<PORow[]>([]);
-  const [orders, setOrders] = useState<PORow[]>([]);
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [open, setOpen] = useState(false);
