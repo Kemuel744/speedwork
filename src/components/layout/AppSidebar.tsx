@@ -5,7 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import {
   LayoutDashboard, User, Settings,
   LogOut, ChevronLeft, CreditCard, BarChart3, Bell, MessageCircle, BookOpen, Newspaper,
-  Store, Package, History, Truck, FolderTree,
+  Store, Package, History, Truck, FolderTree, Building2, ShoppingCart, ArrowLeftRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo-small.webp';
@@ -35,6 +35,9 @@ const adminSections: NavSection[] = [
       { labelKey: 'nav.products', to: '/inventory', icon: Package },
       { labelKey: 'Catégories', to: '/categories', icon: FolderTree },
       { labelKey: 'Fournisseurs', to: '/suppliers', icon: Truck },
+      { labelKey: 'Commandes achat', to: '/purchase-orders', icon: ShoppingCart },
+      { labelKey: 'Boutiques & dépôts', to: '/locations', icon: Building2 },
+      { labelKey: 'Transferts stock', to: '/stock-transfers', icon: ArrowLeftRight },
       { labelKey: 'nav.salesHistory', to: '/sales-history', icon: History },
       { labelKey: 'nav.statistics', to: '/statistics', icon: BarChart3 },
     ],
@@ -68,6 +71,9 @@ const clientSections: NavSection[] = [
       { labelKey: 'nav.products', to: '/inventory', icon: Package },
       { labelKey: 'Catégories', to: '/categories', icon: FolderTree },
       { labelKey: 'Fournisseurs', to: '/suppliers', icon: Truck },
+      { labelKey: 'Commandes achat', to: '/purchase-orders', icon: ShoppingCart },
+      { labelKey: 'Boutiques & dépôts', to: '/locations', icon: Building2 },
+      { labelKey: 'Transferts stock', to: '/stock-transfers', icon: ArrowLeftRight },
       { labelKey: 'nav.salesHistory', to: '/sales-history', icon: History },
       { labelKey: 'nav.statistics', to: '/statistics', icon: BarChart3 },
     ],
