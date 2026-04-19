@@ -5,6 +5,7 @@ import AppSidebar from './AppSidebar';
 import ChatBot from '@/components/chat/ChatBot';
 import NotificationBell from '@/components/NotificationBell';
 import SyncStatusIndicator from '@/components/SyncStatus';
+import LocationSwitcher from '@/components/layout/LocationSwitcher';
 import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { registerAutoSync } from '@/lib/syncQueue';
@@ -49,6 +50,7 @@ export default function AppLayout() {
           <Menu className="w-5 h-5 text-muted-foreground" />
         </button>
         <div className="ml-auto flex items-center gap-3">
+          <LocationSwitcher />
           <SyncStatusIndicator />
           <NotificationBell />
           <div className="text-right">
