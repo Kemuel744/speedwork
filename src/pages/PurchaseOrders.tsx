@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCompany } from '@/contexts/CompanyContext';
 import { useLocations } from '@/contexts/LocationContext';
@@ -13,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { ShoppingCart, Plus, FileText, Mail, MessageSquare, Trash2, Check, Eye, CheckCheck, X } from 'lucide-react';
+import { ShoppingCart, Plus, Mail, MessageSquare, Trash2, Eye, CheckCheck, X } from 'lucide-react';
 import { sendDocumentByEmail, sendDocumentByWhatsApp } from '@/lib/emailHelper';
 
 interface POItem {

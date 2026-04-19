@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Truck, Plus, QrCode, Trash2, ArrowRight, ScanLine, X, Store, Warehouse } from 'lucide-react';
+import { Truck, Plus, QrCode, Trash2, ArrowRight, ScanLine, Store, Warehouse } from 'lucide-react';
 import QRScanner from '@/components/reports/QRScanner';
 import QRCodeLib from 'qrcode';
 
