@@ -77,7 +77,10 @@ describe('Impression & téléchargement PDF A4 — DocumentPreview', () => {
         expect(a4!.style.maxHeight).toBe('297mm');
 
         // Couleurs / contenu doivent être préservés à l'impression
-        expect(a4!.style.printColorAdjust || a4!.style.WebkitPrintColorAdjust).toBe('exact');
+        const colorAdjust =
+          a4!.style.printColorAdjust ||
+          (a4!.style as unknown as Record<string, string>).WebkitPrintColorAdjust;
+        expect(colorAdjust).toBe('exact');
       });
     });
   });
