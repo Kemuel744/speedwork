@@ -235,7 +235,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'problem.4': 'Vos reçus ne sont pas professionnels ou inexistants ?',
     'problem.5': 'Vous n\'avez aucun historique fiable de vos ventes ?',
     'problem.6': 'Votre caisse ne fonctionne pas sans Internet ?',
-    'problem.cta': '👉 SpeedWork résout tout ça avec une caisse intelligente et un suivi de stock automatique.',
+    'problem.cta': 'SpeedWork résout tout ça avec une caisse intelligente et un suivi de stock automatique.',
 
     // Power Features Section
     'power.title': '6 modules puissants pour votre commerce',
@@ -807,7 +807,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'problem.4': 'Receipts are unprofessional or nonexistent?',
     'problem.5': 'No reliable sales history?',
     'problem.6': "Your register doesn't work without Internet?",
-    'problem.cta': '👉 SpeedWork solves all of this with a smart checkout and automatic stock tracking.',
+    'problem.cta': 'SpeedWork solves all of this with a smart checkout and automatic stock tracking.',
 
     // Power Features Section
     'power.title': '6 powerful modules for your business',
