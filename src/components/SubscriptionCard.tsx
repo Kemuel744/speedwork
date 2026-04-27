@@ -19,9 +19,9 @@ interface SubscriptionData {
 }
 
 const planLabels: Record<string, { label: string; icon: typeof Crown; color: string }> = {
-  monthly: { label: 'Mensuel', icon: Zap, color: 'bg-primary/10 text-primary border-primary/20' },
-  annual: { label: 'Annuel', icon: Crown, color: 'bg-amber-500/10 text-amber-600 border-amber-500/20' },
-  enterprise: { label: 'Entreprise', icon: Crown, color: 'bg-violet-500/10 text-violet-600 border-violet-500/20' },
+  monthly: { label: 'Starter', icon: Zap, color: 'bg-primary/10 text-primary border-primary/20' },
+  annual: { label: 'Business', icon: Crown, color: 'bg-amber-500/10 text-amber-600 border-amber-500/20' },
+  enterprise: { label: 'Pro', icon: Crown, color: 'bg-violet-500/10 text-violet-600 border-violet-500/20' },
 };
 
 const statusLabels: Record<string, { label: string; class: string }> = {
