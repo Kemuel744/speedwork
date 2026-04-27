@@ -19,26 +19,27 @@ export default function HeroSection() {
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-accent/8" />
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28 relative">
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16 lg:py-24 relative">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
+            className="order-2 lg:order-1 text-center lg:text-left"
           >
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-1.5 text-sm font-medium mb-6">
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-1.5 text-sm font-medium mb-5">
               <Zap className="w-4 h-4" />
               {t('hero.badge')}
             </div>
-            <h1 className="text-4xl sm:text-5xl font-extrabold text-foreground leading-tight tracking-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground leading-tight tracking-tight">
               {t('hero.title1')}{' '}
               <span className="text-primary">{t('hero.title2')}</span>
             </h1>
-            <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
+            <p className="mt-5 text-base sm:text-lg text-muted-foreground leading-relaxed">
               {t('hero.subtitle')}
             </p>
 
-            <div className="mt-6 flex flex-wrap gap-2">
+            <div className="mt-6 flex flex-wrap gap-2 justify-center lg:justify-start">
               {badges.map((b, i) => (
                 <motion.span
                   key={b.label}
@@ -53,14 +54,14 @@ export default function HeroSection() {
               ))}
             </div>
 
-            <div className="mt-8 flex flex-col sm:flex-row items-start gap-4">
-              <Button size="lg" asChild className="h-13 px-8 text-base font-semibold">
+            <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3 sm:gap-4">
+              <Button size="lg" asChild className="h-12 sm:h-13 px-6 sm:px-8 text-base font-semibold w-full sm:w-auto">
                 <Link to="/tarifs">
                   {t('hero.tryFree')}
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="h-13 px-8 text-base">
+              <Button size="lg" variant="outline" asChild className="h-12 sm:h-13 px-6 sm:px-8 text-base w-full sm:w-auto">
                 <Link to="/fonctionnalites">{t('hero.discoverFeatures')}</Link>
               </Button>
             </div>
@@ -69,7 +70,7 @@ export default function HeroSection() {
             </p>
           </motion.div>
           <motion.div
-            className="relative hidden md:block"
+            className="relative order-1 lg:order-2 w-full"
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
@@ -77,9 +78,9 @@ export default function HeroSection() {
             <img
               src={promoHero}
               alt="SpeedWork – Logiciel de gestion de boutique, dépôt et pharmacie en Afrique"
-              className="w-full rounded-2xl shadow-2xl object-cover aspect-[4/5] md:aspect-[3/4] lg:aspect-[2/3]"
-              width={560}
-              height={840}
+              className="w-full h-auto max-h-[480px] lg:max-h-[560px] object-contain mx-auto"
+              width={1536}
+              height={1024}
               fetchPriority="high"
               decoding="async"
             />
