@@ -2098,6 +2098,93 @@ export type Database = {
           },
         ]
       }
+      receipt_settings: {
+        Row: {
+          auto_print: boolean
+          copies: number
+          created_at: string
+          escpos_connection: string
+          escpos_device_name: string
+          font_family: string
+          font_size_pt: number
+          footer_legal_mention: string
+          footer_return_policy: string
+          footer_thanks_message: string
+          header_address: string
+          header_business_name: string
+          header_extra_line: string
+          header_phone: string
+          header_tax_id: string
+          id: string
+          logo_url: string | null
+          open_cash_drawer: boolean
+          paper_width_mm: number
+          qr_content_type: string
+          qr_custom_value: string
+          show_logo: boolean
+          show_qr_code: boolean
+          updated_at: string
+          use_escpos: boolean
+          user_id: string
+        }
+        Insert: {
+          auto_print?: boolean
+          copies?: number
+          created_at?: string
+          escpos_connection?: string
+          escpos_device_name?: string
+          font_family?: string
+          font_size_pt?: number
+          footer_legal_mention?: string
+          footer_return_policy?: string
+          footer_thanks_message?: string
+          header_address?: string
+          header_business_name?: string
+          header_extra_line?: string
+          header_phone?: string
+          header_tax_id?: string
+          id?: string
+          logo_url?: string | null
+          open_cash_drawer?: boolean
+          paper_width_mm?: number
+          qr_content_type?: string
+          qr_custom_value?: string
+          show_logo?: boolean
+          show_qr_code?: boolean
+          updated_at?: string
+          use_escpos?: boolean
+          user_id: string
+        }
+        Update: {
+          auto_print?: boolean
+          copies?: number
+          created_at?: string
+          escpos_connection?: string
+          escpos_device_name?: string
+          font_family?: string
+          font_size_pt?: number
+          footer_legal_mention?: string
+          footer_return_policy?: string
+          footer_thanks_message?: string
+          header_address?: string
+          header_business_name?: string
+          header_extra_line?: string
+          header_phone?: string
+          header_tax_id?: string
+          id?: string
+          logo_url?: string | null
+          open_cash_drawer?: boolean
+          paper_width_mm?: number
+          qr_content_type?: string
+          qr_custom_value?: string
+          show_logo?: boolean
+          show_qr_code?: boolean
+          updated_at?: string
+          use_escpos?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
       sale_return_items: {
         Row: {
           created_at: string
