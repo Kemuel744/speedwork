@@ -13,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 import PlanLimitsTable from '@/components/PlanLimitsTable';
 import type { PlanId } from '@/lib/planLimits';
+import PlanLimitsCheck from '@/components/PlanLimitsCheck';
 
 type SubscriptionRow = Tables<'subscriptions'>;
 
@@ -256,6 +257,12 @@ export default function AdminSubscriptions() {
                   Limites du plan
                 </p>
                 <PlanLimitsTable planId={selectedSub.plan as PlanId} variant="detail" />
+              </div>
+              <div className="pt-1">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                  Conformité aux limites
+                </p>
+                <PlanLimitsCheck userId={selectedSub.user_id} planId={selectedSub.plan as PlanId} />
               </div>
             </div>
           )}
