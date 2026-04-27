@@ -192,6 +192,14 @@
     page-break-after: auto;
   }
 
+  /* Neutralize inline 297mm height locks on inner template wrappers */
+  .a4-preview > div,
+  .a4-preview > div > div {
+    min-height: 0 !important;
+    max-height: none !important;
+    height: auto !important;
+  }
+
   /* Avoid trailing blank page caused by margins on last children */
   body:has(.a4-preview) .a4-preview > *:last-child,
   body:has(.a4-preview) #root > *:last-child {
