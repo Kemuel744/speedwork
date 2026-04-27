@@ -100,7 +100,8 @@ export default function Accounting() {
           <Card>
             <CardContent className="p-6">
               <h2 className="text-xl font-bold mb-4">Compte de résultat — {start} au {end}</h2>
-              <table className="w-full text-sm">
+              <div className="overflow-x-auto -mx-2 sm:mx-0">
+              <table className="w-full text-sm min-w-[360px]">
                 <tbody className="divide-y">
                   <tr><td className="py-2 font-semibold">Ventes brutes</td><td className="text-right">{displayAmount(pnl.revenue)}</td></tr>
                   <tr><td className="py-2 pl-4 text-muted-foreground">- Retours</td><td className="text-right text-destructive">-{displayAmount(pnl.returns)}</td></tr>
@@ -113,6 +114,7 @@ export default function Accounting() {
                   </tr>
                 </tbody>
               </table>
+              </div>
             </CardContent>
           </Card>
         </>

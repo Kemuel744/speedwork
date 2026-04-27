@@ -10,7 +10,7 @@ export default function LocationSwitcher() {
 
   return (
     <Select value={currentLocationId || ''} onValueChange={setCurrentLocationId}>
-      <SelectTrigger className="h-9 w-auto min-w-[160px] max-w-[220px] text-sm">
+      <SelectTrigger className="h-9 w-auto min-w-0 sm:min-w-[160px] max-w-[140px] sm:max-w-[220px] text-sm px-2 sm:px-3">
         <SelectValue placeholder="Choisir un lieu" />
       </SelectTrigger>
       <SelectContent align="end">

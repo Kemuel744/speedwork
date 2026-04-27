@@ -40,24 +40,24 @@ export default function AppLayout() {
       <AppSidebar collapsed={collapsed} onToggle={() => setCollapsed(c => !c)} />
       
       <header className={cn(
-        "fixed top-0 right-0 h-16 bg-card/80 backdrop-blur-md border-b border-border z-30 flex items-center px-4 lg:px-6 transition-all duration-300",
+        "fixed top-0 right-0 h-16 bg-card/80 backdrop-blur-md border-b border-border z-30 flex items-center gap-2 px-3 sm:px-4 lg:px-6 transition-all duration-300",
         collapsed ? "left-0 lg:left-16" : "left-0 lg:left-64"
       )}>
         <button
           onClick={() => setCollapsed(c => !c)}
-          className="lg:hidden p-2 rounded-lg hover:bg-secondary transition-colors"
+          className="lg:hidden p-2 rounded-lg hover:bg-secondary transition-colors shrink-0"
         >
           <Menu className="w-5 h-5 text-muted-foreground" />
         </button>
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-2 sm:gap-3 min-w-0">
           <LocationSwitcher />
           <SyncStatusIndicator />
           <NotificationBell />
-          <div className="text-right">
-            <p className="text-sm font-medium text-foreground">{user.name}</p>
-            <p className="text-xs text-muted-foreground capitalize">{user.role}</p>
+          <div className="text-right hidden sm:block min-w-0 max-w-[140px]">
+            <p className="text-sm font-medium text-foreground truncate">{user.name}</p>
+            <p className="text-xs text-muted-foreground capitalize truncate">{user.role}</p>
           </div>
-          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
             <span className="text-sm font-semibold text-primary">{user.name.charAt(0)}</span>
           </div>
         </div>
