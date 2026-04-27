@@ -51,7 +51,7 @@ export default function PublicPurchaseOrder() {
           <Button onClick={() => window.print()}><Printer className="w-4 h-4 mr-2" />Imprimer</Button>
         </div>
 
-        <div className="bg-card rounded-lg shadow-sm p-8 print:shadow-none print:p-0">
+        <div className="a4-preview bg-card rounded-lg shadow-sm p-8 print:shadow-none print:p-0">
           <div className="flex justify-between items-start border-b border-border pb-6 mb-6">
             <div>
               <h1 className="text-3xl font-bold text-primary">BON DE COMMANDE</h1>
