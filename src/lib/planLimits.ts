@@ -7,6 +7,24 @@ export interface PlanLimits {
   pos: string;
 }
 
+/**
+ * Numeric thresholds derived from the human-readable limits above.
+ * `null` means "no enforced cap" (e.g. unlimited users on Business/Pro).
+ * Use these for compliance checks (e.g. AdminSubscriptions mismatch panel).
+ */
+export interface PlanQuotas {
+  maxProducts: number | null;
+  maxDepots: number;
+  maxUsers: number | null;
+  maxPos: number | null;
+}
+
+export const planQuotas: Record<PlanId, PlanQuotas> = {
+  monthly:    { maxProducts: 750,  maxDepots: 0, maxUsers: 1,    maxPos: 1 },
+  annual:     { maxProducts: 1000, maxDepots: 1, maxUsers: null, maxPos: 1 },
+  enterprise: { maxProducts: null, maxDepots: 2, maxUsers: null, maxPos: null },
+};
+
 /** Source of truth — used on public pricing cards AND admin screens. */
 export const planLimits: Record<PlanId, PlanLimits> = {
   monthly: {
