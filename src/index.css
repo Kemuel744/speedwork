@@ -134,8 +134,9 @@
     overflow: visible !important;
   }
 
-  /* Hide everything by default — explicit print zones override below */
-  body > * {
+  /* When a print-zone is present, hide everything else; otherwise print normally */
+  body:has(.a4-preview) > *,
+  body:has(.guide-doc) > * {
     display: none !important;
   }
 
