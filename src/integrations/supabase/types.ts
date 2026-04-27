@@ -98,6 +98,267 @@ export type Database = {
         }
         Relationships: []
       }
+      cash_movements: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string
+          id: string
+          movement_type: string
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          description?: string
+          id?: string
+          movement_type?: string
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string
+          id?: string
+          movement_type?: string
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      cash_registers: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          location_id: string | null
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          location_id?: string | null
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          location_id?: string | null
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      cash_sessions: {
+        Row: {
+          closed_at: string | null
+          closed_by_name: string
+          counted_amount: number
+          created_at: string
+          difference: number
+          expected_amount: number
+          id: string
+          location_id: string | null
+          notes: string
+          number: string
+          opened_at: string
+          opened_by_name: string
+          opening_amount: number
+          register_id: string | null
+          sales_count: number
+          status: string
+          total_cash_in: number
+          total_cash_out: number
+          total_sales: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          closed_at?: string | null
+          closed_by_name?: string
+          counted_amount?: number
+          created_at?: string
+          difference?: number
+          expected_amount?: number
+          id?: string
+          location_id?: string | null
+          notes?: string
+          number: string
+          opened_at?: string
+          opened_by_name?: string
+          opening_amount?: number
+          register_id?: string | null
+          sales_count?: number
+          status?: string
+          total_cash_in?: number
+          total_cash_out?: number
+          total_sales?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          closed_at?: string | null
+          closed_by_name?: string
+          counted_amount?: number
+          created_at?: string
+          difference?: number
+          expected_amount?: number
+          id?: string
+          location_id?: string | null
+          notes?: string
+          number?: string
+          opened_at?: string
+          opened_by_name?: string
+          opening_amount?: number
+          register_id?: string | null
+          sales_count?: number
+          status?: string
+          total_cash_in?: number
+          total_cash_out?: number
+          total_sales?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      customer_credit_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          credit_id: string
+          id: string
+          notes: string
+          payment_date: string
+          payment_method: string
+          session_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          credit_id: string
+          id?: string
+          notes?: string
+          payment_date?: string
+          payment_method?: string
+          session_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          credit_id?: string
+          id?: string
+          notes?: string
+          payment_date?: string
+          payment_method?: string
+          session_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      customer_credits: {
+        Row: {
+          created_at: string
+          customer_id: string
+          due_date: string | null
+          id: string
+          initial_amount: number
+          notes: string
+          number: string
+          remaining_amount: number
+          sale_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          due_date?: string | null
+          id?: string
+          initial_amount?: number
+          notes?: string
+          number: string
+          remaining_amount?: number
+          sale_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          due_date?: string | null
+          id?: string
+          initial_amount?: number
+          notes?: string
+          number?: string
+          remaining_amount?: number
+          sale_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      customers: {
+        Row: {
+          address: string
+          city: string
+          created_at: string
+          credit_limit: number
+          current_balance: number
+          email: string
+          id: string
+          is_active: boolean
+          name: string
+          notes: string
+          phone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string
+          city?: string
+          created_at?: string
+          credit_limit?: number
+          current_balance?: number
+          email?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          notes?: string
+          phone?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          city?: string
+          created_at?: string
+          credit_limit?: number
+          current_balance?: number
+          email?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          notes?: string
+          phone?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       documents: {
         Row: {
           client_address: string | null
@@ -1345,31 +1606,148 @@ export type Database = {
           },
         ]
       }
-      sales: {
+      sale_return_items: {
         Row: {
           created_at: string
+          description: string
+          id: string
+          product_id: string | null
+          quantity: number
+          return_id: string
+          total: number
+          unit_price: number
+          user_id: string
+          variant_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          product_id?: string | null
+          quantity?: number
+          return_id: string
+          total?: number
+          unit_price?: number
+          user_id: string
+          variant_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          product_id?: string | null
+          quantity?: number
+          return_id?: string
+          total?: number
+          unit_price?: number
+          user_id?: string
+          variant_id?: string | null
+        }
+        Relationships: []
+      }
+      sale_returns: {
+        Row: {
+          cashier_name: string
+          created_at: string
+          customer_id: string | null
+          id: string
+          notes: string
+          number: string
+          reason: string
+          refund_method: string
+          restock: boolean
+          return_date: string
+          sale_id: string | null
+          session_id: string | null
+          total_amount: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cashier_name?: string
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          notes?: string
+          number: string
+          reason?: string
+          refund_method?: string
+          restock?: boolean
+          return_date?: string
+          sale_id?: string | null
+          session_id?: string | null
+          total_amount?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cashier_name?: string
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          notes?: string
+          number?: string
+          reason?: string
+          refund_method?: string
+          restock?: boolean
+          return_date?: string
+          sale_id?: string | null
+          session_id?: string | null
+          total_amount?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      sales: {
+        Row: {
+          amount_paid: number
+          cashier_name: string
+          change_given: number
+          created_at: string
+          customer_id: string | null
           id: string
           items: Json
+          notes: string
+          payment_method: string
           receipt_number: string
           sale_date: string
+          session_id: string | null
+          status: string
           total: number
           user_id: string
         }
         Insert: {
+          amount_paid?: number
+          cashier_name?: string
+          change_given?: number
           created_at?: string
+          customer_id?: string | null
           id?: string
           items?: Json
+          notes?: string
+          payment_method?: string
           receipt_number: string
           sale_date?: string
+          session_id?: string | null
+          status?: string
           total?: number
           user_id: string
         }
         Update: {
+          amount_paid?: number
+          cashier_name?: string
+          change_given?: number
           created_at?: string
+          customer_id?: string | null
           id?: string
           items?: Json
+          notes?: string
+          payment_method?: string
           receipt_number?: string
           sale_date?: string
+          session_id?: string | null
+          status?: string
           total?: number
           user_id?: string
         }
@@ -2092,8 +2470,20 @@ export type Database = {
       }
     }
     Functions: {
+      close_cash_session: {
+        Args: {
+          _closed_by_name?: string
+          _counted_amount: number
+          _notes?: string
+          _session_id: string
+        }
+        Returns: Json
+      }
+      generate_credit_number: { Args: { _user_id: string }; Returns: string }
       generate_ean13: { Args: { prefix?: string }; Returns: string }
       generate_po_number: { Args: { _user_id: string }; Returns: string }
+      generate_return_number: { Args: { _user_id: string }; Returns: string }
+      generate_session_number: { Args: { _user_id: string }; Returns: string }
       generate_transfer_number: { Args: { _user_id: string }; Returns: string }
       get_admin_contacts: {
         Args: never
