@@ -70,7 +70,11 @@ Deno.serve(async (req) => {
       throw rolesError;
     }
 
-    const planLabel = plan === "annual" ? "Annuel (36 000 FCFA)" : "Mensuel (5 000 FCFA)";
+    const planLabel = plan === "annual"
+      ? "Business (15 000 FCFA/mois)"
+      : plan === "enterprise"
+        ? "Pro (35 000 FCFA/mois)"
+        : "Starter (7 500 FCFA/mois)";
 
     // Create notification for each admin
     const notifications = (adminRoles || []).map((admin) => ({
