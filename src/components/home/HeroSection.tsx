@@ -27,15 +27,21 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
-          <img
-            src={promoHero}
-            alt="SpeedWork – Logiciel de gestion de boutique, dépôt et pharmacie en Afrique"
-            className="w-full h-auto object-contain rounded-2xl shadow-xl"
-            width={1536}
-            height={1024}
-            fetchPriority="high"
-            decoding="async"
-          />
+          {/* Wrapper réservant l'aspect ratio 3:2 pour éviter tout CLS pendant le chargement */}
+          <div
+            className="relative w-full overflow-hidden rounded-2xl shadow-xl bg-gradient-to-br from-primary/5 via-secondary to-accent/5"
+            style={{ aspectRatio: '3 / 2' }}
+          >
+            <img
+              src={promoHero}
+              alt="SpeedWork – Logiciel de gestion de boutique, dépôt et pharmacie en Afrique"
+              className="absolute inset-0 w-full h-full object-contain"
+              width={1536}
+              height={1024}
+              fetchPriority="high"
+              decoding="async"
+            />
+          </div>
         </motion.div>
 
         {/* Texte / CTA en dessous, pleine largeur centrée */}
