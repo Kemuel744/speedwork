@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { Loader2, Printer, Bluetooth, Receipt, TestTube2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { Link } from 'react-router-dom';
 import {
   DEFAULT_RECEIPT_SETTINGS,
   invalidateReceiptSettingsCache,
@@ -118,6 +119,11 @@ export default function ReceiptSettingsPage() {
           </p>
         </div>
         <div className="flex gap-2">
+          <Button asChild variant="outline">
+            <Link to="/receipt-test">
+              <TestTube2 className="w-4 h-4 mr-2" />Écran de test
+            </Link>
+          </Button>
           <Button variant="outline" onClick={testPrint}>
             <TestTube2 className="w-4 h-4 mr-2" />Test d'impression
           </Button>
