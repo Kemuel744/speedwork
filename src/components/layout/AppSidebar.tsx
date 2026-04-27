@@ -6,7 +6,7 @@ import {
   LayoutDashboard, User, Settings,
   LogOut, ChevronLeft, CreditCard, BarChart3, Bell, MessageCircle, BookOpen, Newspaper,
   Store, Package, History, Truck, FolderTree, Building2, ShoppingCart, ArrowLeftRight,
-  Banknote, Undo2, Wallet,
+  Banknote, Undo2, Wallet, Tag, Award,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo-small.webp';
@@ -52,6 +52,13 @@ const adminSections: NavSection[] = [
     ],
   },
   {
+    titleKey: 'Marketing',
+    items: [
+      { labelKey: 'Promotions', to: '/promotions', icon: Tag },
+      { labelKey: 'Fidélité client', to: '/loyalty', icon: Award },
+    ],
+  },
+  {
     titleKey: 'nav.communication',
     items: [
       { labelKey: 'nav.messages', to: '/messages', icon: MessageCircle },
@@ -93,6 +100,13 @@ const clientSections: NavSection[] = [
       { labelKey: 'Caisse journalière', to: '/cash-register', icon: Banknote },
       { labelKey: 'Retours & remboursements', to: '/returns', icon: Undo2 },
       { labelKey: 'Crédit clients', to: '/customer-credits', icon: Wallet },
+    ],
+  },
+  {
+    titleKey: 'Marketing',
+    items: [
+      { labelKey: 'Promotions', to: '/promotions', icon: Tag },
+      { labelKey: 'Fidélité client', to: '/loyalty', icon: Award },
     ],
   },
   {
