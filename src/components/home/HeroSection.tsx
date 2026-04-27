@@ -22,7 +22,7 @@ export default function HeroSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 lg:py-16 relative">
         {/* Image en paysage, plein cadre, en premier */}
         <motion.div
-          className="relative w-full mb-12 sm:mb-16 lg:mb-20"
+          className="relative w-full mb-16 sm:mb-20 lg:mb-24"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
@@ -43,7 +43,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
-          className="text-center max-w-3xl mx-auto pt-2 sm:pt-4"
+          className="text-center max-w-3xl mx-auto pt-6 sm:pt-8 lg:pt-10"
         >
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-1.5 text-sm font-medium mb-6 sm:mb-7">
               <Zap className="w-4 h-4" />
