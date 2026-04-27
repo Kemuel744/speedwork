@@ -402,17 +402,27 @@ export default function Reports() {
               const receiptNo = `REC-${Date.now().toString(36).toUpperCase()}`;
               const total = cartItems.reduce((s, i) => s + i.product.unit_price * i.quantity, 0);
               
+              // Attach to active cash session if any
+              const { data: openSess } = await supabase
+                .from('cash_sessions').select('id').eq('status', 'open').maybeSingle();
+
               // Save sale to database
               await supabase.from('sales').insert({
                 user_id: user.id,
                 receipt_number: receiptNo,
                 items: cartItems.map(i => ({
+                  product_id: i.product.id,
                   name: i.product.name,
+                  description: i.product.name,
                   quantity: i.quantity,
                   unit_price: i.product.unit_price,
                   total: i.product.unit_price * i.quantity,
                 })),
                 total,
+                amount_paid: total,
+                payment_method: 'cash',
+                session_id: openSess?.id || null,
+                status: 'completed',
               } as any);
 
               for (const item of cartItems) {
