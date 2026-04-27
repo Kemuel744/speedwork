@@ -6,7 +6,7 @@ import {
   LayoutDashboard, User, Settings,
   LogOut, ChevronLeft, CreditCard, BarChart3, Bell, MessageCircle, BookOpen, Newspaper,
   Store, Package, History, Truck, FolderTree, Building2, ShoppingCart, ArrowLeftRight,
-  Banknote, Undo2, Wallet, Tag, Award, Calculator, Receipt, Percent,
+  Banknote, Undo2, Wallet, Tag, Award, Calculator, Receipt, Percent, UserCog, Printer,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo-small.webp';
@@ -62,6 +62,13 @@ const adminSections: NavSection[] = [
     ],
   },
   {
+    titleKey: 'Équipe',
+    items: [
+      { labelKey: 'Employés & caissiers', to: '/employees', icon: UserCog },
+      { labelKey: 'Étiquettes & codes-barres', to: '/labels', icon: Printer },
+    ],
+  },
+  {
     titleKey: 'nav.communication',
     items: [
       { labelKey: 'nav.messages', to: '/messages', icon: MessageCircle },
@@ -113,6 +120,13 @@ const clientSections: NavSection[] = [
     items: [
       { labelKey: 'Promotions', to: '/promotions', icon: Tag },
       { labelKey: 'Fidélité client', to: '/loyalty', icon: Award },
+    ],
+  },
+  {
+    titleKey: 'Équipe',
+    items: [
+      { labelKey: 'Employés & caissiers', to: '/employees', icon: UserCog },
+      { labelKey: 'Étiquettes & codes-barres', to: '/labels', icon: Printer },
     ],
   },
   {
