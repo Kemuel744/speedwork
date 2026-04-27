@@ -115,6 +115,31 @@
   }
 }
 
+/* === Global responsive guards === */
+@layer base {
+  html, body {
+    /* Prevent any rogue child from causing horizontal page scroll on mobile */
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  /* Long words / URLs / emails should wrap instead of overflow on small screens */
+  p, span, a, h1, h2, h3, h4, h5, h6, li, td, th, label, button {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  /* Media defaults */
+  img, video, canvas, svg { max-width: 100%; height: auto; }
+  /* Tables in cards: enable horizontal scroll wrappers automatically when needed */
+  .table-scroll {
+    @apply -mx-4 sm:mx-0 overflow-x-auto;
+  }
+}
+
+/* Disable global overflow guards in print so pages don't get clipped */
+@media print {
+  html, body { overflow: visible !important; max-width: none !important; }
+}
+
 @media print {
   /* Force print background colors on ALL elements */
   *, *::before, *::after {
