@@ -22,6 +22,8 @@ const StockTransfers = lazy(() => import("@/pages/StockTransfers"));
 const CashRegister = lazy(() => import("@/pages/CashRegister"));
 const Returns = lazy(() => import("@/pages/Returns"));
 const CustomerCredits = lazy(() => import("@/pages/CustomerCredits"));
+const Promotions = lazy(() => import("@/pages/Promotions"));
+const Loyalty = lazy(() => import("@/pages/Loyalty"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 const PageLoader = () => (
@@ -58,6 +60,8 @@ export default function AuthenticatedRoutes() {
                     <Route path="/cash-register" element={<CashRegister />} />
                     <Route path="/returns" element={<Returns />} />
                     <Route path="/customer-credits" element={<CustomerCredits />} />
+                    <Route path="/promotions" element={<Promotions />} />
+                    <Route path="/loyalty" element={<Loyalty />} />
                     {/* Redirects from old routes */}
                     <Route path="/documents" element={<Navigate to="/dashboard" replace />} />
                     <Route path="/clients" element={<Navigate to="/dashboard" replace />} />

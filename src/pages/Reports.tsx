@@ -400,7 +400,43 @@ export default function Reports() {
             onSaleComplete={async (cartItems) => {
               if (!user) return;
               const receiptNo = `REC-${Date.now().toString(36).toUpperCase()}`;
-              const total = cartItems.reduce((s, i) => s + i.product.unit_price * i.quantity, 0);
+              const subtotal = cartItems.reduce((s, i) => s + i.product.unit_price * i.quantity, 0);
+
+              // Auto-apply best promotion
+              let discount = 0;
+              let promotionId: string | null = null;
+              try {
+                const { data: promos } = await supabase
+                  .from('promotions').select('*')
+                  .eq('is_active', true).eq('auto_apply', true)
+                  .order('priority', { ascending: false });
+                const now = new Date();
+                for (const p of (promos || [])) {
+                  const starts = new Date(p.starts_at);
+                  const ends = p.ends_at ? new Date(p.ends_at) : null;
+                  if (starts > now || (ends && ends < now)) continue;
+                  if (p.usage_limit > 0 && p.usage_count >= p.usage_limit) continue;
+                  if (subtotal < Number(p.min_purchase || 0)) continue;
+                  let d = 0;
+                  if (p.promo_type === 'percent' || p.promo_type === 'flash') d = subtotal * Number(p.value) / 100;
+                  else if (p.promo_type === 'fixed') d = Number(p.value);
+                  if (Number(p.max_discount) > 0 && d > Number(p.max_discount)) d = Number(p.max_discount);
+                  if (d > subtotal) d = subtotal;
+                  if (d > discount) { discount = d; promotionId = p.id; }
+                }
+              } catch (e) { /* ignore */ }
+
+              const total = Math.max(0, subtotal - discount);
+
+              // Compute loyalty points earned (no customer linked at POS for now)
+              let pointsEarned = 0;
+              try {
+                const { data: lp } = await supabase
+                  .from('loyalty_programs').select('*').eq('is_active', true).maybeSingle();
+                if (lp && Number(lp.spend_threshold) > 0) {
+                  pointsEarned = Math.floor(total / Number(lp.spend_threshold)) * Number(lp.points_per_currency);
+                }
+              } catch (e) { /* ignore */ }
               
               // Attach to active cash session if any
               const { data: openSess } = await supabase
@@ -419,11 +455,27 @@ export default function Reports() {
                   total: i.product.unit_price * i.quantity,
                 })),
                 total,
+                subtotal,
+                discount_amount: discount,
+                promotion_id: promotionId,
+                points_earned: pointsEarned,
                 amount_paid: total,
                 payment_method: 'cash',
                 session_id: openSess?.id || null,
                 status: 'completed',
               } as any);
+
+              // Increment promo usage count
+              if (promotionId) {
+                try {
+                  const { data: cur } = await supabase
+                    .from('promotions').select('usage_count').eq('id', promotionId).single();
+                  if (cur) {
+                    await supabase.from('promotions')
+                      .update({ usage_count: (cur.usage_count || 0) + 1 } as any).eq('id', promotionId);
+                  }
+                } catch (e) { /* ignore */ }
+              }
 
               for (const item of cartItems) {
                 await supabase.from('stock_movements').insert({
@@ -437,7 +489,10 @@ export default function Reports() {
                   quantity_in_stock: item.product.quantity_in_stock - item.quantity,
                 } as any).eq('id', item.product.id);
               }
-              toast({ title: 'Vente enregistrée', description: `${receiptNo} — ${cartItems.length} article(s)` });
+              const desc = discount > 0
+                ? `${receiptNo} — Remise: ${displayAmount(discount)}`
+                : `${receiptNo} — ${cartItems.length} article(s)`;
+              toast({ title: 'Vente enregistrée', description: desc });
               fetchAll();
             }}
           />
