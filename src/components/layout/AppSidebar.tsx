@@ -62,6 +62,13 @@ const adminSections: NavSection[] = [
     ],
   },
   {
+    titleKey: 'Équipe',
+    items: [
+      { labelKey: 'Employés & caissiers', to: '/employees', icon: UserCog },
+      { labelKey: 'Étiquettes & codes-barres', to: '/labels', icon: Printer },
+    ],
+  },
+  {
     titleKey: 'nav.communication',
     items: [
       { labelKey: 'nav.messages', to: '/messages', icon: MessageCircle },
@@ -113,6 +120,13 @@ const clientSections: NavSection[] = [
     items: [
       { labelKey: 'Promotions', to: '/promotions', icon: Tag },
       { labelKey: 'Fidélité client', to: '/loyalty', icon: Award },
+    ],
+  },
+  {
+    titleKey: 'Équipe',
+    items: [
+      { labelKey: 'Employés & caissiers', to: '/employees', icon: UserCog },
+      { labelKey: 'Étiquettes & codes-barres', to: '/labels', icon: Printer },
     ],
   },
   {
