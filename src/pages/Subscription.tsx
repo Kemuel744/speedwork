@@ -309,7 +309,8 @@ export default function Subscription() {
                     </span>
                     <span className="text-muted-foreground text-sm ml-1">FCFA{plan.period}</span>
                   </div>
-                  <ul className="space-y-2.5">
+                  <PlanLimitsTable planId={plan.id as PlanId} variant="card" />
+                  <ul className="space-y-2.5 mt-4">
                     {plan.features.map((f, i) => (
                       <li key={i} className="flex items-center gap-2 text-sm text-foreground">
                         <Check className="w-4 h-4 text-accent shrink-0" />
