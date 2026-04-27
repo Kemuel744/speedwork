@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { useCompany } from '@/contexts/CompanyContext';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { printReceipt, getReceiptSettings } from '@/lib/thermalPrint';
 
 interface Product {
   id: string;
@@ -88,62 +89,52 @@ export default function POSCart({ products, displayAmount, currency, onSaleCompl
     try {
       await onSaleComplete(cart);
       const receiptNo = `REC-${Date.now().toString(36).toUpperCase()}`;
-      setReceiptData({ items: [...cart], total: cartTotal, date: new Date(), receiptNo });
+      const items = [...cart];
+      const total = cartTotal;
+      const date = new Date();
       setCart([]);
+      // Auto-impression si activée dans les réglages
+      const settings = await getReceiptSettings();
+      if (settings.auto_print) {
+        await thermalPrint(items, total, date, receiptNo);
+      } else {
+        setReceiptData({ items, total, date, receiptNo });
+      }
     } finally {
       setProcessing(false);
     }
   };
 
-  const printReceipt = () => {
+  const thermalPrint = async (
+    items: CartItem[],
+    total: number,
+    date: Date,
+    receiptNo: string,
+  ) => {
+    await printReceipt({
+      kind: 'sale',
+      title: 'REÇU DE VENTE',
+      number: receiptNo,
+      date,
+      lines: items.map(i => ({
+        label: i.product.name,
+        sub: i.product.category,
+        qty: i.quantity,
+        unitPrice: i.product.unit_price,
+        total: i.product.unit_price * i.quantity,
+      })),
+      summary: [
+        { label: 'Articles', value: String(items.reduce((s, i) => s + i.quantity, 0)) },
+      ],
+      totalLabel: 'TOTAL',
+      totalValue: displayAmount(total, currency),
+      qrPayload: receiptNo,
+    });
+  };
+
+  const handlePrintFromDialog = () => {
     if (!receiptData) return;
-    const win = window.open('', '_blank');
-    if (!win) return;
-    win.document.write(`<!DOCTYPE html><html><head><title>Reçu ${receiptData.receiptNo}</title>
-      <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Courier New', monospace; max-width: 300px; margin: 0 auto; padding: 16px; color: #000; }
-        @page { size: 80mm auto; margin: 5mm; }
-        .center { text-align: center; }
-        .bold { font-weight: bold; }
-        .line { border-top: 1px dashed #000; margin: 8px 0; }
-        .row { display: flex; justify-content: space-between; font-size: 12px; margin: 3px 0; }
-        .total-row { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; margin: 6px 0; }
-        h1 { font-size: 16px; margin-bottom: 4px; }
-        .small { font-size: 10px; color: #555; }
-        @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
-      </style>
-    </head><body>
-      <div class="center">
-        <h1 class="bold">${company.name || 'Ma Boutique'}</h1>
-        ${company.address ? `<p class="small">${company.address}</p>` : ''}
-        ${company.phone ? `<p class="small">Tél: ${company.phone}</p>` : ''}
-        ${company.email ? `<p class="small">${company.email}</p>` : ''}
-      </div>
-      <div class="line"></div>
-      <div class="row"><span>Reçu N°:</span><span>${receiptData.receiptNo}</span></div>
-      <div class="row"><span>Date:</span><span>${format(receiptData.date, 'dd/MM/yyyy HH:mm', { locale: fr })}</span></div>
-      <div class="line"></div>
-      ${receiptData.items.map(i => `
-        <div style="margin: 6px 0;">
-          <div style="font-size: 12px; font-weight: bold;">${i.product.name}</div>
-          <div class="row">
-            <span>${i.quantity} x ${displayAmount(i.product.unit_price, currency)}</span>
-            <span>${displayAmount(i.product.unit_price * i.quantity, currency)}</span>
-          </div>
-        </div>
-      `).join('')}
-      <div class="line"></div>
-      <div class="total-row"><span>TOTAL</span><span>${displayAmount(receiptData.total, currency)}</span></div>
-      <div class="row"><span>Articles:</span><span>${receiptData.items.reduce((s, i) => s + i.quantity, 0)}</span></div>
-      <div class="line"></div>
-      <div class="center small" style="margin-top: 12px;">
-        <p>Merci pour votre achat !</p>
-        <p>${company.name || 'SpeedWork'}</p>
-      </div>
-    </body></html>`);
-    win.document.close();
-    setTimeout(() => win.print(), 400);
+    thermalPrint(receiptData.items, receiptData.total, receiptData.date, receiptData.receiptNo);
   };
 
   return (
@@ -286,9 +277,9 @@ export default function POSCart({ products, displayAmount, currency, onSaleCompl
                 <span className="text-xl font-bold text-primary">{displayAmount(receiptData.total, currency)}</span>
               </div>
 
-              <Button className="w-full gap-2" onClick={printReceipt}>
+              <Button className="w-full gap-2" onClick={handlePrintFromDialog}>
                 <Printer className="w-4 h-4" />
-                Imprimer le reçu
+                Imprimer sur l'imprimante de caisse
               </Button>
             </div>
           )}
