@@ -29,6 +29,7 @@ const VatDeclaration = lazy(() => import("@/pages/VatDeclaration"));
 const TaxRates = lazy(() => import("@/pages/TaxRates"));
 const Employees = lazy(() => import("@/pages/Employees"));
 const Labels = lazy(() => import("@/pages/Labels"));
+const ReceiptSettingsPage = lazy(() => import("@/pages/ReceiptSettings"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 const PageLoader = () => (
@@ -72,6 +73,7 @@ export default function AuthenticatedRoutes() {
                     <Route path="/tax-rates" element={<TaxRates />} />
                     <Route path="/employees" element={<Employees />} />
                     <Route path="/labels" element={<Labels />} />
+                    <Route path="/receipt-settings" element={<ReceiptSettingsPage />} />
                     {/* Redirects from old routes */}
                     <Route path="/documents" element={<Navigate to="/dashboard" replace />} />
                     <Route path="/clients" element={<Navigate to="/dashboard" replace />} />
