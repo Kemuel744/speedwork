@@ -131,14 +131,16 @@ describe('Règles CSS d\'impression A4 (index.css)', () => {
     expect(css).toMatch(/@page\s*{[^}]*margin:\s*0/);
   });
 
-  it('force les dimensions 210mm × 297mm sur .a4-preview à l\'impression', () => {
+  it('force la largeur 210mm sur .a4-preview à l\'impression et libère la hauteur pour éviter les pages vides', () => {
     expect(css).toMatch(/\.a4-preview\b[\s\S]*width:\s*210mm/);
-    expect(css).toMatch(/\.a4-preview\b[\s\S]*height:\s*297mm/);
-    expect(css).toMatch(/\.a4-preview\b[\s\S]*max-height:\s*297mm/);
+    // hauteur libérée pour éviter pages blanches fantômes
+    expect(css).toMatch(/\.a4-preview\b[\s\S]*max-height:\s*none/);
+    expect(css).toMatch(/\.a4-preview\b[\s\S]*height:\s*auto/);
   });
 
-  it('rend visible uniquement le document A4 lors de l\'impression', () => {
-    expect(css).toMatch(/\.a4-preview\s*\*\s*{[\s\S]*visibility:\s*visible/);
+  it('isole la zone d\'impression via :has(.a4-preview) en cachant les autres éléments', () => {
+    expect(css).toMatch(/body:has\(\.a4-preview\)\s*>\s*\*[\s\S]*display:\s*none/);
+    expect(css).toMatch(/body:has\(\.a4-preview\)\s+#root[\s\S]*display:\s*revert/);
   });
 
   it('préserve les couleurs de marque (print-color-adjust: exact)', () => {
