@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Store, Package, QrCode, BarChart3, Wifi, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
-import promoHero from '@/assets/promo-hero-optimized.webp';
+import promoHero from '@/assets/promo-hero-final.png';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function HeroSection() {
