@@ -50,7 +50,7 @@ export default function AppLayout() {
           <Menu className="w-5 h-5 text-muted-foreground" />
         </button>
         <div className="ml-auto flex items-center gap-2 sm:gap-3 min-w-0">
-          <div className="hidden sm:block"><LocationSwitcher /></div>
+          <LocationSwitcher />
           <SyncStatusIndicator />
           <NotificationBell />
           <div className="text-right hidden sm:block min-w-0 max-w-[140px]">
