@@ -11,6 +11,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
+import PlanLimitsTable from '@/components/PlanLimitsTable';
+import type { PlanId } from '@/lib/planLimits';
 
 type SubscriptionRow = Tables<'subscriptions'>;
 
@@ -248,6 +250,12 @@ export default function AdminSubscriptions() {
               <div className="flex justify-between py-1.5">
                 <span className="text-muted-foreground">Statut</span>
                 <Badge className={statusConfig[selectedSub.status].className}>{statusConfig[selectedSub.status].label}</Badge>
+              </div>
+              <div className="pt-3">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                  Limites du plan
+                </p>
+                <PlanLimitsTable planId={selectedSub.plan as PlanId} variant="detail" />
               </div>
             </div>
           )}
