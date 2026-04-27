@@ -6,7 +6,7 @@ import {
   LayoutDashboard, User, Settings,
   LogOut, ChevronLeft, CreditCard, BarChart3, Bell, MessageCircle, BookOpen, Newspaper,
   Store, Package, History, Truck, FolderTree, Building2, ShoppingCart, ArrowLeftRight,
-  Banknote, Undo2, Wallet, Tag, Award,
+  Banknote, Undo2, Wallet, Tag, Award, Calculator, Receipt, Percent,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo-small.webp';
@@ -49,6 +49,9 @@ const adminSections: NavSection[] = [
       { labelKey: 'Caisse journalière', to: '/cash-register', icon: Banknote },
       { labelKey: 'Retours & remboursements', to: '/returns', icon: Undo2 },
       { labelKey: 'Crédit clients', to: '/customer-credits', icon: Wallet },
+      { labelKey: 'Comptabilité', to: '/accounting', icon: Calculator },
+      { labelKey: 'Déclaration TVA', to: '/vat-declaration', icon: Receipt },
+      { labelKey: 'Taux de TVA', to: '/tax-rates', icon: Percent },
     ],
   },
   {
@@ -100,6 +103,9 @@ const clientSections: NavSection[] = [
       { labelKey: 'Caisse journalière', to: '/cash-register', icon: Banknote },
       { labelKey: 'Retours & remboursements', to: '/returns', icon: Undo2 },
       { labelKey: 'Crédit clients', to: '/customer-credits', icon: Wallet },
+      { labelKey: 'Comptabilité', to: '/accounting', icon: Calculator },
+      { labelKey: 'Déclaration TVA', to: '/vat-declaration', icon: Receipt },
+      { labelKey: 'Taux de TVA', to: '/tax-rates', icon: Percent },
     ],
   },
   {
