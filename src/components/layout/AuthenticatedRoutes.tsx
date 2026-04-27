@@ -24,6 +24,9 @@ const Returns = lazy(() => import("@/pages/Returns"));
 const CustomerCredits = lazy(() => import("@/pages/CustomerCredits"));
 const Promotions = lazy(() => import("@/pages/Promotions"));
 const Loyalty = lazy(() => import("@/pages/Loyalty"));
+const Accounting = lazy(() => import("@/pages/Accounting"));
+const VatDeclaration = lazy(() => import("@/pages/VatDeclaration"));
+const TaxRates = lazy(() => import("@/pages/TaxRates"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 const PageLoader = () => (
@@ -62,6 +65,9 @@ export default function AuthenticatedRoutes() {
                     <Route path="/customer-credits" element={<CustomerCredits />} />
                     <Route path="/promotions" element={<Promotions />} />
                     <Route path="/loyalty" element={<Loyalty />} />
+                    <Route path="/accounting" element={<Accounting />} />
+                    <Route path="/vat-declaration" element={<VatDeclaration />} />
+                    <Route path="/tax-rates" element={<TaxRates />} />
                     {/* Redirects from old routes */}
                     <Route path="/documents" element={<Navigate to="/dashboard" replace />} />
                     <Route path="/clients" element={<Navigate to="/dashboard" replace />} />
