@@ -32,6 +32,81 @@ export type Database = {
         }
         Relationships: []
       }
+      accounting_entries: {
+        Row: {
+          created_at: string
+          description: string
+          entry_date: string
+          id: string
+          reference: string
+          source_id: string | null
+          source_type: string
+          total_credit: number
+          total_debit: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          entry_date?: string
+          id?: string
+          reference?: string
+          source_id?: string | null
+          source_type?: string
+          total_credit?: number
+          total_debit?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          entry_date?: string
+          id?: string
+          reference?: string
+          source_id?: string | null
+          source_type?: string
+          total_credit?: number
+          total_debit?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      accounting_entry_lines: {
+        Row: {
+          account_id: string
+          created_at: string
+          credit: number
+          debit: number
+          description: string
+          entry_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          account_id: string
+          created_at?: string
+          credit?: number
+          debit?: number
+          description?: string
+          entry_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          account_id?: string
+          created_at?: string
+          credit?: number
+          debit?: number
+          description?: string
+          entry_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       blog_posts: {
         Row: {
           author: string
@@ -225,6 +300,42 @@ export type Database = {
           total_cash_in?: number
           total_cash_out?: number
           total_sales?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      chart_of_accounts: {
+        Row: {
+          account_type: string
+          code: string
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          parent_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_type?: string
+          code: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          parent_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_type?: string
+          code?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          parent_id?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -1916,6 +2027,9 @@ export type Database = {
           session_id: string | null
           status: string
           subtotal: number
+          subtotal_ht: number
+          tax_amount: number
+          tax_rate: number
           total: number
           user_id: string
         }
@@ -1940,6 +2054,9 @@ export type Database = {
           session_id?: string | null
           status?: string
           subtotal?: number
+          subtotal_ht?: number
+          tax_amount?: number
+          tax_rate?: number
           total?: number
           user_id: string
         }
@@ -1964,6 +2081,9 @@ export type Database = {
           session_id?: string | null
           status?: string
           subtotal?: number
+          subtotal_ht?: number
+          tax_amount?: number
+          tax_rate?: number
           total?: number
           user_id?: string
         }
@@ -2216,6 +2336,39 @@ export type Database = {
           payment_terms?: string
           phone?: string
           tax_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      tax_rates: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          is_default: boolean
+          name: string
+          rate: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          name: string
+          rate?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          name?: string
+          rate?: number
           updated_at?: string
           user_id?: string
         }
@@ -2736,7 +2889,9 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_pnl: { Args: { _end: string; _start: string }; Returns: Json }
       get_user_org_id: { Args: { _user_id: string }; Returns: string }
+      get_vat_summary: { Args: { _end: string; _start: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
