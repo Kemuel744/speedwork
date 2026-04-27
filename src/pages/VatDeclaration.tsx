@@ -66,7 +66,8 @@ export default function VatDeclaration() {
         <Card>
           <CardContent className="p-6">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2"><Receipt className="w-5 h-5" />Récapitulatif TVA — {start} au {end}</h2>
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto -mx-2 sm:mx-0">
+            <table className="w-full text-sm min-w-[320px]">
               <tbody className="divide-y">
                 <tr><td className="py-2">Total ventes HT</td><td className="text-right font-semibold">{displayAmount(vat.sales_ht)}</td></tr>
                 <tr className="bg-muted/30"><td className="py-2 font-bold">TVA collectée</td><td className="text-right font-bold">{displayAmount(vat.vat_collected)}</td></tr>
@@ -78,6 +79,7 @@ export default function VatDeclaration() {
                 </tr>
               </tbody>
             </table>
+            </div>
             <p className="text-xs text-muted-foreground mt-4">Si le résultat est négatif, vous bénéficiez d'un crédit de TVA reportable.</p>
           </CardContent>
         </Card>
