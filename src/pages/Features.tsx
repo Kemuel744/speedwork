@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import SEO from '@/components/SEO';
 import PublicNavbar from '@/components/PublicNavbar';
-import promoRevolution from '@/assets/promo-revolution.png';
+import featuresHero from '@/assets/features-hero.png';
 import PublicFooter from '@/components/PublicFooter';
 import { motion } from 'framer-motion';
 import ScrollReveal, { StaggerContainer, StaggerItem } from '@/components/home/ScrollReveal';
@@ -49,46 +49,57 @@ export default function Features() {
       <PublicNavbar />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-primary/5 via-transparent to-accent/5 py-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              className="text-center lg:text-left"
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-transparent to-accent/5">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 lg:py-16">
+          {/* Image en paysage, plein cadre, en premier */}
+          <motion.div
+            className="relative w-full mb-16 sm:mb-20 lg:mb-24"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+          >
+            <div
+              className="relative w-full overflow-hidden rounded-2xl shadow-xl bg-gradient-to-br from-primary/5 via-secondary to-accent/5"
+              style={{ aspectRatio: '3 / 2' }}
             >
-              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-1.5 text-sm font-medium mb-6">
-                <Zap className="w-4 h-4" />
-                {t('features.heroBadge')}
-              </div>
-              <h1 className="text-4xl sm:text-5xl font-extrabold text-foreground tracking-tight">
-                {t('features.heroTitle1')} <span className="text-primary">{t('features.heroTitle2')}</span> {t('features.heroTitle3')}
-              </h1>
-              <p className="mt-4 text-lg text-muted-foreground max-w-2xl">
-                {t('features.heroSubtitle')}
-              </p>
-              <Button size="lg" asChild className="mt-8 h-13 px-8 text-base font-semibold">
+              <img
+                src={featuresHero}
+                alt="SpeedWork – Fonctionnalités de gestion de boutique, dépôt et pharmacie"
+                className="absolute inset-0 w-full h-full object-contain"
+                width={1536}
+                height={1024}
+                fetchPriority="high"
+                decoding="async"
+              />
+            </div>
+          </motion.div>
+
+          {/* Texte / CTA en dessous, pleine largeur centrée */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+            className="text-center max-w-3xl mx-auto pt-6 sm:pt-8 lg:pt-10"
+          >
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-1.5 text-sm font-medium mb-6 sm:mb-7">
+              <Zap className="w-4 h-4" />
+              {t('features.heroBadge')}
+            </div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground leading-tight tracking-tight">
+              {t('features.heroTitle1')} <span className="text-primary">{t('features.heroTitle2')}</span> {t('features.heroTitle3')}
+            </h1>
+            <p className="mt-6 sm:mt-7 text-base sm:text-lg text-muted-foreground leading-relaxed">
+              {t('features.heroSubtitle')}
+            </p>
+            <div className="mt-8 flex justify-center">
+              <Button size="lg" asChild className="h-12 sm:h-13 px-6 sm:px-8 text-base font-semibold w-full sm:w-auto">
                 <Link to="/tarifs">
                   {t('features.heroCta')}
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>
               </Button>
-            </motion.div>
-            <motion.div
-              className="hidden lg:block"
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
-            >
-              <img
-                src={promoRevolution}
-                alt="SpeedWork – Logiciel de gestion de boutique en Afrique"
-                className="w-full rounded-2xl shadow-2xl"
-                loading="lazy"
-              />
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
