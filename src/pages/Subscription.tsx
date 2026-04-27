@@ -17,53 +17,59 @@ import { supabase } from '@/integrations/supabase/client';
 const plans = [
   {
     id: 'monthly',
-    name: 'Mensuel',
-    price: 5000,
+    name: 'Starter',
+    price: 7500,
     period: '/mois',
-    description: 'Idéal pour démarrer',
+    description: 'Pour petites boutiques',
     features: [
-      'Factures & devis illimités + PDF',
-      'Gestion des clients',
-      'Gestion d\'équipes & travailleurs',
-      'Missions terrain géolocalisées',
-      'Pointage & présence intelligent',
-      'Support par email',
+      "Jusqu'à 750 produits enregistrés",
+      'Gestion du stock',
+      'Facturation',
+      'Ventes quotidiennes',
+      'Suivi produits',
+      'Alertes rupture simples',
+      '1 utilisateur',
+      '1 point de vente',
+      'Cible : petites boutiques, kiosques, mini-alimentations',
     ],
     icon: Zap,
     popular: false,
   },
   {
     id: 'annual',
-    name: 'Annuel',
-    price: 3000,
+    name: 'Business',
+    price: 15000,
     period: '/mois',
-    totalPrice: 36000,
-    description: 'Économisez 24 000 FCFA/an',
+    description: 'Pour commerces en croissance',
     features: [
-      'Tout le plan Mensuel',
-      'Analyse de productivité & KPI',
-      'Scores de fiabilité travailleurs',
-      'Calcul de paie automatique',
-      'Bilan annuel par IA',
-      'Support prioritaire',
+      'Tout le plan Starter +',
+      '750 à 1 000 produits + 1 dépôt',
+      "Gestion d'un dépôt",
+      'Fournisseurs',
+      'Rapports de ventes',
+      'Suivi des marges',
+      'Plusieurs utilisateurs',
+      'Cible : quincailleries moyennes, dépôts alimentaires, pharmacies locales',
     ],
     icon: Crown,
     popular: true,
-    savings: '40%',
+    savings: 'Recommandé',
   },
   {
     id: 'enterprise',
-    name: 'Entreprise',
-    price: 15000,
+    name: 'Pro',
+    price: 35000,
     period: '/mois',
-    description: '1 admin + 3 collaborateurs',
+    description: 'Pour structures avancées',
     features: [
-      'Tout le plan Annuel',
-      '3 collaborateurs avec leurs postes',
-      'Carte des missions en temps réel',
-      'Relances automatiques par IA',
-      'Messagerie interne sécurisée',
-      'Gestion centralisée des accès',
+      'Tout le plan Business +',
+      'Plus de 1 000 produits + 2 dépôts',
+      'Multi-dépôts',
+      'Transferts de stock',
+      'Tableau de bord avancé',
+      "Contrôle d'inventaire",
+      'Support prioritaire',
+      'Cible : grossistes, grandes quincailleries, réseaux de boutiques',
     ],
     icon: Crown,
     popular: false,
@@ -129,7 +135,7 @@ export default function Subscription() {
     setSubmitting(true);
     try {
       const plan = plans.find(p => p.id === selectedPlan);
-      const amount = selectedPlan === 'annual' ? (plan?.totalPrice ?? 36000) : (plan?.price ?? (selectedPlan === 'enterprise' ? 15000 : 5000));
+      const amount = plan?.price ?? (selectedPlan === 'enterprise' ? 35000 : selectedPlan === 'annual' ? 15000 : 7500);
       const method = depositMethods.find(m => m.id === selectedMethod);
 
       // Send notification to admin via edge function
@@ -165,7 +171,7 @@ export default function Subscription() {
       <PublicNavbar />
       <SEO
         title="Tarifs – Gestion d'entreprise tout-en-un"
-        description="Abonnement SpeedWork : facturation, équipes, missions terrain, pointage, analytics et paie à partir de 3 000 FCFA/mois. Paiement par Mobile Money."
+        description="Abonnement SpeedWork pour boutiques, dépôts et pharmacies : Starter 7 500 FCFA, Business 15 000 FCFA, Pro 35 000 FCFA / mois. Paiement par Mobile Money."
         path="/tarifs"
       />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
@@ -175,7 +181,7 @@ export default function Subscription() {
           {
             "@type": "Question",
             "name": "Combien coûte SpeedWork ?",
-            "acceptedAnswer": { "@type": "Answer", "text": "SpeedWork propose deux formules : un abonnement mensuel à 5 000 FCFA/mois et un abonnement annuel à 3 000 FCFA/mois (soit 36 000 FCFA/an), vous permettant d'économiser 40%." }
+            "acceptedAnswer": { "@type": "Answer", "text": "SpeedWork propose trois formules : Starter à 7 500 FCFA/mois pour petites boutiques, Business à 15 000 FCFA/mois pour commerces en croissance, et Pro à 35 000 FCFA/mois pour les structures avancées." }
           },
           {
             "@type": "Question",
@@ -216,7 +222,7 @@ export default function Subscription() {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Plan</span>
-                <span className="font-medium text-foreground">{selectedPlan === 'annual' ? 'Annuel' : selectedPlan === 'enterprise' ? 'Entreprise' : 'Mensuel'}</span>
+                <span className="font-medium text-foreground">{selectedPlan === 'annual' ? 'Business' : selectedPlan === 'enterprise' ? 'Pro' : 'Starter'}</span>
               </div>
             </div>
             <div className="flex flex-col gap-3">
@@ -339,7 +345,7 @@ export default function Subscription() {
               </Button>
             </div>
             <p className="text-sm text-muted-foreground mb-2">
-              Plan sélectionné : <strong>{selectedPlan === 'annual' ? 'Annuel — 36 000 FCFA' : selectedPlan === 'enterprise' ? 'Entreprise — 15 000 FCFA/mois' : 'Mensuel — 5 000 FCFA'}</strong>
+              Plan sélectionné : <strong>{selectedPlan === 'annual' ? 'Business — 15 000 FCFA/mois' : selectedPlan === 'enterprise' ? 'Pro — 35 000 FCFA/mois' : 'Starter — 7 500 FCFA/mois'}</strong>
             </p>
             <p className="text-sm text-muted-foreground mb-6">
               Envoyez le montant à l'un des numéros ci-dessous, puis cliquez sur "J'ai effectué le dépôt".
@@ -372,7 +378,7 @@ export default function Subscription() {
 
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-sm text-amber-800">
               <p className="font-semibold mb-1">⚠️ Important</p>
-              <p>Envoyez exactement <strong>{selectedPlan === 'annual' ? '36 000' : selectedPlan === 'enterprise' ? '15 000' : '5 000'} FCFA</strong> au numéro indiqué. Après le dépôt, remplissez le formulaire ci-dessous pour recevoir votre clé d'activation.</p>
+              <p>Envoyez exactement <strong>{selectedPlan === 'annual' ? '15 000' : selectedPlan === 'enterprise' ? '35 000' : '7 500'} FCFA</strong> au numéro indiqué. Après le dépôt, remplissez le formulaire ci-dessous pour recevoir votre clé d'activation.</p>
             </div>
 
             <Button
