@@ -123,23 +123,43 @@
     color-adjust: exact !important;
   }
 
+  /* Reset page sizing globally to prevent ghost blank pages */
+  html, body {
+    width: 210mm !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    overflow: visible !important;
+  }
+
+  /* Hide everything by default — explicit print zones override below */
+  body > * {
+    display: none !important;
+  }
+
   /* === Document preview (factures/devis) === */
-  body:not(:has(.guide-doc)) * {
-    visibility: hidden;
+  body:has(.a4-preview) #root,
+  body:has(.a4-preview) #root * {
+    display: revert !important;
+  }
+  body:has(.a4-preview) .no-print,
+  body:has(.a4-preview) .print\:hidden,
+  body:has(.a4-preview) nav,
+  body:has(.a4-preview) aside,
+  body:has(.a4-preview) header[role="banner"] {
+    display: none !important;
   }
 
-  body:not(:has(.guide-doc)) .a4-preview,
-  body:not(:has(.guide-doc)) .a4-preview * {
-    visibility: visible !important;
-  }
-
-  body:not(:has(.guide-doc)) .a4-preview {
-    position: absolute;
-    left: 0;
-    top: 0;
+  body:has(.a4-preview) .a4-preview {
+    position: relative !important;
+    left: 0 !important;
+    top: 0 !important;
     width: 210mm;
-    height: 297mm;
-    max-height: 297mm;
+    min-height: auto !important;
+    max-height: none !important;
+    height: auto !important;
     overflow: hidden;
     padding: 0;
     margin: 0;
@@ -147,6 +167,10 @@
     border: none !important;
     border-radius: 0 !important;
     background: white !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-after: avoid !important;
+    break-inside: avoid !important;
   }
 
   /* Force inline styles (brand colors) to print */
@@ -168,7 +192,20 @@
     page-break-after: auto;
   }
 
+  /* Avoid trailing blank page caused by margins on last children */
+  body:has(.a4-preview) .a4-preview > *:last-child,
+  body:has(.a4-preview) #root > *:last-child {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
   /* === Guide d'utilisation === */
+  body:has(.guide-doc) #root,
+  body:has(.guide-doc) #root * {
+    display: revert !important;
+  }
   body:has(.guide-doc) .no-print {
     display: none !important;
   }
@@ -207,9 +244,9 @@
     page-break-after: avoid;
   }
 
-  /* Hide everything except the document */
-  aside, header, nav, [data-lovable], iframe, .print\\:hidden,
-  .fixed, [style*="position: fixed"] {
+  /* Always hide chrome elements */
+  aside, nav, [data-lovable], iframe, .print\\:hidden,
+  .fixed, [style*="position: fixed"], [style*="position:fixed"] {
     display: none !important;
     visibility: hidden !important;
   }
