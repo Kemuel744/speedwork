@@ -12,6 +12,8 @@ import { toast } from 'sonner';
 import SEO from '@/components/SEO';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
+import PlanLimitsTable from '@/components/PlanLimitsTable';
+import type { PlanId } from '@/lib/planLimits';
 import { supabase } from '@/integrations/supabase/client';
 
 const plans = [
@@ -22,14 +24,11 @@ const plans = [
     period: '/mois',
     description: 'Pour petites boutiques',
     features: [
-      "Jusqu'à 750 produits enregistrés",
       'Gestion du stock',
       'Facturation',
       'Ventes quotidiennes',
       'Suivi produits',
       'Alertes rupture simples',
-      '1 utilisateur',
-      '1 point de vente',
       'Cible : petites boutiques, kiosques, mini-alimentations',
     ],
     icon: Zap,
@@ -43,12 +42,10 @@ const plans = [
     description: 'Pour commerces en croissance',
     features: [
       'Tout le plan Starter +',
-      '750 à 1 000 produits + 1 dépôt',
       "Gestion d'un dépôt",
       'Fournisseurs',
       'Rapports de ventes',
       'Suivi des marges',
-      'Plusieurs utilisateurs',
       'Cible : quincailleries moyennes, dépôts alimentaires, pharmacies locales',
     ],
     icon: Crown,
@@ -63,7 +60,6 @@ const plans = [
     description: 'Pour structures avancées',
     features: [
       'Tout le plan Business +',
-      'Plus de 1 000 produits + 2 dépôts',
       'Multi-dépôts',
       'Transferts de stock',
       'Tableau de bord avancé',
@@ -313,7 +309,8 @@ export default function Subscription() {
                     </span>
                     <span className="text-muted-foreground text-sm ml-1">FCFA{plan.period}</span>
                   </div>
-                  <ul className="space-y-2.5">
+                  <PlanLimitsTable planId={plan.id as PlanId} variant="card" />
+                  <ul className="space-y-2.5 mt-4">
                     {plan.features.map((f, i) => (
                       <li key={i} className="flex items-center gap-2 text-sm text-foreground">
                         <Check className="w-4 h-4 text-accent shrink-0" />
