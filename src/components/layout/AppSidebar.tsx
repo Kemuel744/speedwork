@@ -66,6 +66,7 @@ const adminSections: NavSection[] = [
     items: [
       { labelKey: 'Employés & caissiers', to: '/employees', icon: UserCog },
       { labelKey: 'Étiquettes & codes-barres', to: '/labels', icon: Printer },
+      { labelKey: 'Reçus & impression', to: '/receipt-settings', icon: Receipt },
     ],
   },
   {
@@ -127,6 +128,7 @@ const clientSections: NavSection[] = [
     items: [
       { labelKey: 'Employés & caissiers', to: '/employees', icon: UserCog },
       { labelKey: 'Étiquettes & codes-barres', to: '/labels', icon: Printer },
+      { labelKey: 'Reçus & impression', to: '/receipt-settings', icon: Receipt },
     ],
   },
   {

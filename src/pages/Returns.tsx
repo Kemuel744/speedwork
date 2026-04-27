@@ -12,13 +12,15 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { Undo2, Plus, Search, Trash2, Receipt } from 'lucide-react';
+import { Undo2, Plus, Search, Trash2, Receipt, Printer } from 'lucide-react';
+import { printReceipt } from '@/lib/thermalPrint';
 
 interface SaleItem { product_id?: string; description: string; quantity: number; unit_price: number; total: number; variant_id?: string; }
 interface Sale { id: string; receipt_number: string; sale_date: string; total: number; items: SaleItem[]; customer_id?: string; }
 interface ReturnRow {
   id: string; number: string; sale_id: string | null; return_date: string;
   reason: string; refund_method: string; total_amount: number; restock: boolean; cashier_name: string;
+  items?: { description: string; quantity: number; unit_price: number; total: number }[];
 }
 interface SelectedItem extends SaleItem { selected: boolean; returnQty: number; }
 
@@ -110,6 +112,29 @@ export default function Returns() {
     }
 
     toast({ title: `Retour ${number} enregistré`, description: `Remboursement: ${displayAmount(totalRefund)}` });
+    // Impression automatique du reçu de retour
+    await printReceipt({
+      kind: 'return',
+      title: 'REÇU DE RETOUR',
+      number,
+      date: new Date(),
+      cashier: cashier || undefined,
+      lines: selected.map(i => ({
+        label: i.description,
+        qty: i.returnQty,
+        unitPrice: i.unit_price,
+        total: i.returnQty * i.unit_price,
+      })),
+      summary: [
+        { label: 'Vente d\'origine', value: foundSale.receipt_number },
+        { label: 'Mode remb.', value: refundMethods[refundMethod] || refundMethod },
+        { label: 'Remis en stock', value: restock ? 'Oui' : 'Non' },
+      ],
+      totalLabel: 'REMBOURSÉ',
+      totalValue: displayAmount(totalRefund),
+      notes: reason || undefined,
+      qrPayload: number,
+    }).catch(() => { /* noop : ne bloque pas la sauvegarde */ });
     setOpen(false); reset(); fetchAll();
   };
 
@@ -117,6 +142,29 @@ export default function Returns() {
     if (!confirm('Supprimer ce retour ?')) return;
     await supabase.from('sale_returns').delete().eq('id', id);
     fetchAll();
+  };
+
+  const reprint = async (r: ReturnRow) => {
+    // Re-charge les items pour réimpression
+    const { data } = await supabase.from('sale_return_items').select('description,quantity,unit_price,total').eq('return_id', r.id);
+    await printReceipt({
+      kind: 'return',
+      title: 'REÇU DE RETOUR (copie)',
+      number: r.number,
+      date: new Date(r.return_date),
+      cashier: r.cashier_name || undefined,
+      lines: (data || []).map((i: any) => ({
+        label: i.description, qty: i.quantity, unitPrice: Number(i.unit_price), total: Number(i.total),
+      })),
+      summary: [
+        { label: 'Mode remb.', value: refundMethods[r.refund_method] || r.refund_method },
+        { label: 'Remis en stock', value: r.restock ? 'Oui' : 'Non' },
+      ],
+      totalLabel: 'REMBOURSÉ',
+      totalValue: displayAmount(Number(r.total_amount)),
+      notes: r.reason || undefined,
+      qrPayload: r.number,
+    });
   };
 
   return (
@@ -238,6 +286,9 @@ export default function Returns() {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="font-bold text-destructive">-{displayAmount(Number(r.total_amount))}</span>
+                    <Button size="sm" variant="ghost" onClick={() => reprint(r)} title="Réimprimer">
+                      <Printer className="w-3.5 h-3.5" />
+                    </Button>
                     <Button size="sm" variant="ghost" onClick={() => remove(r.id)}>
                       <Trash2 className="w-3.5 h-3.5 text-destructive" />
                     </Button>
