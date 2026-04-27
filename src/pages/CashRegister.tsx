@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { Banknote, Plus, Lock, Unlock, ArrowDownToLine, ArrowUpFromLine, Printer, TrendingUp, TrendingDown, Equal } from 'lucide-react';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { printReceipt } from '@/lib/thermalPrint';
 
 interface Session {
   id: string; number: string; opened_at: string; closed_at: string | null;
@@ -120,37 +121,28 @@ export default function CashRegister() {
     fetchAll();
   };
 
-  const printZ = (s: Session) => {
-    const w = window.open('', '_blank');
-    if (!w) return;
+  const printZ = async (s: Session) => {
     const fmt = (n: number) => displayAmount(n);
-    w.document.write(`
-      <html><head><title>Rapport Z — ${s.number}</title>
-      <style>body{font-family:monospace;max-width:300px;margin:0 auto;padding:16px;font-size:13px}
-      h2{text-align:center;margin:0 0 4px}.row{display:flex;justify-content:space-between;padding:3px 0}
-      .sep{border-top:1px dashed #888;margin:8px 0}.tot{font-weight:bold;font-size:15px}</style>
-      </head><body>
-      <h2>RAPPORT Z</h2>
-      <p style="text-align:center;margin:0 0 8px">${s.number}</p>
-      <div class="sep"></div>
-      <div class="row"><span>Ouvert</span><span>${new Date(s.opened_at).toLocaleString('fr-FR')}</span></div>
-      <div class="row"><span>Fermé</span><span>${s.closed_at ? new Date(s.closed_at).toLocaleString('fr-FR') : '—'}</span></div>
-      <div class="row"><span>Caissier</span><span>${s.closed_by_name || s.opened_by_name || '—'}</span></div>
-      <div class="sep"></div>
-      <div class="row"><span>Fond d'ouverture</span><span>${fmt(s.opening_amount)}</span></div>
-      <div class="row"><span>Ventes espèces (${s.sales_count})</span><span>+${fmt(s.total_sales)}</span></div>
-      <div class="row"><span>Entrées caisse</span><span>+${fmt(s.total_cash_in)}</span></div>
-      <div class="row"><span>Sorties caisse</span><span>-${fmt(s.total_cash_out)}</span></div>
-      <div class="sep"></div>
-      <div class="row tot"><span>Attendu</span><span>${fmt(s.expected_amount)}</span></div>
-      <div class="row tot"><span>Compté</span><span>${fmt(s.counted_amount)}</span></div>
-      <div class="row tot"><span>Écart</span><span>${s.difference >= 0 ? '+' : ''}${fmt(s.difference)}</span></div>
-      <div class="sep"></div>
-      ${s.notes ? `<p style="font-size:11px">Note: ${s.notes}</p>` : ''}
-      <p style="text-align:center;font-size:11px;color:#666;margin-top:12px">Merci — SpeedWork</p>
-      </body></html>`);
-    w.document.close();
-    setTimeout(() => w.print(), 200);
+    await printReceipt({
+      kind: 'session',
+      title: 'RAPPORT Z — CLÔTURE CAISSE',
+      number: s.number,
+      date: s.closed_at ? new Date(s.closed_at) : new Date(),
+      cashier: s.closed_by_name || s.opened_by_name || undefined,
+      summary: [
+        { label: 'Ouvert', value: new Date(s.opened_at).toLocaleString('fr-FR') },
+        { label: 'Fermé', value: s.closed_at ? new Date(s.closed_at).toLocaleString('fr-FR') : '—' },
+        { label: 'Fond d\'ouverture', value: fmt(s.opening_amount) },
+        { label: `Ventes espèces (${s.sales_count})`, value: '+' + fmt(s.total_sales) },
+        { label: 'Entrées caisse', value: '+' + fmt(s.total_cash_in) },
+        { label: 'Sorties caisse', value: '-' + fmt(s.total_cash_out) },
+        { label: 'Attendu', value: fmt(s.expected_amount), bold: true },
+        { label: 'Compté', value: fmt(s.counted_amount), bold: true },
+        { label: 'Écart', value: (s.difference >= 0 ? '+' : '') + fmt(s.difference), bold: true },
+      ],
+      notes: s.notes || undefined,
+      qrPayload: s.number,
+    });
   };
 
   return (
