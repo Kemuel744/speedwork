@@ -312,11 +312,6 @@ export default function Subscription() {
                       {plan.price.toLocaleString('fr-FR')}
                     </span>
                     <span className="text-muted-foreground text-sm ml-1">FCFA{plan.period}</span>
-                    {plan.totalPrice && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        soit {plan.totalPrice.toLocaleString('fr-FR')} FCFA/an
-                      </p>
-                    )}
                   </div>
                   <ul className="space-y-2.5">
                     {plan.features.map((f, i) => (
