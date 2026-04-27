@@ -235,6 +235,7 @@ export type Database = {
       }
       cash_sessions: {
         Row: {
+          cashier_id: string | null
           closed_at: string | null
           closed_by_name: string
           counted_amount: number
@@ -258,6 +259,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          cashier_id?: string | null
           closed_at?: string | null
           closed_by_name?: string
           counted_amount?: number
@@ -281,6 +283,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          cashier_id?: string | null
           closed_at?: string | null
           closed_by_name?: string
           counted_amount?: number
@@ -602,6 +605,105 @@ export type Database = {
         }
         Relationships: []
       }
+      employee_permissions: {
+        Row: {
+          can_close_cash: boolean
+          can_discount: boolean
+          can_manage_products: boolean
+          can_manage_stock: boolean
+          can_open_cash: boolean
+          can_refund: boolean
+          can_sell: boolean
+          can_view_reports: boolean
+          created_at: string
+          employee_id: string
+          id: string
+          max_discount_pct: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          can_close_cash?: boolean
+          can_discount?: boolean
+          can_manage_products?: boolean
+          can_manage_stock?: boolean
+          can_open_cash?: boolean
+          can_refund?: boolean
+          can_sell?: boolean
+          can_view_reports?: boolean
+          created_at?: string
+          employee_id: string
+          id?: string
+          max_discount_pct?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          can_close_cash?: boolean
+          can_discount?: boolean
+          can_manage_products?: boolean
+          can_manage_stock?: boolean
+          can_open_cash?: boolean
+          can_refund?: boolean
+          can_sell?: boolean
+          can_view_reports?: boolean
+          created_at?: string
+          employee_id?: string
+          id?: string
+          max_discount_pct?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      employees: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string
+          hired_at: string
+          id: string
+          is_active: boolean
+          location_id: string | null
+          notes: string
+          phone: string
+          pin_code: string
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string
+          full_name: string
+          hired_at?: string
+          id?: string
+          is_active?: boolean
+          location_id?: string | null
+          notes?: string
+          phone?: string
+          pin_code?: string
+          role?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string
+          hired_at?: string
+          id?: string
+          is_active?: boolean
+          location_id?: string | null
+          notes?: string
+          phone?: string
+          pin_code?: string
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       expenses: {
         Row: {
           amount: number
@@ -768,6 +870,90 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      label_print_jobs: {
+        Row: {
+          created_at: string
+          id: string
+          printed_at: string
+          product_count: number
+          template_id: string | null
+          total_labels: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          printed_at?: string
+          product_count?: number
+          template_id?: string | null
+          total_labels?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          printed_at?: string
+          product_count?: number
+          template_id?: string | null
+          total_labels?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      label_templates: {
+        Row: {
+          cols_per_page: number
+          created_at: string
+          height_mm: number
+          id: string
+          is_default: boolean
+          name: string
+          rows_per_page: number
+          show_barcode: boolean
+          show_company: boolean
+          show_name: boolean
+          show_price: boolean
+          show_qr: boolean
+          updated_at: string
+          user_id: string
+          width_mm: number
+        }
+        Insert: {
+          cols_per_page?: number
+          created_at?: string
+          height_mm?: number
+          id?: string
+          is_default?: boolean
+          name: string
+          rows_per_page?: number
+          show_barcode?: boolean
+          show_company?: boolean
+          show_name?: boolean
+          show_price?: boolean
+          show_qr?: boolean
+          updated_at?: string
+          user_id: string
+          width_mm?: number
+        }
+        Update: {
+          cols_per_page?: number
+          created_at?: string
+          height_mm?: number
+          id?: string
+          is_default?: boolean
+          name?: string
+          rows_per_page?: number
+          show_barcode?: boolean
+          show_company?: boolean
+          show_name?: boolean
+          show_price?: boolean
+          show_qr?: boolean
+          updated_at?: string
+          user_id?: string
+          width_mm?: number
+        }
+        Relationships: []
       }
       learning_resources: {
         Row: {
@@ -2008,6 +2194,7 @@ export type Database = {
       sales: {
         Row: {
           amount_paid: number
+          cashier_id: string | null
           cashier_name: string
           change_given: number
           created_at: string
@@ -2035,6 +2222,7 @@ export type Database = {
         }
         Insert: {
           amount_paid?: number
+          cashier_id?: string | null
           cashier_name?: string
           change_given?: number
           created_at?: string
@@ -2062,6 +2250,7 @@ export type Database = {
         }
         Update: {
           amount_paid?: number
+          cashier_id?: string | null
           cashier_name?: string
           change_given?: number
           created_at?: string
@@ -2906,6 +3095,7 @@ export type Database = {
         Args: { _code: string; _subtotal: number }
         Returns: Json
       }
+      verify_employee_pin: { Args: { _pin: string }; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "client"
