@@ -6,6 +6,7 @@ import {
   LayoutDashboard, User, Settings,
   LogOut, ChevronLeft, CreditCard, BarChart3, Bell, MessageCircle, BookOpen, Newspaper,
   Store, Package, History, Truck, FolderTree, Building2, ShoppingCart, ArrowLeftRight,
+  Banknote, Undo2, Wallet,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo-small.webp';
@@ -43,6 +44,14 @@ const adminSections: NavSection[] = [
     ],
   },
   {
+    titleKey: 'Finance',
+    items: [
+      { labelKey: 'Caisse journalière', to: '/cash-register', icon: Banknote },
+      { labelKey: 'Retours & remboursements', to: '/returns', icon: Undo2 },
+      { labelKey: 'Crédit clients', to: '/customer-credits', icon: Wallet },
+    ],
+  },
+  {
     titleKey: 'nav.communication',
     items: [
       { labelKey: 'nav.messages', to: '/messages', icon: MessageCircle },
@@ -76,6 +85,14 @@ const clientSections: NavSection[] = [
       { labelKey: 'Transferts stock', to: '/stock-transfers', icon: ArrowLeftRight },
       { labelKey: 'nav.salesHistory', to: '/sales-history', icon: History },
       { labelKey: 'nav.statistics', to: '/statistics', icon: BarChart3 },
+    ],
+  },
+  {
+    titleKey: 'Finance',
+    items: [
+      { labelKey: 'Caisse journalière', to: '/cash-register', icon: Banknote },
+      { labelKey: 'Retours & remboursements', to: '/returns', icon: Undo2 },
+      { labelKey: 'Crédit clients', to: '/customer-credits', icon: Wallet },
     ],
   },
   {
