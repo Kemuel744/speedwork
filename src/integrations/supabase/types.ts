@@ -321,6 +321,9 @@ export type Database = {
           email: string
           id: string
           is_active: boolean
+          lifetime_points: number
+          lifetime_spent: number
+          loyalty_points: number
           name: string
           notes: string
           phone: string
@@ -336,6 +339,9 @@ export type Database = {
           email?: string
           id?: string
           is_active?: boolean
+          lifetime_points?: number
+          lifetime_spent?: number
+          loyalty_points?: number
           name: string
           notes?: string
           phone?: string
@@ -351,6 +357,9 @@ export type Database = {
           email?: string
           id?: string
           is_active?: boolean
+          lifetime_points?: number
+          lifetime_spent?: number
+          loyalty_points?: number
           name?: string
           notes?: string
           phone?: string
@@ -784,6 +793,90 @@ export type Database = {
           notes?: string
           phone?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      loyalty_programs: {
+        Row: {
+          created_at: string
+          currency_per_point: number
+          description: string
+          expiry_months: number
+          id: string
+          is_active: boolean
+          max_redemption_pct: number
+          min_redemption_points: number
+          name: string
+          points_per_currency: number
+          spend_threshold: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          currency_per_point?: number
+          description?: string
+          expiry_months?: number
+          id?: string
+          is_active?: boolean
+          max_redemption_pct?: number
+          min_redemption_points?: number
+          name?: string
+          points_per_currency?: number
+          spend_threshold?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          currency_per_point?: number
+          description?: string
+          expiry_months?: number
+          id?: string
+          is_active?: boolean
+          max_redemption_pct?: number
+          min_redemption_points?: number
+          name?: string
+          points_per_currency?: number
+          spend_threshold?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      loyalty_transactions: {
+        Row: {
+          created_at: string
+          customer_id: string
+          description: string
+          expires_at: string | null
+          id: string
+          points: number
+          sale_id: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          description?: string
+          expires_at?: string | null
+          id?: string
+          points?: number
+          sale_id?: string | null
+          transaction_type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          description?: string
+          expires_at?: string | null
+          id?: string
+          points?: number
+          sale_id?: string | null
+          transaction_type?: string
           user_id?: string
         }
         Relationships: []
@@ -1464,6 +1557,108 @@ export type Database = {
         }
         Relationships: []
       }
+      promo_codes: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          is_active: boolean
+          promotion_id: string
+          usage_count: number
+          usage_limit: number
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          promotion_id: string
+          usage_count?: number
+          usage_limit?: number
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          promotion_id?: string
+          usage_count?: number
+          usage_limit?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      promotions: {
+        Row: {
+          apply_to: string
+          auto_apply: boolean
+          category_ids: string[]
+          created_at: string
+          description: string
+          ends_at: string | null
+          id: string
+          is_active: boolean
+          max_discount: number
+          min_purchase: number
+          name: string
+          priority: number
+          product_ids: string[]
+          promo_type: string
+          starts_at: string
+          updated_at: string
+          usage_count: number
+          usage_limit: number
+          user_id: string
+          value: number
+        }
+        Insert: {
+          apply_to?: string
+          auto_apply?: boolean
+          category_ids?: string[]
+          created_at?: string
+          description?: string
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_discount?: number
+          min_purchase?: number
+          name: string
+          priority?: number
+          product_ids?: string[]
+          promo_type?: string
+          starts_at?: string
+          updated_at?: string
+          usage_count?: number
+          usage_limit?: number
+          user_id: string
+          value?: number
+        }
+        Update: {
+          apply_to?: string
+          auto_apply?: boolean
+          category_ids?: string[]
+          created_at?: string
+          description?: string
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_discount?: number
+          min_purchase?: number
+          name?: string
+          priority?: number
+          product_ids?: string[]
+          promo_type?: string
+          starts_at?: string
+          updated_at?: string
+          usage_count?: number
+          usage_limit?: number
+          user_id?: string
+          value?: number
+        }
+        Relationships: []
+      }
       purchase_order_items: {
         Row: {
           created_at: string
@@ -1706,14 +1901,21 @@ export type Database = {
           change_given: number
           created_at: string
           customer_id: string | null
+          discount_amount: number
           id: string
           items: Json
           notes: string
           payment_method: string
+          points_earned: number
+          points_redeemed: number
+          points_value: number
+          promo_code: string
+          promotion_id: string | null
           receipt_number: string
           sale_date: string
           session_id: string | null
           status: string
+          subtotal: number
           total: number
           user_id: string
         }
@@ -1723,14 +1925,21 @@ export type Database = {
           change_given?: number
           created_at?: string
           customer_id?: string | null
+          discount_amount?: number
           id?: string
           items?: Json
           notes?: string
           payment_method?: string
+          points_earned?: number
+          points_redeemed?: number
+          points_value?: number
+          promo_code?: string
+          promotion_id?: string | null
           receipt_number: string
           sale_date?: string
           session_id?: string | null
           status?: string
+          subtotal?: number
           total?: number
           user_id: string
         }
@@ -1740,14 +1949,21 @@ export type Database = {
           change_given?: number
           created_at?: string
           customer_id?: string | null
+          discount_amount?: number
           id?: string
           items?: Json
           notes?: string
           payment_method?: string
+          points_earned?: number
+          points_redeemed?: number
+          points_value?: number
+          promo_code?: string
+          promotion_id?: string | null
           receipt_number?: string
           sale_date?: string
           session_id?: string | null
           status?: string
+          subtotal?: number
           total?: number
           user_id?: string
         }
@@ -2531,6 +2747,10 @@ export type Database = {
       is_org_admin: { Args: { _user_id: string }; Returns: boolean }
       receive_stock_transfer: { Args: { _qr_token: string }; Returns: Json }
       same_org: { Args: { _user1: string; _user2: string }; Returns: boolean }
+      validate_promo_code: {
+        Args: { _code: string; _subtotal: number }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "client"
