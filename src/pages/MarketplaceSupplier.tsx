@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowLeft, Store, MapPin, Phone, Mail, Package, ShoppingCart, Trash2, Plus, Send, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Store, MapPin, Phone, Mail, Package, ShoppingCart, Trash2, Plus, Send, MessageSquare, Truck, Calculator } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface SupplierInfo {
@@ -39,6 +39,10 @@ export default function MarketplaceSupplier() {
   const [notes, setNotes] = useState('');
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  // Delivery estimation
+  const [shippingMode, setShippingMode] = useState<'pickup' | 'standard' | 'express'>('standard');
+  const [distanceKm, setDistanceKm] = useState<number>(10);
+  const [totalWeightKg, setTotalWeightKg] = useState<number>(5);
 
   const fetchAll = useCallback(async () => {
     if (!id) return;
@@ -64,18 +68,37 @@ export default function MarketplaceSupplier() {
 
   const subtotal = cart.reduce((s, l) => s + l.quantity * (l.unit_price || 0), 0);
 
+  // Shipping calculation (XAF). Tunable rates.
+  const shippingConfig = {
+    pickup:   { base: 0,    perKm: 0,   perKg: 0,   minDays: 0, maxDays: 0, label: 'Retrait sur place' },
+    standard: { base: 1500, perKm: 150, perKg: 100, minDays: 2, maxDays: 5, label: 'Standard' },
+    express:  { base: 3000, perKm: 300, perKg: 200, minDays: 1, maxDays: 2, label: 'Express' },
+  } as const;
+  const sc = shippingConfig[shippingMode];
+  const shippingCost = Math.round(sc.base + sc.perKm * Math.max(0, distanceKm) + sc.perKg * Math.max(0, totalWeightKg));
+  const grandTotal = subtotal + shippingCost;
+  const today = new Date();
+  const minDate = new Date(today); minDate.setDate(today.getDate() + sc.minDays);
+  const maxDate = new Date(today); maxDate.setDate(today.getDate() + sc.maxDays);
+  const fmtDate = (d: Date) => d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+  const deliveryEstimate = shippingMode === 'pickup'
+    ? 'Disponible immédiatement après confirmation'
+    : sc.minDays === sc.maxDays ? `Sous ${sc.minDays} jour(s) (${fmtDate(minDate)})` : `Entre ${fmtDate(minDate)} et ${fmtDate(maxDate)} (${sc.minDays}–${sc.maxDays} jours)`;
+
   const submitOrder = async () => {
     if (!user || !supplier || cart.length === 0) return;
     setSubmitting(true);
     const numRes: any = await (supabase.rpc as any)('generate_marketplace_order_number', { _user_id: user.id });
     const number = numRes?.data || `MO-${Date.now()}`;
+    const shippingNote = `\n\n— Livraison —\nMode: ${sc.label}\nDistance: ${distanceKm} km · Poids: ${totalWeightKg} kg\nFrais estimés: ${shippingCost.toLocaleString()} XAF\nDélai: ${deliveryEstimate}`;
     const { data: order, error } = await (supabase.from as any)('marketplace_orders').insert({
       number, buyer_user_id: user.id, supplier_user_id: supplier.user_id,
       status: orderType === 'direct' ? 'confirmed' : 'quote_request',
       order_type: orderType,
-      subtotal, total: subtotal, currency: 'XAF',
+      subtotal, total: grandTotal, currency: 'XAF',
       delivery_address: deliveryAddress, delivery_city: deliveryCity,
-      buyer_notes: notes,
+      expected_delivery: shippingMode === 'pickup' ? null : maxDate.toISOString().slice(0, 10),
+      buyer_notes: (notes || '') + shippingNote,
     }).select().single();
     if (error || !order) { setSubmitting(false); return toast({ title: 'Erreur', description: error?.message, variant: 'destructive' }); }
     const items = cart.map(l => ({ order_id: order.id, product_id: l.product_id, product_name: l.product_name, quantity: l.quantity, unit_price: l.unit_price, total: l.quantity * l.unit_price }));
@@ -175,7 +198,48 @@ export default function MarketplaceSupplier() {
                   <Button size="sm" variant="ghost" onClick={() => removeLine(l.product_id)}><Trash2 className="w-3.5 h-3.5 text-destructive" /></Button>
                 </div>
               ))}
-              <div className="text-right font-semibold text-lg">Total : {subtotal.toLocaleString()} XAF</div>
+              <div className="text-right text-sm text-muted-foreground">Sous-total : {subtotal.toLocaleString()} XAF</div>
+            </div>
+
+            <div className="rounded-lg border bg-muted/30 p-3 space-y-3">
+              <div className="flex items-center gap-2 text-sm font-semibold">
+                <Truck className="w-4 h-4 text-primary" />Frais & délais de livraison
+              </div>
+              <div>
+                <Label className="text-xs">Mode</Label>
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {(['pickup','standard','express'] as const).map(m => (
+                    <Button key={m} type="button" size="sm" variant={shippingMode === m ? 'default' : 'outline'} onClick={() => setShippingMode(m)}>
+                      {shippingConfig[m].label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              {shippingMode !== 'pickup' && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-xs">Distance estimée (km)</Label>
+                    <Input type="number" min={0} value={distanceKm} onChange={e => setDistanceKm(Math.max(0, Number(e.target.value)))} />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Poids total (kg)</Label>
+                    <Input type="number" min={0} step="0.1" value={totalWeightKg} onChange={e => setTotalWeightKg(Math.max(0, Number(e.target.value)))} />
+                  </div>
+                </div>
+              )}
+              <div className="flex items-center justify-between text-sm border-t pt-2">
+                <span className="flex items-center gap-1.5 text-muted-foreground"><Calculator className="w-3.5 h-3.5" />Frais estimés</span>
+                <span className="font-semibold">{shippingCost.toLocaleString()} XAF</span>
+              </div>
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>Délai estimé</span>
+                <span className="font-medium text-foreground">{deliveryEstimate}</span>
+              </div>
+              <div className="flex items-center justify-between text-base font-bold border-t pt-2">
+                <span>Total TTC</span>
+                <span>{grandTotal.toLocaleString()} XAF</span>
+              </div>
+              <p className="text-[10px] text-muted-foreground italic">Estimation indicative — sera confirmée par le fournisseur.</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t">
