@@ -3166,6 +3166,7 @@ export type Database = {
         }[]
       }
       get_pnl: { Args: { _end: string; _start: string }; Returns: Json }
+      get_purchase_order_by_token: { Args: { _token: string }; Returns: Json }
       get_user_org_id: { Args: { _user_id: string }; Returns: string }
       get_vat_summary: { Args: { _end: string; _start: string }; Returns: Json }
       has_role: {
