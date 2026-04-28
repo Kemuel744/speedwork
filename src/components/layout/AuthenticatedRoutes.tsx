@@ -27,6 +27,97 @@ const Employees = lazy(() => import("@/pages/Employees"));
 const ReceiptSettingsPage = lazy(() => import("@/pages/ReceiptSettings"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
+// Mapping centralisé : ancienne route -> nouvelle destination (avec onglet)
+const LEGACY_REDIRECTS: Record<string, string> = {
+  "/products": "/stock?tab=products",
+  "/product": "/stock?tab=products",
+  "/inventory": "/stock?tab=products",
+  "/category": "/stock?tab=categories",
+  "/categories": "/stock?tab=categories",
+  "/multi-depot": "/stock?tab=multi-depot",
+  "/multi-depot-stock": "/stock?tab=multi-depot",
+  "/depots": "/stock?tab=multi-depot",
+  "/transfers": "/stock?tab=transfers",
+  "/stock-transfers": "/stock?tab=transfers",
+  "/labels": "/stock?tab=labels",
+  "/supplier": "/network?tab=suppliers",
+  "/suppliers": "/network?tab=suppliers",
+  "/location": "/network?tab=locations",
+  "/locations": "/network?tab=locations",
+  "/boutiques": "/network?tab=locations",
+  "/purchase-order": "/network?tab=purchase-orders",
+  "/purchase-orders": "/network?tab=purchase-orders",
+  "/marketplace/orders": "/marketplace?tab=orders",
+  "/marketplace/order": "/marketplace?tab=orders",
+  "/marketplace/profile": "/marketplace?tab=profile",
+  "/marketplace/discover": "/marketplace?tab=discover",
+  "/supplier-profile": "/marketplace?tab=profile",
+  "/cash": "/finance?tab=cash",
+  "/cash-register": "/finance?tab=cash",
+  "/return": "/finance?tab=returns",
+  "/returns": "/finance?tab=returns",
+  "/credit": "/finance?tab=credits",
+  "/credits": "/finance?tab=credits",
+  "/customer-credits": "/finance?tab=credits",
+  "/accounting": "/finance?tab=accounting",
+  "/comptabilite": "/finance?tab=accounting",
+  "/vat": "/finance?tab=vat",
+  "/tva": "/finance?tab=vat",
+  "/vat-declaration": "/finance?tab=vat",
+  "/tax-rates": "/finance?tab=tax-rates",
+  "/taux": "/finance?tab=tax-rates",
+  "/promotion": "/marketing?tab=promotions",
+  "/promotions": "/marketing?tab=promotions",
+  "/loyalty": "/marketing?tab=loyalty",
+  "/fidelite": "/marketing?tab=loyalty",
+  "/documents": "/dashboard",
+  "/document": "/dashboard",
+  "/clients": "/dashboard",
+  "/client": "/dashboard",
+  "/workers": "/dashboard",
+  "/worker": "/dashboard",
+  "/teams": "/dashboard",
+  "/team": "/dashboard",
+  "/missions": "/dashboard",
+  "/mission": "/dashboard",
+  "/attendance": "/dashboard",
+  "/payroll": "/dashboard",
+  "/analytics": "/dashboard",
+  "/reliability": "/dashboard",
+  "/annual-review": "/dashboard",
+  "/reminders": "/dashboard",
+  "/learning": "/guide",
+  "/shared-document": "/dashboard",
+  "/create-document": "/dashboard",
+  "/work-tasks": "/dashboard",
+  "/missions-map": "/dashboard",
+  "/teams-map": "/dashboard",
+  "/productivity": "/dashboard",
+  "/productivity-map": "/dashboard",
+};
+
+function LegacyOrNotFound() {
+  const pathname = window.location.pathname;
+  const clean = pathname.replace(/\/+$/, "") || "/";
+  if (LEGACY_REDIRECTS[clean]) {
+    return <Navigate to={LEGACY_REDIRECTS[clean]} replace />;
+  }
+  const segs = clean.split("/").filter(Boolean);
+  if (segs.length >= 2) {
+    const twoSeg = "/" + segs[0] + "/" + segs[1];
+    if (LEGACY_REDIRECTS[twoSeg]) {
+      return <Navigate to={LEGACY_REDIRECTS[twoSeg]} replace />;
+    }
+  }
+  if (segs.length >= 1) {
+    const firstSeg = "/" + segs[0];
+    if (LEGACY_REDIRECTS[firstSeg]) {
+      return <Navigate to={LEGACY_REDIRECTS[firstSeg]} replace />;
+    }
+  }
+  return <NotFound />;
+}
+
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-screen">
     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -100,7 +191,7 @@ export default function AuthenticatedRoutes() {
                     <Route path="/annual-review" element={<Navigate to="/dashboard" replace />} />
                     <Route path="/reminders" element={<Navigate to="/dashboard" replace />} />
                   </Route>
-                  <Route path="*" element={<NotFound />} />
+                  <Route path="*" element={<LegacyOrNotFound />} />
                 </Routes>
               </Suspense>
             </DocumentsProvider>
