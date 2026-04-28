@@ -49,22 +49,79 @@ export default function MultiDepotStock() {
 
   const saveAll = async () => {
     if (!user || dirtyCount === 0) return;
-    setSaving(true);
-    const rows = Object.entries(drafts).map(([key, val]) => {
+
+    // Validation : vérifier le format des entrées avant tout appel réseau
+    const invalid: string[] = [];
+    const parsed = Object.entries(drafts).map(([key, val]) => {
       const [productId, locationId] = key.split('|');
-      return {
-        user_id: user.id,
-        product_id: productId,
-        location_id: locationId,
-        quantity: Math.max(0, parseInt(val || '0', 10) || 0),
-      };
+      const qty = parseInt(val || '0', 10);
+      if (!productId || !locationId) invalid.push(key);
+      if (Number.isNaN(qty) || qty < 0) invalid.push(key);
+      return { productId, locationId, quantity: Math.max(0, qty || 0) };
     });
-    const { error } = await supabase
-      .from('location_stock')
-      .upsert(rows as never, { onConflict: 'location_id,product_id,variant_id' });
+    if (invalid.length > 0) {
+      return toast({
+        title: 'Données invalides',
+        description: `${invalid.length} cellule(s) contiennent des valeurs incorrectes. Veuillez saisir des nombres entiers positifs.`,
+        variant: 'destructive',
+      });
+    }
+
+    setSaving(true);
+
+    // SELECT-then-UPDATE/INSERT (variant_id nullable empêche un onConflict fiable)
+    let okCount = 0;
+    const errors: string[] = [];
+    for (const row of parsed) {
+      const { data: existing, error: selErr } = await supabase
+        .from('location_stock')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('location_id', row.locationId)
+        .eq('product_id', row.productId)
+        .is('variant_id', null)
+        .maybeSingle();
+
+      if (selErr) {
+        errors.push(selErr.message);
+        continue;
+      }
+
+      const op = existing
+        ? supabase.from('location_stock').update({ quantity: row.quantity }).eq('id', existing.id)
+        : supabase.from('location_stock').insert({
+            user_id: user.id,
+            location_id: row.locationId,
+            product_id: row.productId,
+            quantity: row.quantity,
+          } as never);
+
+      const { error: opErr } = await op;
+      if (opErr) {
+        // Détection d'un schéma incompatible (colonne manquante, contrainte cassée…)
+        if (/column .* does not exist|relation .* does not exist|schema/i.test(opErr.message)) {
+          setSaving(false);
+          return toast({
+            title: 'Format de table inattendu',
+            description: `La table location_stock ne correspond pas au format attendu (${opErr.message}). Contactez le support.`,
+            variant: 'destructive',
+          });
+        }
+        errors.push(opErr.message);
+      } else {
+        okCount++;
+      }
+    }
+
     setSaving(false);
-    if (error) return toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
-    toast({ title: `${rows.length} stock(s) mis à jour` });
+    if (errors.length > 0) {
+      return toast({
+        title: `Enregistrement partiel (${okCount}/${parsed.length})`,
+        description: errors[0],
+        variant: 'destructive',
+      });
+    }
+    toast({ title: `${okCount} stock(s) mis à jour` });
     setDrafts({});
     fetchAll();
   };
