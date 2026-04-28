@@ -5,7 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import {
   LayoutDashboard, User, Settings,
   LogOut, ChevronLeft, CreditCard, BarChart3, Bell, MessageCircle, BookOpen, Newspaper,
-  Store, Package, History, Truck, FolderTree, Building2, ShoppingCart, ArrowLeftRight,
+  Store, Package, History, Truck, FolderTree, Building2, ShoppingCart, ArrowLeftRight, Grid3x3,
   Banknote, Undo2, Wallet, Tag, Award, Calculator, Receipt, Percent, UserCog, Printer,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -38,6 +38,7 @@ const adminSections: NavSection[] = [
       { labelKey: 'Fournisseurs', to: '/suppliers', icon: Truck },
       { labelKey: 'Commandes achat', to: '/purchase-orders', icon: ShoppingCart },
       { labelKey: 'Boutiques & dépôts', to: '/locations', icon: Building2 },
+      { labelKey: 'Stock multi-dépôts', to: '/multi-depot-stock', icon: Grid3x3 },
       { labelKey: 'Transferts stock', to: '/stock-transfers', icon: ArrowLeftRight },
       { labelKey: 'nav.salesHistory', to: '/sales-history', icon: History },
       { labelKey: 'nav.statistics', to: '/statistics', icon: BarChart3 },
