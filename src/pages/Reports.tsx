@@ -24,7 +24,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, AreaChart, Area,
@@ -107,6 +107,7 @@ export default function Reports() {
   const trialStatus = useTrialStatus();
   const { displayAmount, displayCurrency } = useCurrency();
   const currency = displayCurrency;
+  const navigate = useNavigate();
 
   const isAdmin = user?.role === 'admin';
   const hasProAccess = isAdmin || (!trialStatus.trialExpired && !trialStatus.isLoading);
@@ -375,15 +376,15 @@ export default function Reports() {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-6 flex-wrap h-auto gap-1">
-          <TabsTrigger value="pos">
+          <TabsTrigger value="pos" onClick={() => navigate('/cash-register')}>
             <ShoppingCart className="w-3.5 h-3.5 mr-1" />Caisse
           </TabsTrigger>
-          <TabsTrigger value="history">
+          <TabsTrigger value="history" onClick={() => navigate('/sales-history')}>
             <Receipt className="w-3.5 h-3.5 mr-1" />Historique
           </TabsTrigger>
           <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
           <TabsTrigger value="expenses">Dépenses</TabsTrigger>
-          <TabsTrigger value="stock">
+          <TabsTrigger value="stock" onClick={() => navigate('/inventory')}>
             <Package className="w-3.5 h-3.5 mr-1" />Produits & Stock
             {!hasProAccess && <Lock className="w-3 h-3 ml-1 text-muted-foreground" />}
           </TabsTrigger>
