@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import speedworkLogo from '@/assets/logo-small.webp';
+import kubatechLogo from '@/assets/kubatech-logo.png';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function PublicFooter() {
@@ -60,6 +61,19 @@ export default function PublicFooter() {
 
         <div className="mt-8 pt-6 border-t border-border text-center text-xs text-muted-foreground">
           © {new Date().getFullYear()} SpeedWork. {t('footer.rights')}
+        </div>
+
+        <div className="mt-4 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+          <span>Produit par</span>
+          <img
+            src={kubatechLogo}
+            alt="KubaTech"
+            className="h-6 w-6 rounded-full object-cover"
+            width={24}
+            height={24}
+            loading="lazy"
+          />
+          <span className="font-semibold text-foreground">KubaTech</span>
         </div>
       </div>
     </footer>
