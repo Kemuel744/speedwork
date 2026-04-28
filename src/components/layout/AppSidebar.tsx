@@ -4,9 +4,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import {
   LayoutDashboard, User, Settings,
-  LogOut, ChevronLeft, CreditCard, BarChart3, Bell, MessageCircle, BookOpen, Newspaper,
-  Store, Package, History, Truck, FolderTree, Building2, ShoppingCart, ArrowLeftRight, Grid3x3,
-  Banknote, Undo2, Wallet, Tag, Award, Calculator, Receipt, Percent, UserCog, Printer, Globe,
+  LogOut, ChevronLeft, CreditCard, BarChart3, MessageCircle, BookOpen, Newspaper,
+  Store, History, ShoppingCart, Banknote, Megaphone, UserCog, Receipt, Globe, Boxes,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo-small.webp';
@@ -33,13 +32,8 @@ const adminSections: NavSection[] = [
   {
     titleKey: 'nav.gestion',
     items: [
-      { labelKey: 'nav.products', to: '/inventory', icon: Package },
-      { labelKey: 'Catégories', to: '/categories', icon: FolderTree },
-      { labelKey: 'Fournisseurs', to: '/suppliers', icon: Truck },
-      { labelKey: 'Commandes achat', to: '/purchase-orders', icon: ShoppingCart },
-      { labelKey: 'Boutiques & dépôts', to: '/locations', icon: Building2 },
-      { labelKey: 'Stock multi-dépôts', to: '/multi-depot-stock', icon: Grid3x3 },
-      { labelKey: 'Transferts stock', to: '/stock-transfers', icon: ArrowLeftRight },
+      { labelKey: 'Stock & produits', to: '/stock', icon: Boxes },
+      { labelKey: 'Réseau & achats', to: '/network', icon: ShoppingCart },
       { labelKey: 'nav.salesHistory', to: '/sales-history', icon: History },
       { labelKey: 'nav.statistics', to: '/statistics', icon: BarChart3 },
     ],
@@ -48,33 +42,25 @@ const adminSections: NavSection[] = [
     titleKey: 'Marketplace',
     items: [
       { labelKey: 'Marketplace', to: '/marketplace', icon: Globe },
-      { labelKey: 'Mes commandes marketplace', to: '/marketplace/orders', icon: ShoppingCart },
-      { labelKey: 'Mon profil fournisseur', to: '/supplier-profile', icon: Store },
     ],
   },
   {
     titleKey: 'Finance',
     items: [
       { labelKey: 'Caisse journalière', to: '/cash-register', icon: Banknote },
-      { labelKey: 'Retours & remboursements', to: '/returns', icon: Undo2 },
-      { labelKey: 'Crédit clients', to: '/customer-credits', icon: Wallet },
-      { labelKey: 'Comptabilité', to: '/accounting', icon: Calculator },
-      { labelKey: 'Déclaration TVA', to: '/vat-declaration', icon: Receipt },
-      { labelKey: 'Taux de TVA', to: '/tax-rates', icon: Percent },
+      { labelKey: 'Finance & comptabilité', to: '/finance', icon: Receipt },
     ],
   },
   {
     titleKey: 'Marketing',
     items: [
-      { labelKey: 'Promotions', to: '/promotions', icon: Tag },
-      { labelKey: 'Fidélité client', to: '/loyalty', icon: Award },
+      { labelKey: 'Promotions & fidélité', to: '/marketing', icon: Megaphone },
     ],
   },
   {
     titleKey: 'Équipe',
     items: [
       { labelKey: 'Employés & caissiers', to: '/employees', icon: UserCog },
-      { labelKey: 'Étiquettes & codes-barres', to: '/labels', icon: Printer },
       { labelKey: 'Reçus & impression', to: '/receipt-settings', icon: Receipt },
     ],
   },
@@ -104,13 +90,8 @@ const clientSections: NavSection[] = [
   {
     titleKey: 'nav.gestion',
     items: [
-      { labelKey: 'nav.products', to: '/inventory', icon: Package },
-      { labelKey: 'Catégories', to: '/categories', icon: FolderTree },
-      { labelKey: 'Fournisseurs', to: '/suppliers', icon: Truck },
-      { labelKey: 'Commandes achat', to: '/purchase-orders', icon: ShoppingCart },
-      { labelKey: 'Boutiques & dépôts', to: '/locations', icon: Building2 },
-      { labelKey: 'Stock multi-dépôts', to: '/multi-depot-stock', icon: Grid3x3 },
-      { labelKey: 'Transferts stock', to: '/stock-transfers', icon: ArrowLeftRight },
+      { labelKey: 'Stock & produits', to: '/stock', icon: Boxes },
+      { labelKey: 'Réseau & achats', to: '/network', icon: ShoppingCart },
       { labelKey: 'nav.salesHistory', to: '/sales-history', icon: History },
       { labelKey: 'nav.statistics', to: '/statistics', icon: BarChart3 },
     ],
@@ -119,33 +100,25 @@ const clientSections: NavSection[] = [
     titleKey: 'Marketplace',
     items: [
       { labelKey: 'Marketplace', to: '/marketplace', icon: Globe },
-      { labelKey: 'Mes commandes marketplace', to: '/marketplace/orders', icon: ShoppingCart },
-      { labelKey: 'Mon profil fournisseur', to: '/supplier-profile', icon: Store },
     ],
   },
   {
     titleKey: 'Finance',
     items: [
       { labelKey: 'Caisse journalière', to: '/cash-register', icon: Banknote },
-      { labelKey: 'Retours & remboursements', to: '/returns', icon: Undo2 },
-      { labelKey: 'Crédit clients', to: '/customer-credits', icon: Wallet },
-      { labelKey: 'Comptabilité', to: '/accounting', icon: Calculator },
-      { labelKey: 'Déclaration TVA', to: '/vat-declaration', icon: Receipt },
-      { labelKey: 'Taux de TVA', to: '/tax-rates', icon: Percent },
+      { labelKey: 'Finance & comptabilité', to: '/finance', icon: Receipt },
     ],
   },
   {
     titleKey: 'Marketing',
     items: [
-      { labelKey: 'Promotions', to: '/promotions', icon: Tag },
-      { labelKey: 'Fidélité client', to: '/loyalty', icon: Award },
+      { labelKey: 'Promotions & fidélité', to: '/marketing', icon: Megaphone },
     ],
   },
   {
     titleKey: 'Équipe',
     items: [
       { labelKey: 'Employés & caissiers', to: '/employees', icon: UserCog },
-      { labelKey: 'Étiquettes & codes-barres', to: '/labels', icon: Printer },
       { labelKey: 'Reçus & impression', to: '/receipt-settings', icon: Receipt },
     ],
   },
