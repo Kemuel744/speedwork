@@ -6,7 +6,7 @@ import {
   LayoutDashboard, User, Settings,
   LogOut, ChevronLeft, CreditCard, BarChart3, Bell, MessageCircle, BookOpen, Newspaper,
   Store, Package, History, Truck, FolderTree, Building2, ShoppingCart, ArrowLeftRight, Grid3x3,
-  Banknote, Undo2, Wallet, Tag, Award, Calculator, Receipt, Percent, UserCog, Printer,
+  Banknote, Undo2, Wallet, Tag, Award, Calculator, Receipt, Percent, UserCog, Printer, Globe,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo-small.webp';
@@ -42,6 +42,14 @@ const adminSections: NavSection[] = [
       { labelKey: 'Transferts stock', to: '/stock-transfers', icon: ArrowLeftRight },
       { labelKey: 'nav.salesHistory', to: '/sales-history', icon: History },
       { labelKey: 'nav.statistics', to: '/statistics', icon: BarChart3 },
+    ],
+  },
+  {
+    titleKey: 'Marketplace',
+    items: [
+      { labelKey: 'Marketplace', to: '/marketplace', icon: Globe },
+      { labelKey: 'Mes commandes marketplace', to: '/marketplace/orders', icon: ShoppingCart },
+      { labelKey: 'Mon profil fournisseur', to: '/supplier-profile', icon: Store },
     ],
   },
   {
@@ -105,6 +113,14 @@ const clientSections: NavSection[] = [
       { labelKey: 'Transferts stock', to: '/stock-transfers', icon: ArrowLeftRight },
       { labelKey: 'nav.salesHistory', to: '/sales-history', icon: History },
       { labelKey: 'nav.statistics', to: '/statistics', icon: BarChart3 },
+    ],
+  },
+  {
+    titleKey: 'Marketplace',
+    items: [
+      { labelKey: 'Marketplace', to: '/marketplace', icon: Globe },
+      { labelKey: 'Mes commandes marketplace', to: '/marketplace/orders', icon: ShoppingCart },
+      { labelKey: 'Mon profil fournisseur', to: '/supplier-profile', icon: Store },
     ],
   },
   {

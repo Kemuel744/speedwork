@@ -10,6 +10,7 @@ import {
   TrendingUp, TrendingDown, DollarSign, FileCheck, Users,
   Plus, Trash2, Download, Printer, BarChart3, ArrowUpRight, ArrowDownRight, Wallet, Target,
   Calendar, Package, AlertTriangle, ArrowRightLeft, Lock, Crown, ShoppingCart, Receipt,
+  Globe,
 } from 'lucide-react';
 import SalesTab from '@/components/reports/SalesTab';
 import POSCart from '@/components/reports/POSCart';
@@ -44,7 +45,7 @@ const EXPENSE_CATEGORIES = [
 type Period = 'day' | 'week' | 'month' | 'year';
 
 interface Expense { id: string; category: string; description: string; amount: number; expense_date: string; }
-interface Product { id: string; name: string; description: string; unit_price: number; quantity_in_stock: number; alert_threshold: number; category: string; }
+interface Product { id: string; name: string; description: string; unit_price: number; quantity_in_stock: number; alert_threshold: number; category: string; is_public?: boolean; wholesale_price?: number; show_public_price?: boolean; }
 interface StockMovement { id: string; product_id: string; movement_type: string; quantity: number; reason: string; created_at: string; }
 
 function getDateRange(period: Period, refDate: Date = new Date()) {
@@ -780,7 +781,20 @@ export default function Reports() {
                             <p className="font-semibold text-foreground">{p.name}</p>
                             {p.description && <p className="text-xs text-muted-foreground">{p.description}</p>}
                           </div>
-                          <Button variant="ghost" size="sm" onClick={() => deleteProduct(p.id)}><Trash2 className="w-3.5 h-3.5 text-muted-foreground" /></Button>
+                          <div className="flex items-center gap-1">
+                            <Button
+                              variant="ghost" size="sm"
+                              title={p.is_public ? 'Visible dans la marketplace — cliquez pour masquer' : 'Publier dans la marketplace'}
+                              onClick={async () => {
+                                const { error } = await supabase.from('products').update({ is_public: !p.is_public } as any).eq('id', p.id);
+                                if (error) toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+                                else { toast({ title: !p.is_public ? 'Produit publié dans la marketplace' : 'Produit masqué' }); fetchAll(); }
+                              }}
+                            >
+                              <Globe className={`w-3.5 h-3.5 ${p.is_public ? 'text-primary' : 'text-muted-foreground'}`} />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => deleteProduct(p.id)}><Trash2 className="w-3.5 h-3.5 text-muted-foreground" /></Button>
+                          </div>
                         </div>
                         <div className="flex items-center justify-between mt-3">
                           <div>
@@ -794,6 +808,9 @@ export default function Reports() {
                             </Badge>
                           </div>
                         </div>
+                        {p.is_public && (
+                          <Badge className="mt-2 bg-primary/10 text-primary text-[10px]"><Globe className="w-3 h-3 mr-1" />Marketplace</Badge>
+                        )}
                       </CardContent>
                     </Card>
                   ))}

@@ -22,6 +22,10 @@ const MultiDepotStock = lazy(() => import("@/pages/MultiDepotStock"));
 const SupplierDetail = lazy(() => import("@/pages/SupplierDetail"));
 const PurchaseOrders = lazy(() => import("@/pages/PurchaseOrders"));
 const StockTransfers = lazy(() => import("@/pages/StockTransfers"));
+const Marketplace = lazy(() => import("@/pages/Marketplace"));
+const MarketplaceSupplier = lazy(() => import("@/pages/MarketplaceSupplier"));
+const MarketplaceOrders = lazy(() => import("@/pages/MarketplaceOrders"));
+const SupplierProfileSettings = lazy(() => import("@/pages/SupplierProfileSettings"));
 const CashRegister = lazy(() => import("@/pages/CashRegister"));
 const Returns = lazy(() => import("@/pages/Returns"));
 const CustomerCredits = lazy(() => import("@/pages/CustomerCredits"));
@@ -70,6 +74,10 @@ export default function AuthenticatedRoutes() {
                     <Route path="/multi-depot-stock" element={<MultiDepotStock />} />
                     <Route path="/purchase-orders" element={<PurchaseOrders />} />
                     <Route path="/stock-transfers" element={<StockTransfers />} />
+                    <Route path="/marketplace" element={<Marketplace />} />
+                    <Route path="/marketplace/orders" element={<MarketplaceOrders />} />
+                    <Route path="/marketplace/:id" element={<MarketplaceSupplier />} />
+                    <Route path="/supplier-profile" element={<SupplierProfileSettings />} />
                     <Route path="/cash-register" element={<CashRegister />} />
                     <Route path="/returns" element={<Returns />} />
                     <Route path="/customer-credits" element={<CustomerCredits />} />
