@@ -24,7 +24,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, AreaChart, Area,
@@ -107,6 +107,8 @@ export default function Reports() {
   const trialStatus = useTrialStatus();
   const { displayAmount, displayCurrency } = useCurrency();
   const currency = displayCurrency;
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const isAdmin = user?.role === 'admin';
   const hasProAccess = isAdmin || (!trialStatus.trialExpired && !trialStatus.isLoading);
@@ -123,7 +125,21 @@ export default function Reports() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [productDialogOpen, setProductDialogOpen] = useState(false);
   const [movementDialogOpen, setMovementDialogOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('pos');
+  // Map menu routes to tabs so clicking a menu item lands on the right view
+  const routeToTab: Record<string, string> = {
+    '/inventory': 'stock',
+    '/sales-history': 'history',
+    '/statistics': 'overview',
+    '/reports': 'pos',
+  };
+  const initialTab = routeToTab[location.pathname] || 'pos';
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  React.useEffect(() => {
+    const t = routeToTab[location.pathname];
+    if (t) setActiveTab(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   // Fetch data
   const fetchAll = useCallback(async () => {
@@ -373,7 +389,18 @@ export default function Reports() {
       )}
 
       {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs value={activeTab} onValueChange={(v) => {
+        setActiveTab(v);
+        // Sync URL with the menu item linked to this tab
+        const tabToRoute: Record<string, string> = {
+          pos: '/cash-register',
+          history: '/sales-history',
+          stock: '/inventory',
+          overview: '/statistics',
+        };
+        const target = tabToRoute[v];
+        if (target && target !== location.pathname) navigate(target);
+      }}>
         <TabsList className="mb-6 flex-wrap h-auto gap-1">
           <TabsTrigger value="pos">
             <ShoppingCart className="w-3.5 h-3.5 mr-1" />Caisse
