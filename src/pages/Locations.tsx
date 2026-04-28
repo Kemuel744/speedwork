@@ -8,6 +8,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
@@ -43,6 +47,8 @@ export default function Locations() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<LocationRow | null>(null);
   const [form, setForm] = useState(empty);
+  const [toDelete, setToDelete] = useState<LocationRow | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchAll = useCallback(async () => {
     if (!user) return;
@@ -93,11 +99,27 @@ export default function Locations() {
     setOpen(false); fetchAll(); refresh();
   };
 
-  const remove = async (id: string) => {
-    if (!confirm('Supprimer ce lieu ? Le stock associé sera également supprimé.')) return;
-    await supabase.from('locations').delete().eq('id', id);
-    toast({ title: 'Lieu supprimé' });
-    fetchAll(); refresh();
+  const confirmRemove = async () => {
+    if (!toDelete || !user) return;
+    setDeleting(true);
+    try {
+      // Clean up dependent rows first to avoid FK / RLS surprises
+      await supabase.from('location_stock').delete().eq('location_id', toDelete.id);
+      await supabase.from('stock_transfers' as never).delete().or(`from_location_id.eq.${toDelete.id},to_location_id.eq.${toDelete.id}`);
+
+      const { error } = await supabase.from('locations').delete().eq('id', toDelete.id);
+      if (error) {
+        toast({ title: 'Suppression impossible', description: error.message, variant: 'destructive' });
+        return;
+      }
+      toast({ title: 'Lieu supprimé', description: `${toDelete.name} a été retiré.` });
+      setToDelete(null);
+      fetchAll(); refresh();
+    } catch (e: any) {
+      toast({ title: 'Erreur', description: e?.message || 'Suppression échouée', variant: 'destructive' });
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const setDefault = async (id: string) => {
@@ -265,7 +287,7 @@ export default function Locations() {
                   <Button size="sm" variant="outline" onClick={() => openEdit(l)} title="Modifier">
                     <Edit2 className="w-3.5 h-3.5" />
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => remove(l.id)} title="Supprimer">
+                  <Button size="sm" variant="outline" onClick={() => setToDelete(l)} title="Supprimer" disabled={l.is_default}>
                     <Trash2 className="w-3.5 h-3.5 text-destructive" />
                   </Button>
                 </div>
@@ -274,6 +296,28 @@ export default function Locations() {
           ))}
         </div>
       )}
+
+      <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer « {toDelete?.name} » ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cette action est irréversible. Le stock associé à ce {toDelete?.location_type === 'shop' ? 'point de vente' : 'dépôt'} sera également supprimé.
+              {toDelete?.is_default && ' Vous ne pouvez pas supprimer le lieu par défaut — définissez d\'abord un autre lieu par défaut.'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmRemove}
+              disabled={deleting || toDelete?.is_default}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? 'Suppression…' : 'Supprimer définitivement'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
