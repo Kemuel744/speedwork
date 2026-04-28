@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowLeft, ShoppingCart, MessageCircle, Send, Package, Check, X, Truck, CheckCircle2, Inbox, FileCheck2, Ban, Clock } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, MessageCircle, Send, Package, Check, X, Truck, CheckCircle2, Inbox, FileCheck2, Ban, Clock, ArrowDownToLine } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Order {
@@ -62,6 +62,10 @@ export default function MarketplaceOrders() {
   const [items, setItems] = useState<OrderItem[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMsg, setNewMsg] = useState('');
+  const chatScrollRef = useRef<HTMLDivElement>(null);
+  const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [highlightedMsgId, setHighlightedMsgId] = useState<string | null>(null);
+  const prevStatusRef = useRef<string | null>(null);
 
   const fetchOrders = useCallback(async () => {
     if (!user) return;
@@ -179,6 +183,43 @@ export default function MarketplaceOrders() {
   const isSupplierView = selected?.supplier_user_id === user?.id;
   const otherProfile = selected ? profiles[isSupplierView ? selected.buyer_user_id : selected.supplier_user_id] : null;
 
+  // Find the latest event message in chat for a given status (📦 prefix + matching title)
+  const findEventMessage = useCallback((statusKey: string): Message | null => {
+    const cfg = NOTIF_MESSAGE[statusKey];
+    if (!cfg) return null;
+    // Search from newest to oldest
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const m = messages[i];
+      if (m.content.startsWith('📦') && m.content.includes(cfg.title)) return m;
+    }
+    return null;
+  }, [messages]);
+
+  const scrollToMessage = useCallback((msgId: string) => {
+    const el = messageRefs.current[msgId];
+    if (el && chatScrollRef.current) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setHighlightedMsgId(msgId);
+      setTimeout(() => setHighlightedMsgId(null), 2500);
+    }
+  }, []);
+
+  const jumpToStatusEvent = (statusKey: string) => {
+    const m = findEventMessage(statusKey);
+    if (m) scrollToMessage(m.id);
+    else toast({ title: 'Aucun message trouvé pour cette étape' });
+  };
+
+  // Auto-jump to the new event when status changes
+  useEffect(() => {
+    if (!selected) { prevStatusRef.current = null; return; }
+    if (prevStatusRef.current && prevStatusRef.current !== selected.status) {
+      const m = findEventMessage(selected.status);
+      if (m) setTimeout(() => scrollToMessage(m.id), 200);
+    }
+    prevStatusRef.current = selected.status;
+  }, [selected, messages, findEventMessage, scrollToMessage]);
+
   return (
     <div className="page-container">
       <Link to="/marketplace" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4">
@@ -230,6 +271,8 @@ export default function MarketplaceOrders() {
                         const done = idx < currentIdx;
                         const active = idx === currentIdx;
                         const Icon = step.icon;
+                        const hasEvent = !!findEventMessage(step.key);
+                        const reached = done || active;
                         return (
                           <React.Fragment key={step.key}>
                             <div className="flex flex-col items-center text-center min-w-0 flex-1 z-10">
@@ -243,6 +286,17 @@ export default function MarketplaceOrders() {
                               <p className={`text-[10px] sm:text-xs mt-1.5 font-medium ${active || done ? 'text-foreground' : 'text-muted-foreground'}`}>
                                 {step.label}
                               </p>
+                              {reached && hasEvent && (
+                                <button
+                                  type="button"
+                                  onClick={() => jumpToStatusEvent(step.key)}
+                                  className="text-[9px] sm:text-[10px] text-primary hover:underline mt-1 inline-flex items-center gap-0.5"
+                                  title="Voir le message lié à cette étape"
+                                >
+                                  <ArrowDownToLine className="w-2.5 h-2.5" />
+                                  Voir
+                                </button>
+                              )}
                             </div>
                             {idx < TIMELINE_STEPS.length - 1 && (
                               <div className={`flex-1 h-0.5 mt-4 ${idx < currentIdx ? 'bg-primary' : 'bg-muted'}`} />
@@ -303,11 +357,15 @@ export default function MarketplaceOrders() {
 
               {/* Messagerie */}
               <div className="pt-3 border-t">
-                <h3 className="font-semibold text-sm mb-2 flex items-center gap-2"><MessageCircle className="w-4 h-4" />Discussion ({messages.length})</h3>
-                <div className="space-y-2 max-h-60 overflow-y-auto bg-secondary/20 p-2 rounded">
+                <h3 className="font-semibold text-sm mb-2 flex items-center gap-2" id={`chat-${selected.id}`}><MessageCircle className="w-4 h-4" />Discussion ({messages.length})</h3>
+                <div ref={chatScrollRef} className="space-y-2 max-h-60 overflow-y-auto bg-secondary/20 p-2 rounded scroll-smooth">
                   {messages.length === 0 && <p className="text-xs text-muted-foreground text-center py-4">Aucun message</p>}
                   {messages.map(m => (
-                    <div key={m.id} className={`text-sm p-2 rounded max-w-[85%] ${m.sender_user_id === user?.id ? 'bg-primary text-primary-foreground ml-auto' : 'bg-card'}`}>
+                    <div
+                      key={m.id}
+                      ref={el => { messageRefs.current[m.id] = el; }}
+                      className={`text-sm p-2 rounded max-w-[85%] transition-all ${m.sender_user_id === user?.id ? 'bg-primary text-primary-foreground ml-auto' : 'bg-card'} ${highlightedMsgId === m.id ? 'ring-2 ring-amber-400 shadow-lg scale-[1.02]' : ''}`}
+                    >
                       <p className="whitespace-pre-wrap break-words">{m.content}</p>
                       <p className="text-[10px] opacity-70 mt-1">{new Date(m.created_at).toLocaleString('fr-FR')}</p>
                     </div>
