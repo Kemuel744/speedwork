@@ -8,7 +8,6 @@ import SyncStatusIndicator from '@/components/SyncStatus';
 import LocationSwitcher from '@/components/layout/LocationSwitcher';
 import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { registerAutoSync } from '@/lib/syncQueue';
 
 export default function AppLayout() {
   const { user, isLoading } = useAuth();
@@ -17,10 +16,6 @@ export default function AppLayout() {
   const [collapsed, setCollapsed] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth < 1024 : true
   );
-
-  useEffect(() => {
-    registerAutoSync();
-  }, []);
 
   // Resynchronise lors du redimensionnement (ex: rotation tablette)
   useEffect(() => {
