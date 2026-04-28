@@ -69,7 +69,7 @@ export default function Employees() {
       return;
     }
     const { pin_code, ...rest } = form;
-    const payload: Record<string, unknown> = { ...rest, user_id: user.id };
+    const payload: any = { ...rest, user_id: user.id };
     if (pin_code && /^\d{4}$/.test(pin_code)) payload.pin_code = pin_code;
     const { error } = editing
       ? await supabase.from('employees').update(payload).eq('id', editing.id)
