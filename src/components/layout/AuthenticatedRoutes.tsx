@@ -17,6 +17,9 @@ const Messages = lazy(() => import("@/pages/Messages"));
 const Suppliers = lazy(() => import("@/pages/Suppliers"));
 const Categories = lazy(() => import("@/pages/Categories"));
 const Locations = lazy(() => import("@/pages/Locations"));
+const LocationDetail = lazy(() => import("@/pages/LocationDetail"));
+const MultiDepotStock = lazy(() => import("@/pages/MultiDepotStock"));
+const SupplierDetail = lazy(() => import("@/pages/SupplierDetail"));
 const PurchaseOrders = lazy(() => import("@/pages/PurchaseOrders"));
 const StockTransfers = lazy(() => import("@/pages/StockTransfers"));
 const CashRegister = lazy(() => import("@/pages/CashRegister"));
@@ -60,8 +63,11 @@ export default function AuthenticatedRoutes() {
                     <Route path="/admin/blog" element={<AdminBlog />} />
                     <Route path="/messages" element={<Messages />} />
                     <Route path="/suppliers" element={<Suppliers />} />
+                    <Route path="/suppliers/:id" element={<SupplierDetail />} />
                     <Route path="/categories" element={<Categories />} />
                     <Route path="/locations" element={<Locations />} />
+                    <Route path="/locations/:id" element={<LocationDetail />} />
+                    <Route path="/multi-depot-stock" element={<MultiDepotStock />} />
                     <Route path="/purchase-orders" element={<PurchaseOrders />} />
                     <Route path="/stock-transfers" element={<StockTransfers />} />
                     <Route path="/cash-register" element={<CashRegister />} />
