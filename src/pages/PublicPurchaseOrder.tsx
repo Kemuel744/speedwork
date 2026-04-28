@@ -26,7 +26,7 @@ export default function PublicPurchaseOrder() {
       if (!token) return;
       const { data } = await supabase.rpc('get_purchase_order_by_token', { _token: token });
       if (data) {
-        const payload = data as { po: PO; items: POItem[]; supplier: Supplier | null };
+        const payload = data as unknown as { po: PO; items: POItem[]; supplier: Supplier | null };
         setPO(payload.po);
         setItems(payload.items || []);
         setSupplier(payload.supplier ?? null);
