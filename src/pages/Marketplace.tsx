@@ -55,19 +55,14 @@ export default function Marketplace() {
   const fetchAll = useCallback(async () => {
     if (!user) return;
     setLoading(true);
-    const [supRes, recRes, favRes] = await Promise.all([
-      supabase.rpc('get_public_suppliers' as never, {
-        _search: search || null,
-        _city: city || null,
-        _country: country || null,
-        _category: category || null,
-      } as never),
-      supabase.rpc('get_recommended_suppliers' as never),
-      supabase.from('marketplace_favorites' as never).select('supplier_user_id').eq('buyer_user_id', user.id),
-    ]);
-    if (supRes.data) setSuppliers(supRes.data as PublicSupplier[]);
-    if (recRes.data) setRecommended(recRes.data as Recommended[]);
-    if (favRes.data) setFavorites(new Set((favRes.data as Array<{ supplier_user_id: string }>).map(f => f.supplier_user_id)));
+    const supRes: any = await (supabase.rpc as any)('get_public_suppliers', {
+      _search: search || null, _city: city || null, _country: country || null, _category: category || null,
+    });
+    const recRes: any = await (supabase.rpc as any)('get_recommended_suppliers');
+    const favRes: any = await (supabase.from as any)('marketplace_favorites').select('supplier_user_id').eq('buyer_user_id', user.id);
+    if (supRes?.data) setSuppliers(supRes.data as PublicSupplier[]);
+    if (recRes?.data) setRecommended(recRes.data as Recommended[]);
+    if (favRes?.data) setFavorites(new Set((favRes.data as Array<{ supplier_user_id: string }>).map((f: any) => f.supplier_user_id)));
     setLoading(false);
   }, [user, search, city, country, category]);
 
