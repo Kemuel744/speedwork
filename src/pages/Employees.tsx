@@ -60,11 +60,17 @@ export default function Employees() {
 
   const save = async () => {
     if (!user) return;
-    if (!form.full_name.trim() || !/^\d{4}$/.test(form.pin_code)) {
-      toast({ title: 'Nom et PIN à 4 chiffres requis', variant: 'destructive' });
+    if (!form.full_name.trim()) {
+      toast({ title: 'Nom requis', variant: 'destructive' });
       return;
     }
-    const payload = { ...form, user_id: user.id };
+    if (!editing && !/^\d{4}$/.test(form.pin_code)) {
+      toast({ title: 'PIN à 4 chiffres requis', variant: 'destructive' });
+      return;
+    }
+    const { pin_code, ...rest } = form;
+    const payload: any = { ...rest, user_id: user.id };
+    if (pin_code && /^\d{4}$/.test(pin_code)) payload.pin_code = pin_code;
     const { error } = editing
       ? await supabase.from('employees').update(payload).eq('id', editing.id)
       : await supabase.from('employees').insert(payload);
@@ -83,7 +89,8 @@ export default function Employees() {
 
   const startEdit = (e: Employee) => {
     setEditing(e);
-    setForm({ full_name: e.full_name, email: e.email, phone: e.phone, role: e.role, pin_code: e.pin_code, is_active: e.is_active });
+    // PINs are hashed server-side; leave blank to keep current PIN.
+    setForm({ full_name: e.full_name, email: e.email, phone: e.phone, role: e.role, pin_code: '', is_active: e.is_active });
     setOpen(true);
   };
 
@@ -162,7 +169,7 @@ export default function Employees() {
                   <Badge className={r.color}>{r.label}</Badge>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-                  <KeyRound className="w-4 h-4" />PIN : <span className="font-mono font-semibold">{e.pin_code}</span>
+                  <KeyRound className="w-4 h-4" />PIN : <span className="font-mono font-semibold">••••</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <Badge variant={e.is_active ? 'default' : 'outline'}>{e.is_active ? 'Actif' : 'Inactif'}</Badge>
