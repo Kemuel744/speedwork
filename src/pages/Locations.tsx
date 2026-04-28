@@ -252,15 +252,20 @@ export default function Locations() {
                   {l.manager_name && <div className="flex items-center gap-2"><User className="w-3.5 h-3.5 shrink-0" /><span className="truncate">{l.manager_name}</span></div>}
                 </div>
                 <div className="flex gap-2 pt-3 border-t">
+                  <Link to={`/locations/${l.id}`} className="flex-1">
+                    <Button size="sm" variant="outline" className="w-full">
+                      <Package className="w-3.5 h-3.5 mr-1" />Stock
+                    </Button>
+                  </Link>
                   {!l.is_default && (
                     <Button size="sm" variant="outline" onClick={() => setDefault(l.id)} title="Définir par défaut">
                       <Star className="w-3.5 h-3.5" />
                     </Button>
                   )}
-                  <Button size="sm" variant="outline" className="flex-1" onClick={() => openEdit(l)}>
-                    <Edit2 className="w-3.5 h-3.5 mr-1" />Modifier
+                  <Button size="sm" variant="outline" onClick={() => openEdit(l)} title="Modifier">
+                    <Edit2 className="w-3.5 h-3.5" />
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => remove(l.id)}>
+                  <Button size="sm" variant="outline" onClick={() => remove(l.id)} title="Supprimer">
                     <Trash2 className="w-3.5 h-3.5 text-destructive" />
                   </Button>
                 </div>
