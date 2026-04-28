@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Truck, Plus, Trash2, Star, Package, Mail, Phone, MapPin } from 'lucide-react';
+import { ArrowLeft, Truck, Plus, Trash2, Star, Package, Mail, Phone, MapPin, Clock } from 'lucide-react';
 
 interface Supplier { id: string; name: string; contact_person: string; email: string; phone: string; city: string; country: string; payment_terms: string; }
 interface Product { id: string; name: string; sku: string | null; }
@@ -44,6 +44,26 @@ export default function SupplierDetail() {
   const productById = (pid: string) => allProducts.find(p => p.id === pid);
   const linkedIds = new Set(links.map(l => l.product_id));
   const availableProducts = allProducts.filter(p => !linkedIds.has(p.id));
+
+  // Regroupement des produits liés par délai de livraison (lead_time_days)
+  const groupedByLeadTime = React.useMemo(() => {
+    const groups = new Map<number, SupplierLink[]>();
+    links.forEach(l => {
+      const key = Number(l.lead_time_days) || 0;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key)!.push(l);
+    });
+    return Array.from(groups.entries()).sort(([a], [b]) => a - b);
+  }, [links]);
+
+  const formatLeadTime = (days: number) => {
+    if (days === 0) return 'Livraison immédiate';
+    if (days === 1) return 'Livraison sous 1 jour';
+    if (days <= 7) return `Livraison sous ${days} jours`;
+    if (days <= 14) return `Livraison sous 1-2 semaines (${days}j)`;
+    if (days <= 30) return `Livraison sous 2-4 semaines (${days}j)`;
+    return `Livraison longue (${days}j)`;
+  };
 
   const addLink = async () => {
     if (!user || !id || !form.product_id) {
@@ -154,32 +174,42 @@ export default function SupplierDetail() {
               <p>Aucun produit lié à ce fournisseur</p>
             </div>
           ) : (
-            <div className="divide-y">
-              {links.map(l => {
-                const p = productById(l.product_id);
-                return (
-                  <div key={l.id} className="flex items-center gap-3 p-3 sm:p-4 hover:bg-secondary/30">
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium truncate flex items-center gap-2">
-                        {p?.name || 'Produit supprimé'}
-                        {l.is_preferred && <Badge className="text-[10px]"><Star className="w-3 h-3 mr-0.5" />Préféré</Badge>}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {l.supplier_sku && <>Réf : {l.supplier_sku} · </>}
-                        Prix : <strong>{l.cost_price}</strong>
-                        {l.lead_time_days > 0 && <> · {l.lead_time_days}j</>}
-                        {l.min_order_qty > 1 && <> · min {l.min_order_qty}</>}
-                      </p>
-                    </div>
-                    <Button size="sm" variant="outline" onClick={() => togglePreferred(l.id, !l.is_preferred)} title={l.is_preferred ? 'Retirer préféré' : 'Marquer préféré'}>
-                      <Star className={`w-3.5 h-3.5 ${l.is_preferred ? 'fill-amber-400 text-amber-500' : ''}`} />
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => removeLink(l.id)}>
-                      <Trash2 className="w-3.5 h-3.5 text-destructive" />
-                    </Button>
+            <div>
+              {groupedByLeadTime.map(([days, items]) => (
+                <div key={days}>
+                  <div className="flex items-center gap-2 px-4 py-2 bg-secondary/40 border-y text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    <Clock className="w-3.5 h-3.5" />
+                    {formatLeadTime(days)}
+                    <Badge variant="outline" className="ml-auto text-[10px]">{items.length}</Badge>
                   </div>
-                );
-              })}
+                  <div className="divide-y">
+                    {items.map(l => {
+                      const p = productById(l.product_id);
+                      return (
+                        <div key={l.id} className="flex items-center gap-3 p-3 sm:p-4 hover:bg-secondary/30">
+                          <div className="min-w-0 flex-1">
+                            <p className="font-medium truncate flex items-center gap-2">
+                              {p?.name || 'Produit supprimé'}
+                              {l.is_preferred && <Badge className="text-[10px]"><Star className="w-3 h-3 mr-0.5" />Préféré</Badge>}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {l.supplier_sku && <>Réf : {l.supplier_sku} · </>}
+                              Prix : <strong>{l.cost_price}</strong>
+                              {l.min_order_qty > 1 && <> · min {l.min_order_qty}</>}
+                            </p>
+                          </div>
+                          <Button size="sm" variant="outline" onClick={() => togglePreferred(l.id, !l.is_preferred)} title={l.is_preferred ? 'Retirer préféré' : 'Marquer préféré'}>
+                            <Star className={`w-3.5 h-3.5 ${l.is_preferred ? 'fill-amber-400 text-amber-500' : ''}`} />
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => removeLink(l.id)}>
+                            <Trash2 className="w-3.5 h-3.5 text-destructive" />
+                          </Button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </CardContent>
