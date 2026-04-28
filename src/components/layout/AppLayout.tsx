@@ -12,10 +12,23 @@ import { registerAutoSync } from '@/lib/syncQueue';
 
 export default function AppLayout() {
   const { user, isLoading } = useAuth();
-  const [collapsed, setCollapsed] = useState(false);
+  // Sur mobile (<1024px) la sidebar est cachée par défaut (collapsed=true).
+  // Sur desktop, elle est ouverte. Évite que la sidebar masque le contenu sur mobile au chargement.
+  const [collapsed, setCollapsed] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 1024 : true
+  );
 
   useEffect(() => {
     registerAutoSync();
+  }, []);
+
+  // Resynchronise lors du redimensionnement (ex: rotation tablette)
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth < 1024) setCollapsed(true);
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, []);
 
   if (isLoading) {
