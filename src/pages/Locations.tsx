@@ -11,7 +11,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Store, Warehouse, Plus, Edit2, Trash2, MapPin, Phone, User, Star } from 'lucide-react';
+import { Store, Warehouse, Plus, Edit2, Trash2, MapPin, Phone, User, Star, Lock, Crown } from 'lucide-react';
+import { useCurrentPlan } from '@/hooks/useCurrentPlan';
+import { planQuotas, planNames } from '@/lib/planLimits';
+import { Link } from 'react-router-dom';
 
 interface LocationRow {
   id: string;
@@ -35,6 +38,7 @@ export default function Locations() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { refresh } = useLocations();
+  const { plan } = useCurrentPlan();
   const [items, setItems] = useState<LocationRow[]>([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<LocationRow | null>(null);
@@ -48,12 +52,29 @@ export default function Locations() {
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
+  // Plan-based depot quota (shop is always allowed; only depot/warehouse counts)
+  const depotQuota = planQuotas[plan].maxDepots;
+  const depotsUsed = items.filter(l => l.location_type === 'warehouse').length;
+  const depotLimitReached = depotsUsed >= depotQuota;
+
   const openNew = () => { setEditing(null); setForm(empty); setOpen(true); };
   const openEdit = (l: LocationRow) => { setEditing(l); const { id, ...rest } = l; setForm(rest); setOpen(true); };
 
   const save = async () => {
     if (!user || !form.name.trim()) {
       toast({ title: 'Le nom est requis', variant: 'destructive' });
+      return;
+    }
+    // Enforce plan quota for depots/warehouses (shops are unlimited).
+    const isCreatingDepot = form.location_type === 'warehouse';
+    const wasDepot = editing?.location_type === 'warehouse';
+    const wouldAddDepot = isCreatingDepot && (!editing || !wasDepot);
+    if (wouldAddDepot && depotsUsed >= depotQuota) {
+      toast({
+        title: 'Limite du plan atteinte',
+        description: `Le plan ${planNames[plan]} autorise ${depotQuota} dépôt${depotQuota > 1 ? 's' : ''}. Mettez à niveau votre abonnement pour en ajouter davantage.`,
+        variant: 'destructive',
+      });
       return;
     }
     // If marking as default, unset others first
@@ -118,9 +139,16 @@ export default function Locations() {
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="shop">Boutique</SelectItem>
-                    <SelectItem value="warehouse">Dépôt</SelectItem>
+                    <SelectItem value="warehouse" disabled={depotLimitReached && form.location_type !== 'warehouse'}>
+                      Dépôt {depotLimitReached && form.location_type !== 'warehouse' ? '(limite atteinte)' : ''}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
+                {form.location_type === 'warehouse' && depotLimitReached && (!editing || editing.location_type !== 'warehouse') && (
+                  <p className="text-xs text-amber-600 mt-1.5 flex items-center gap-1">
+                    <Lock className="w-3 h-3" /> Plan {planNames[plan]} : {depotsUsed}/{depotQuota} dépôt(s) utilisé(s).
+                  </p>
+                )}
               </div>
               <div>
                 <Label>Téléphone</Label>
@@ -159,6 +187,32 @@ export default function Locations() {
             </div>
           </DialogContent>
         </Dialog>
+      </div>
+
+      {/* Plan quota banner */}
+      <div
+        className={`rounded-xl border p-3 mb-5 text-sm flex items-center justify-between gap-3 ${
+          depotLimitReached
+            ? 'border-amber-300 bg-amber-500/10'
+            : 'border-border bg-secondary/40'
+        }`}
+        role="status"
+        aria-live="polite"
+      >
+        <div className="flex items-center gap-2 min-w-0">
+          <Warehouse className={`w-4 h-4 shrink-0 ${depotLimitReached ? 'text-amber-600' : 'text-primary'}`} />
+          <span className="truncate">
+            Plan <strong>{planNames[plan]}</strong> · Dépôts utilisés : <strong>{depotsUsed}/{depotQuota}</strong>
+            <span className="text-muted-foreground"> · Boutiques illimitées</span>
+          </span>
+        </div>
+        {depotLimitReached && (
+          <Link to="/subscription">
+            <Button size="sm" variant="outline" className="shrink-0">
+              <Crown className="w-3.5 h-3.5 mr-1.5" /> Mettre à niveau
+            </Button>
+          </Link>
+        )}
       </div>
 
       {items.length === 0 ? (
