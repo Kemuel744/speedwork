@@ -43,13 +43,52 @@ export default function LocationDetail() {
   const updateOne = async (productId: string) => {
     if (!user || !id) return;
     const raw = drafts[productId];
-    const qty = Math.max(0, parseInt(raw || '0', 10) || 0);
+    const parsed = parseInt(raw || '0', 10);
+    if (Number.isNaN(parsed) || parsed < 0) {
+      return toast({
+        title: 'Quantité invalide',
+        description: 'Veuillez saisir un nombre entier positif.',
+        variant: 'destructive',
+      });
+    }
+    const qty = Math.max(0, parsed);
     setSaving(true);
-    const { error } = await supabase
+
+    // SELECT-then-UPDATE/INSERT car variant_id est nullable et casse onConflict
+    const { data: existing, error: selErr } = await supabase
       .from('location_stock')
-      .upsert({ user_id: user.id, location_id: id, product_id: productId, quantity: qty } as never, { onConflict: 'location_id,product_id,variant_id' });
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('location_id', id)
+      .eq('product_id', productId)
+      .is('variant_id', null)
+      .maybeSingle();
+
+    if (selErr) {
+      setSaving(false);
+      return toast({ title: 'Erreur', description: selErr.message, variant: 'destructive' });
+    }
+
+    const { error } = existing
+      ? await supabase.from('location_stock').update({ quantity: qty }).eq('id', existing.id)
+      : await supabase.from('location_stock').insert({
+          user_id: user.id,
+          location_id: id,
+          product_id: productId,
+          quantity: qty,
+        } as never);
+
     setSaving(false);
-    if (error) return toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+    if (error) {
+      if (/column .* does not exist|relation .* does not exist|schema/i.test(error.message)) {
+        return toast({
+          title: 'Format de table inattendu',
+          description: `La table location_stock ne correspond pas au format attendu (${error.message}). Contactez le support.`,
+          variant: 'destructive',
+        });
+      }
+      return toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+    }
     toast({ title: 'Stock mis à jour' });
     setDrafts(d => { const n = { ...d }; delete n[productId]; return n; });
     fetchAll();
