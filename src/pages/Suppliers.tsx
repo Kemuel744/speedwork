@@ -9,7 +9,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Truck, Plus, Mail, Phone, MapPin, Edit2, Trash2, Search } from 'lucide-react';
+import { Truck, Plus, Mail, Phone, MapPin, Edit2, Trash2, Search, Package } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface Supplier {
   id: string;
@@ -182,7 +183,10 @@ export default function Suppliers() {
                 </div>
                 {s.payment_terms && <Badge variant="outline" className="text-xs mb-3">{s.payment_terms}</Badge>}
                 <div className="flex gap-2 pt-3 border-t">
-                  <Button size="sm" variant="outline" className="flex-1" onClick={() => openEdit(s)}><Edit2 className="w-3.5 h-3.5 mr-1" />Modifier</Button>
+                  <Link to={`/suppliers/${s.id}`} className="flex-1">
+                    <Button size="sm" variant="outline" className="w-full"><Package className="w-3.5 h-3.5 mr-1" />Produits</Button>
+                  </Link>
+                  <Button size="sm" variant="outline" onClick={() => openEdit(s)}><Edit2 className="w-3.5 h-3.5" /></Button>
                   <Button size="sm" variant="outline" onClick={() => remove(s.id)}><Trash2 className="w-3.5 h-3.5 text-destructive" /></Button>
                 </div>
               </CardContent>
