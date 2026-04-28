@@ -4,8 +4,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import {
   LayoutDashboard, User, Settings,
-  LogOut, ChevronLeft, CreditCard, BarChart3, Bell, MessageCircle, BookOpen, Newspaper,
-  Store, Package, History, ShoppingCart, Banknote, Megaphone, UserCog, Receipt, Globe, Boxes,
+  LogOut, ChevronLeft, CreditCard, BarChart3, MessageCircle, BookOpen, Newspaper,
+  Store, History, ShoppingCart, Banknote, Megaphone, UserCog, Receipt, Globe, Boxes,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo-small.webp';
