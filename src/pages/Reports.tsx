@@ -10,6 +10,7 @@ import {
   TrendingUp, TrendingDown, DollarSign, FileCheck, Users,
   Plus, Trash2, Download, Printer, BarChart3, ArrowUpRight, ArrowDownRight, Wallet, Target,
   Calendar, Package, AlertTriangle, ArrowRightLeft, Lock, Crown, ShoppingCart, Receipt,
+  Globe,
 } from 'lucide-react';
 import SalesTab from '@/components/reports/SalesTab';
 import POSCart from '@/components/reports/POSCart';
@@ -44,7 +45,7 @@ const EXPENSE_CATEGORIES = [
 type Period = 'day' | 'week' | 'month' | 'year';
 
 interface Expense { id: string; category: string; description: string; amount: number; expense_date: string; }
-interface Product { id: string; name: string; description: string; unit_price: number; quantity_in_stock: number; alert_threshold: number; category: string; }
+interface Product { id: string; name: string; description: string; unit_price: number; quantity_in_stock: number; alert_threshold: number; category: string; is_public?: boolean; wholesale_price?: number; show_public_price?: boolean; }
 interface StockMovement { id: string; product_id: string; movement_type: string; quantity: number; reason: string; created_at: string; }
 
 function getDateRange(period: Period, refDate: Date = new Date()) {
