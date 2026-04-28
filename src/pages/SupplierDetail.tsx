@@ -15,7 +15,7 @@ import { ArrowLeft, Truck, Plus, Trash2, Star, Package, Mail, Phone, MapPin } fr
 
 interface Supplier { id: string; name: string; contact_person: string; email: string; phone: string; city: string; country: string; payment_terms: string; }
 interface Product { id: string; name: string; sku: string | null; }
-interface Link { id: string; product_id: string; supplier_sku: string; cost_price: number; lead_time_days: number; min_order_qty: number; is_preferred: boolean; }
+interface SupplierLink { id: string; product_id: string; supplier_sku: string; cost_price: number; lead_time_days: number; min_order_qty: number; is_preferred: boolean; }
 
 export default function SupplierDetail() {
   const { id } = useParams<{ id: string }>();
@@ -23,7 +23,7 @@ export default function SupplierDetail() {
   const { toast } = useToast();
   const [supplier, setSupplier] = useState<Supplier | null>(null);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const [links, setLinks] = useState<Link[]>([]);
+  const [links, setLinks] = useState<SupplierLink[]>([]);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ product_id: '', supplier_sku: '', cost_price: 0, lead_time_days: 0, min_order_qty: 1, is_preferred: false });
 
@@ -36,7 +36,7 @@ export default function SupplierDetail() {
     ]);
     if (supRes.data) setSupplier(supRes.data as Supplier);
     if (prodRes.data) setAllProducts(prodRes.data as Product[]);
-    if (linkRes.data) setLinks(linkRes.data as Link[]);
+    if (linkRes.data) setLinks(linkRes.data as SupplierLink[]);
   }, [user, id]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
