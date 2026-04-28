@@ -10,15 +10,38 @@ import PublicFooter from '@/components/PublicFooter';
 import HeroSection from '@/components/home/HeroSection';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-const ProblemSection = lazy(() => import('@/components/home/ProblemSection'));
-const PowerFeaturesSection = lazy(() => import('@/components/home/PowerFeaturesSection'));
-const SolutionSection = lazy(() => import('@/components/home/SolutionSection'));
-const SocialProofSection = lazy(() => import('@/components/home/SocialProofSection'));
-const SimplicitySection = lazy(() => import('@/components/home/SimplicitySection'));
-const BenefitsSection = lazy(() => import('@/components/home/BenefitsSection'));
-const PositioningSection = lazy(() => import('@/components/home/PositioningSection'));
-const WhySpeedWorkSection = lazy(() => import('@/components/home/WhySpeedWorkSection'));
-const ScrollReveal = lazy(() => import('@/components/home/ScrollReveal'));
+/**
+ * Wraps a dynamic import so that a stale-chunk failure (common after a deploy
+ * or HMR rebuild) triggers exactly one full reload instead of a blank screen.
+ */
+function lazyWithRetry<T extends React.ComponentType<unknown>>(
+  factory: () => Promise<{ default: T }>,
+) {
+  return lazy(async () => {
+    try {
+      return await factory();
+    } catch (err) {
+      const key = '__lovable_chunk_reloaded__';
+      if (typeof window !== 'undefined' && !sessionStorage.getItem(key)) {
+        sessionStorage.setItem(key, '1');
+        window.location.reload();
+        // Return a never-resolving promise to keep Suspense up until reload.
+        return new Promise<{ default: T }>(() => {});
+      }
+      throw err;
+    }
+  });
+}
+
+const ProblemSection = lazyWithRetry(() => import('@/components/home/ProblemSection'));
+const PowerFeaturesSection = lazyWithRetry(() => import('@/components/home/PowerFeaturesSection'));
+const SolutionSection = lazyWithRetry(() => import('@/components/home/SolutionSection'));
+const SocialProofSection = lazyWithRetry(() => import('@/components/home/SocialProofSection'));
+const SimplicitySection = lazyWithRetry(() => import('@/components/home/SimplicitySection'));
+const BenefitsSection = lazyWithRetry(() => import('@/components/home/BenefitsSection'));
+const PositioningSection = lazyWithRetry(() => import('@/components/home/PositioningSection'));
+const WhySpeedWorkSection = lazyWithRetry(() => import('@/components/home/WhySpeedWorkSection'));
+const ScrollReveal = lazyWithRetry(() => import('@/components/home/ScrollReveal'));
 
 const SectionFallback = () => <div className="py-20" />;
 
