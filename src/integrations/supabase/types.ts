@@ -1181,6 +1181,163 @@ export type Database = {
         }
         Relationships: []
       }
+      marketplace_favorites: {
+        Row: {
+          buyer_user_id: string
+          created_at: string
+          id: string
+          supplier_user_id: string
+        }
+        Insert: {
+          buyer_user_id: string
+          created_at?: string
+          id?: string
+          supplier_user_id: string
+        }
+        Update: {
+          buyer_user_id?: string
+          created_at?: string
+          id?: string
+          supplier_user_id?: string
+        }
+        Relationships: []
+      }
+      marketplace_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_read: boolean
+          order_id: string
+          sender_user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          order_id: string
+          sender_user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          order_id?: string
+          sender_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_messages_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketplace_order_items: {
+        Row: {
+          created_at: string
+          id: string
+          order_id: string
+          product_id: string | null
+          product_name: string
+          quantity: number
+          total: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_id: string
+          product_id?: string | null
+          product_name: string
+          quantity?: number
+          total?: number
+          unit_price?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_id?: string
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          total?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketplace_orders: {
+        Row: {
+          buyer_notes: string
+          buyer_user_id: string
+          created_at: string
+          currency: string
+          delivered_at: string | null
+          delivery_address: string
+          delivery_city: string
+          expected_delivery: string | null
+          id: string
+          number: string
+          order_type: string
+          status: string
+          subtotal: number
+          supplier_notes: string
+          supplier_user_id: string
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          buyer_notes?: string
+          buyer_user_id: string
+          created_at?: string
+          currency?: string
+          delivered_at?: string | null
+          delivery_address?: string
+          delivery_city?: string
+          expected_delivery?: string | null
+          id?: string
+          number: string
+          order_type?: string
+          status?: string
+          subtotal?: number
+          supplier_notes?: string
+          supplier_user_id: string
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          buyer_notes?: string
+          buyer_user_id?: string
+          created_at?: string
+          currency?: string
+          delivered_at?: string | null
+          delivery_address?: string
+          delivery_city?: string
+          expected_delivery?: string | null
+          id?: string
+          number?: string
+          order_type?: string
+          status?: string
+          subtotal?: number
+          supplier_notes?: string
+          supplier_user_id?: string
+          total?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -1761,14 +1918,17 @@ export type Database = {
           has_batches: boolean
           has_variants: boolean
           id: string
+          is_public: boolean
           name: string
           quantity_in_stock: number
+          show_public_price: boolean
           sku: string | null
           supplier_id: string | null
           unit: string
           unit_price: number
           updated_at: string
           user_id: string
+          wholesale_price: number
         }
         Insert: {
           alert_threshold?: number
@@ -1781,14 +1941,17 @@ export type Database = {
           has_batches?: boolean
           has_variants?: boolean
           id?: string
+          is_public?: boolean
           name: string
           quantity_in_stock?: number
+          show_public_price?: boolean
           sku?: string | null
           supplier_id?: string | null
           unit?: string
           unit_price?: number
           updated_at?: string
           user_id: string
+          wholesale_price?: number
         }
         Update: {
           alert_threshold?: number
@@ -1801,14 +1964,17 @@ export type Database = {
           has_batches?: boolean
           has_variants?: boolean
           id?: string
+          is_public?: boolean
           name?: string
           quantity_in_stock?: number
+          show_public_price?: boolean
           sku?: string | null
           supplier_id?: string | null
           unit?: string
           unit_price?: number
           updated_at?: string
           user_id?: string
+          wholesale_price?: number
         }
         Relationships: [
           {
@@ -1841,11 +2007,18 @@ export type Database = {
           experience_years: string
           full_name: string
           id: string
+          is_public_supplier: boolean
           logo_url: string | null
           phone: string | null
           profession: string
           sector: string
           skills: string
+          supplier_categories: string[]
+          supplier_delivery_zones: string[]
+          supplier_description: string
+          supplier_min_order: number
+          supplier_orders_count: number
+          supplier_rating: number
           trial_docs_used: number | null
           trial_start: string | null
           updated_at: string
@@ -1865,11 +2038,18 @@ export type Database = {
           experience_years?: string
           full_name?: string
           id?: string
+          is_public_supplier?: boolean
           logo_url?: string | null
           phone?: string | null
           profession?: string
           sector?: string
           skills?: string
+          supplier_categories?: string[]
+          supplier_delivery_zones?: string[]
+          supplier_description?: string
+          supplier_min_order?: number
+          supplier_orders_count?: number
+          supplier_rating?: number
           trial_docs_used?: number | null
           trial_start?: string | null
           updated_at?: string
@@ -1889,11 +2069,18 @@ export type Database = {
           experience_years?: string
           full_name?: string
           id?: string
+          is_public_supplier?: boolean
           logo_url?: string | null
           phone?: string | null
           profession?: string
           sector?: string
           skills?: string
+          supplier_categories?: string[]
+          supplier_delivery_zones?: string[]
+          supplier_description?: string
+          supplier_min_order?: number
+          supplier_orders_count?: number
+          supplier_rating?: number
           trial_docs_used?: number | null
           trial_start?: string | null
           updated_at?: string
@@ -3174,6 +3361,10 @@ export type Database = {
       }
       generate_credit_number: { Args: { _user_id: string }; Returns: string }
       generate_ean13: { Args: { prefix?: string }; Returns: string }
+      generate_marketplace_order_number: {
+        Args: { _user_id: string }
+        Returns: string
+      }
       generate_po_number: { Args: { _user_id: string }; Returns: string }
       generate_return_number: { Args: { _user_id: string }; Returns: string }
       generate_session_number: { Args: { _user_id: string }; Returns: string }
@@ -3214,7 +3405,62 @@ export type Database = {
         }[]
       }
       get_pnl: { Args: { _end: string; _start: string }; Returns: Json }
+      get_public_suppliers: {
+        Args: {
+          _category?: string
+          _city?: string
+          _country?: string
+          _search?: string
+        }
+        Returns: {
+          categories: string[]
+          city: string
+          company_name: string
+          country: string
+          delivery_zones: string[]
+          description: string
+          email: string
+          full_name: string
+          logo_url: string
+          min_order: number
+          orders_count: number
+          phone: string
+          product_count: number
+          rating: number
+          user_id: string
+        }[]
+      }
       get_purchase_order_by_token: { Args: { _token: string }; Returns: Json }
+      get_recommended_suppliers: {
+        Args: never
+        Returns: {
+          categories: string[]
+          city: string
+          company_name: string
+          country: string
+          description: string
+          logo_url: string
+          match_score: number
+          rating: number
+          user_id: string
+        }[]
+      }
+      get_supplier_public_catalog: {
+        Args: { _supplier_user_id: string }
+        Returns: {
+          barcode: string
+          category: string
+          description: string
+          id: string
+          in_stock: boolean
+          name: string
+          show_public_price: boolean
+          sku: string
+          unit: string
+          unit_price: number
+          wholesale_price: number
+        }[]
+      }
       get_user_org_id: { Args: { _user_id: string }; Returns: string }
       get_vat_summary: { Args: { _end: string; _start: string }; Returns: Json }
       has_role: {
