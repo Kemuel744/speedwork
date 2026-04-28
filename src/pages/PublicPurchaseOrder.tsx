@@ -24,18 +24,12 @@ export default function PublicPurchaseOrder() {
   useEffect(() => {
     (async () => {
       if (!token) return;
-      const { data: poData } = await supabase
-        .from('purchase_orders').select('*').eq('share_token', token).maybeSingle();
-      if (poData) {
-        const po = poData as unknown as PO;
-        setPO(po);
-        const [{ data: itemsData }, { data: supData }] = await Promise.all([
-          supabase.from('purchase_order_items').select('description,quantity_ordered,unit_price,total')
-            .eq('purchase_order_id', po.id),
-          supabase.from('suppliers').select('name,email,phone,address,city').eq('id', po.supplier_id).maybeSingle(),
-        ]);
-        if (itemsData) setItems(itemsData as POItem[]);
-        if (supData) setSupplier(supData as Supplier);
+      const { data } = await supabase.rpc('get_purchase_order_by_token', { _token: token });
+      if (data) {
+        const payload = data as { po: PO; items: POItem[]; supplier: Supplier | null };
+        setPO(payload.po);
+        setItems(payload.items || []);
+        setSupplier(payload.supplier ?? null);
       }
       setLoading(false);
     })();
