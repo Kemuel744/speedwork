@@ -668,6 +668,7 @@ export type Database = {
           notes: string
           phone: string
           pin_code: string
+          pin_hash: string | null
           role: string
           updated_at: string
           user_id: string
@@ -683,6 +684,7 @@ export type Database = {
           notes?: string
           phone?: string
           pin_code?: string
+          pin_hash?: string | null
           role?: string
           updated_at?: string
           user_id: string
@@ -698,6 +700,7 @@ export type Database = {
           notes?: string
           phone?: string
           pin_code?: string
+          pin_hash?: string | null
           role?: string
           updated_at?: string
           user_id?: string
