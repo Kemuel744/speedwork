@@ -274,6 +274,7 @@ function printHtmlInIframe(html: string, copies: number): Promise<void> {
     iframe.style.width = '0';
     iframe.style.height = '0';
     iframe.style.border = '0';
+    iframe.setAttribute('aria-hidden', 'true');
     document.body.appendChild(iframe);
 
     const cleanup = () => {
@@ -284,17 +285,42 @@ function printHtmlInIframe(html: string, copies: number): Promise<void> {
     iframe.onload = () => {
       try {
         const win = iframe.contentWindow;
-        if (!win) return cleanup();
-        // Imprime le nombre de copies demandé séquentiellement
-        let remaining = Math.max(1, Math.min(5, copies || 1));
-        const printOnce = () => {
-          win.focus();
-          win.print();
-          remaining -= 1;
-          if (remaining > 0) setTimeout(printOnce, 600);
-          else setTimeout(cleanup, 1200);
+        const docw = iframe.contentDocument;
+        if (!win || !docw) return cleanup();
+
+        // Attendre que toutes les images (logo, QR) soient chargées avant
+        // d'appeler print(), pour éviter les tickets vides ou tronqués.
+        const waitForImages = (): Promise<void> => {
+          const imgs = Array.from(docw.images || []);
+          if (imgs.length === 0) return Promise.resolve();
+          return Promise.race([
+            Promise.all(
+              imgs.map(img =>
+                img.complete && img.naturalWidth > 0
+                  ? Promise.resolve()
+                  : new Promise<void>(res => {
+                      img.addEventListener('load', () => res(), { once: true });
+                      img.addEventListener('error', () => res(), { once: true });
+                    }),
+              ),
+            ).then(() => undefined),
+            // garde-fou : 1.5s max d'attente même si une image bloque
+            new Promise<void>(res => setTimeout(res, 1500)),
+          ]);
         };
-        setTimeout(printOnce, 200);
+
+        const remaining = Math.max(1, Math.min(5, copies || 1));
+        waitForImages().then(() => {
+          let left = remaining;
+          const printOnce = () => {
+            try { win.focus(); win.print(); } catch { /* noop */ }
+            left -= 1;
+            if (left > 0) setTimeout(printOnce, 250);
+            else setTimeout(cleanup, 400);
+          };
+          // Délai minimal pour laisser le navigateur appliquer le layout
+          setTimeout(printOnce, 30);
+        });
       } catch {
         cleanup();
       }
@@ -305,6 +331,12 @@ function printHtmlInIframe(html: string, copies: number): Promise<void> {
     doc.open();
     doc.write(html);
     doc.close();
+
+    // Filet de sécurité : si onload ne se déclenche pas, force le cleanup
+    setTimeout(() => {
+      // Si l'iframe est encore dans le DOM après 8s, on le retire
+      if (iframe.parentNode) cleanup();
+    }, 8000);
   });
 }
 

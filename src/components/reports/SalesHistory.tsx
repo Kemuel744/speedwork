@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { printReceipt } from '@/lib/thermalPrint';
 
 interface SaleItem {
   name: string;
@@ -71,54 +72,25 @@ export default function SalesHistory({ displayAmount, currency }: SalesHistoryPr
     setSales(prev => prev.filter(s => s.id !== id));
   };
 
-  const printReceipt = (sale: Sale) => {
-    const win = window.open('', '_blank');
-    if (!win) return;
-    win.document.write(`<!DOCTYPE html><html><head><title>Reçu ${sale.receipt_number}</title>
-      <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Courier New', monospace; max-width: 300px; margin: 0 auto; padding: 16px; color: #000; }
-        @page { size: 80mm auto; margin: 5mm; }
-        .center { text-align: center; }
-        .bold { font-weight: bold; }
-        .line { border-top: 1px dashed #000; margin: 8px 0; }
-        .row { display: flex; justify-content: space-between; font-size: 12px; margin: 3px 0; }
-        .total-row { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; margin: 6px 0; }
-        h1 { font-size: 16px; margin-bottom: 4px; }
-        .small { font-size: 10px; color: #555; }
-        @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
-      </style>
-    </head><body>
-      <div class="center">
-        <h1 class="bold">${company.name || 'Ma Boutique'}</h1>
-        ${company.address ? `<p class="small">${company.address}</p>` : ''}
-        ${company.phone ? `<p class="small">Tél: ${company.phone}</p>` : ''}
-        ${company.email ? `<p class="small">${company.email}</p>` : ''}
-      </div>
-      <div class="line"></div>
-      <div class="row"><span>Reçu N°:</span><span>${sale.receipt_number}</span></div>
-      <div class="row"><span>Date:</span><span>${format(parseISO(sale.sale_date), 'dd/MM/yyyy HH:mm', { locale: fr })}</span></div>
-      <div class="line"></div>
-      ${sale.items.map(i => `
-        <div style="margin: 6px 0;">
-          <div style="font-size: 12px; font-weight: bold;">${i.name}</div>
-          <div class="row">
-            <span>${i.quantity} x ${displayAmount(i.unit_price, currency)}</span>
-            <span>${displayAmount(i.total, currency)}</span>
-          </div>
-        </div>
-      `).join('')}
-      <div class="line"></div>
-      <div class="total-row"><span>TOTAL</span><span>${displayAmount(sale.total, currency)}</span></div>
-      <div class="row"><span>Articles:</span><span>${sale.items.reduce((s, i) => s + i.quantity, 0)}</span></div>
-      <div class="line"></div>
-      <div class="center small" style="margin-top: 12px;">
-        <p>Merci pour votre achat !</p>
-        <p>${company.name || 'SpeedWork'}</p>
-      </div>
-    </body></html>`);
-    win.document.close();
-    setTimeout(() => win.print(), 400);
+  const printSaleReceipt = (sale: Sale) => {
+    return printReceipt({
+      kind: 'sale',
+      title: 'REÇU DE VENTE',
+      number: sale.receipt_number,
+      date: parseISO(sale.sale_date),
+      lines: sale.items.map(i => ({
+        label: i.name,
+        qty: i.quantity,
+        unitPrice: i.unit_price,
+        total: i.total,
+      })),
+      summary: [
+        { label: 'Articles', value: String(sale.items.reduce((s, i) => s + i.quantity, 0)) },
+      ],
+      totalLabel: 'TOTAL',
+      totalValue: displayAmount(sale.total, currency),
+      qrPayload: sale.receipt_number,
+    });
   };
 
   return (
@@ -178,7 +150,7 @@ export default function SalesHistory({ displayAmount, currency }: SalesHistoryPr
                     <p className="text-sm font-bold">{displayAmount(sale.total, currency)}</p>
                   </div>
                   <div className="flex gap-1 shrink-0">
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => printReceipt(sale)}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => printSaleReceipt(sale)}>
                       <Printer className="w-4 h-4" />
                     </Button>
                     <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => deleteSale(sale.id)}>
@@ -225,7 +197,7 @@ export default function SalesHistory({ displayAmount, currency }: SalesHistoryPr
                 <span className="text-xl font-bold text-primary">{displayAmount(selectedSale.total, currency)}</span>
               </div>
 
-              <Button className="w-full gap-2" onClick={() => printReceipt(selectedSale)}>
+              <Button className="w-full gap-2" onClick={() => printSaleReceipt(selectedSale)}>
                 <Printer className="w-4 h-4" />
                 Imprimer le reçu
               </Button>
