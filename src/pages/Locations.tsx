@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Store, Warehouse, Plus, Edit2, Trash2, MapPin, Phone, User, Star, Lock, Crown } from 'lucide-react';
+import { Store, Warehouse, Plus, Edit2, Trash2, MapPin, Phone, User, Star, Lock, Crown, Package } from 'lucide-react';
 import { useCurrentPlan } from '@/hooks/useCurrentPlan';
 import { planQuotas, planNames } from '@/lib/planLimits';
 import { Link } from 'react-router-dom';
