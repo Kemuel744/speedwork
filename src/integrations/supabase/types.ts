@@ -1645,6 +1645,51 @@ export type Database = {
           },
         ]
       }
+      product_suppliers: {
+        Row: {
+          cost_price: number
+          created_at: string
+          id: string
+          is_preferred: boolean
+          lead_time_days: number
+          min_order_qty: number
+          notes: string
+          product_id: string
+          supplier_id: string
+          supplier_sku: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cost_price?: number
+          created_at?: string
+          id?: string
+          is_preferred?: boolean
+          lead_time_days?: number
+          min_order_qty?: number
+          notes?: string
+          product_id: string
+          supplier_id: string
+          supplier_sku?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cost_price?: number
+          created_at?: string
+          id?: string
+          is_preferred?: boolean
+          lead_time_days?: number
+          min_order_qty?: number
+          notes?: string
+          product_id?: string
+          supplier_id?: string
+          supplier_sku?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       product_variants: {
         Row: {
           alert_threshold: number
