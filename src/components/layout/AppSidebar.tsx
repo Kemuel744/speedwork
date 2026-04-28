@@ -101,6 +101,7 @@ const clientSections: NavSection[] = [
       { labelKey: 'Fournisseurs', to: '/suppliers', icon: Truck },
       { labelKey: 'Commandes achat', to: '/purchase-orders', icon: ShoppingCart },
       { labelKey: 'Boutiques & dépôts', to: '/locations', icon: Building2 },
+      { labelKey: 'Stock multi-dépôts', to: '/multi-depot-stock', icon: Grid3x3 },
       { labelKey: 'Transferts stock', to: '/stock-transfers', icon: ArrowLeftRight },
       { labelKey: 'nav.salesHistory', to: '/sales-history', icon: History },
       { labelKey: 'nav.statistics', to: '/statistics', icon: BarChart3 },
