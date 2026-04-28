@@ -56,6 +56,10 @@ export async function getPendingCount(): Promise<number> {
 }
 
 export async function syncAll(): Promise<{ success: number; failed: number }> {
+  if (!navigator.onLine) {
+    notifyListeners('pending');
+    return { success: 0, failed: 0 };
+  }
   const queue = await getAll<QueuedMutation>('sync_queue');
   if (queue.length === 0) {
     notifyListeners('idle');
@@ -71,6 +75,11 @@ export async function syncAll(): Promise<{ success: number; failed: number }> {
   let failed = 0;
 
   for (const mutation of queue) {
+    // Backoff exponentiel : ne re-tente pas trop tôt après un échec récent
+    const minDelay = Math.min(60_000, 1000 * Math.pow(2, mutation.retries));
+    if (mutation.retries > 0 && Date.now() - mutation.createdAt < minDelay) {
+      continue;
+    }
     try {
       await executeMutation(mutation);
       await deleteOne('sync_queue', mutation.queueId);
@@ -84,13 +93,15 @@ export async function syncAll(): Promise<{ success: number; failed: number }> {
         await deleteOne('sync_queue', mutation.queueId);
         console.warn('[SyncQueue] Dropped mutation after 5 retries:', mutation);
       } else {
+        mutation.createdAt = Date.now(); // reset timer pour backoff
         await putOne('sync_queue', mutation);
       }
       failed++;
     }
   }
 
-  notifyListeners(failed > 0 ? 'error' : 'idle');
+  const remaining = await getPendingCount();
+  notifyListeners(failed > 0 ? 'error' : remaining > 0 ? 'pending' : 'idle');
   return { success, failed };
 }
 
