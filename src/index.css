@@ -159,17 +159,31 @@
     overflow: visible !important;
   }
 
-  /* When a print-zone is present, hide everything else; otherwise print normally */
-  body:has(.a4-preview) > *,
-  body:has(.guide-doc) > *,
-  body:has(.print-zone) > * {
+  /* When a printable target is present, hide only siblings of the app root.
+     The printable target itself is isolated below with visibility rules so the
+     rest of the app layout cannot leak into A4 output. */
+  body:has(.a4-preview) > *:not(#root),
+  body:has(.guide-doc) > *:not(#root),
+  body:has(.print-zone) > *:not(#root) {
     display: none !important;
   }
 
-  /* === Document preview (factures/devis) === */
   body:has(.a4-preview) #root,
+  body:has(.guide-doc) #root,
+  body:has(.print-zone) #root {
+    display: block !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    background: #fff !important;
+  }
+
+  /* === Document preview (factures/devis) === */
   body:has(.a4-preview) #root * {
-    display: revert !important;
+    visibility: hidden !important;
+  }
+  body:has(.a4-preview) .a4-preview,
+  body:has(.a4-preview) .a4-preview * {
+    visibility: visible !important;
   }
   body:has(.a4-preview) .no-print,
   body:has(.a4-preview) .print\:hidden,
@@ -177,10 +191,11 @@
   body:has(.a4-preview) aside,
   body:has(.a4-preview) header[role="banner"] {
     display: none !important;
+    visibility: hidden !important;
   }
 
   body:has(.a4-preview) .a4-preview {
-    position: relative !important;
+    position: absolute !important;
     left: 0 !important;
     top: 0 !important;
     width: 210mm;
@@ -237,12 +252,16 @@
   }
 
   /* === Guide d'utilisation === */
-  body:has(.guide-doc) #root,
   body:has(.guide-doc) #root * {
-    display: revert !important;
+    visibility: hidden !important;
+  }
+  body:has(.guide-doc) .guide-doc,
+  body:has(.guide-doc) .guide-doc * {
+    visibility: visible !important;
   }
   body:has(.guide-doc) .no-print {
     display: none !important;
+    visibility: hidden !important;
   }
 
   body:has(.guide-doc) {
@@ -252,6 +271,9 @@
   }
 
   body:has(.guide-doc) .guide-doc {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
     max-width: 100% !important;
     padding: 10px 20px !important;
     box-shadow: none !important;
@@ -280,9 +302,12 @@
   }
 
   /* === Generic print-zone (Comptabilité, TVA, rapports internes) === */
-  body:has(.print-zone) #root,
   body:has(.print-zone) #root * {
-    display: revert !important;
+    visibility: hidden !important;
+  }
+  body:has(.print-zone) .print-zone,
+  body:has(.print-zone) .print-zone * {
+    visibility: visible !important;
   }
   body:has(.print-zone) .no-print,
   body:has(.print-zone) .print\:hidden,
@@ -291,6 +316,7 @@
   body:has(.print-zone) header[role="banner"],
   body:has(.print-zone) [role="tablist"] {
     display: none !important;
+    visibility: hidden !important;
   }
   body:has(.print-zone) {
     background: #fff !important;
@@ -299,6 +325,10 @@
   }
   body:has(.print-zone) .print-zone {
     display: block !important;
+    position: absolute !important;
+    left: 50% !important;
+    top: 0 !important;
+    transform: translateX(-50%) !important;
     width: 190mm !important;
     max-width: 190mm !important;
     margin: 0 auto !important;
@@ -309,10 +339,7 @@
     border: none !important;
     font-size: 11pt;
   }
-  body:has(.print-zone) .print-zone * {
-    visibility: visible !important;
-    color: inherit;
-  }
+  body:has(.print-zone) .print-zone * { color: inherit; }
   body:has(.print-zone) .print-zone table {
     width: 100% !important;
     border-collapse: collapse !important;
