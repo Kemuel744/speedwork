@@ -191,6 +191,7 @@
   body:has(.a4-preview) aside,
   body:has(.a4-preview) header[role="banner"] {
     display: none !important;
+    visibility: hidden !important;
   }
 
   body:has(.a4-preview) .a4-preview {
@@ -260,6 +261,7 @@
   }
   body:has(.guide-doc) .no-print {
     display: none !important;
+    visibility: hidden !important;
   }
 
   body:has(.guide-doc) {
@@ -314,6 +316,7 @@
   body:has(.print-zone) header[role="banner"],
   body:has(.print-zone) [role="tablist"] {
     display: none !important;
+    visibility: hidden !important;
   }
   body:has(.print-zone) {
     background: #fff !important;
@@ -336,10 +339,7 @@
     border: none !important;
     font-size: 11pt;
   }
-  body:has(.print-zone) .print-zone * {
-    visibility: visible !important;
-    color: inherit;
-  }
+  body:has(.print-zone) .print-zone * { color: inherit; }
   body:has(.print-zone) .print-zone table {
     width: 100% !important;
     border-collapse: collapse !important;
