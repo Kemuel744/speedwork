@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Warehouse, Store, Search, Save, Package, Plus, Boxes, Coins, Layers } from 'lucide-react';
+import { usePlanQuota } from '@/hooks/usePlanQuota';
 
 interface LocRow { id: string; name: string; location_type: string; address: string; city: string; }
 interface ProductRow { id: string; name: string; sku: string | null; barcode: string | null; alert_threshold: number; cost_price: number; unit_price: number; }
@@ -19,6 +20,7 @@ export default function LocationDetail() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const { toast } = useToast();
+  const productsQuota = usePlanQuota('products');
   const [loc, setLoc] = useState<LocRow | null>(null);
   const [products, setProducts] = useState<ProductRow[]>([]);
   const [stockMap, setStockMap] = useState<Record<string, StockRow>>({});
@@ -115,6 +117,13 @@ export default function LocationDetail() {
     if (!user || !id) return;
     if (!newProd.name.trim()) {
       return toast({ title: 'Nom requis', variant: 'destructive' });
+    }
+    if (productsQuota.cap !== null && productsQuota.used >= productsQuota.cap) {
+      return toast({
+        title: 'Limite du plan atteinte',
+        description: `Le plan ${productsQuota.planName} autorise ${productsQuota.cap} produits. Mettez à niveau votre abonnement pour en ajouter davantage.`,
+        variant: 'destructive',
+      });
     }
     const cost = parseFloat((newProd.cost_price || '0').replace(',', '.'));
     const price = parseFloat((newProd.unit_price || '0').replace(',', '.'));
