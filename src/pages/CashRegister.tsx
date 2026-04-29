@@ -10,7 +10,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Banknote, Plus, Lock, Unlock, ArrowDownToLine, ArrowUpFromLine, Printer, TrendingUp, TrendingDown, Equal, ShoppingCart } from 'lucide-react';
+import { Banknote, Plus, Lock, Unlock, ArrowDownToLine, ArrowUpFromLine, Printer, TrendingUp, TrendingDown, Equal, ShoppingCart, KeyRound } from 'lucide-react';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { printReceipt } from '@/lib/thermalPrint';
 
@@ -44,6 +45,10 @@ export default function CashRegister() {
   const [movements, setMovements] = useState<Movement[]>([]);
   const [liveSales, setLiveSales] = useState<LiveSale[]>([]);
   const [openOpen, setOpenOpen] = useState(false);
+  const [pinOpen, setPinOpen] = useState(false);
+  const [pinCode, setPinCode] = useState('');
+  const [pinOpening, setPinOpening] = useState('');
+  const [pinLoading, setPinLoading] = useState(false);
   const [closeOpen, setCloseOpen] = useState(false);
   const [movOpen, setMovOpen] = useState(false);
   const [zModal, setZModal] = useState<Session | null>(null);
@@ -103,6 +108,39 @@ export default function CashRegister() {
     toast({ title: `Caisse ouverte (${number})` });
     setOpenOpen(false); setOpeningAmount(''); setOpenedByName('');
     fetchAll();
+  };
+
+  // Ouverture rapide par caissier via code PIN attribué par l'administrateur
+  const openSessionByPin = async () => {
+    if (!user) return;
+    if (!/^\d{4,6}$/.test(pinCode)) {
+      toast({ title: 'PIN invalide', description: 'Entrez votre code à 4-6 chiffres', variant: 'destructive' });
+      return;
+    }
+    const opening = Number(pinOpening) || 0;
+    if (opening < 0) { toast({ title: 'Montant invalide', variant: 'destructive' }); return; }
+    setPinLoading(true);
+    try {
+      const { data, error } = await supabase.rpc('verify_employee_pin', { _pin: pinCode });
+      if (error) { toast({ title: 'Erreur', description: error.message, variant: 'destructive' }); return; }
+      const res = data as { valid: boolean; full_name?: string; error?: string };
+      if (!res?.valid) {
+        toast({ title: 'Accès refusé', description: res?.error || 'PIN incorrect', variant: 'destructive' });
+        return;
+      }
+      const { data: numData } = await supabase.rpc('generate_session_number', { _user_id: user.id });
+      const number = numData || `CS-${Date.now()}`;
+      const { error: insErr } = await supabase.from('cash_sessions').insert({
+        user_id: user.id, number, opening_amount: opening,
+        opened_by_name: res.full_name || 'Caissier', status: 'open',
+      } as never);
+      if (insErr) { toast({ title: 'Erreur', description: insErr.message, variant: 'destructive' }); return; }
+      toast({ title: `Caisse ouverte (${number})`, description: `Caissier : ${res.full_name}` });
+      setPinOpen(false); setPinCode(''); setPinOpening('');
+      fetchAll();
+    } finally {
+      setPinLoading(false);
+    }
   };
 
   const closeSession = async () => {
@@ -180,9 +218,50 @@ export default function CashRegister() {
         </div>
         <div className="flex gap-2">
           {!activeSession ? (
+            <>
+            <Dialog open={pinOpen} onOpenChange={setPinOpen}>
+              <DialogTrigger asChild>
+                <Button variant="default"><KeyRound className="w-4 h-4 mr-1.5" />Ouvrir avec code caissier</Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <KeyRound className="w-5 h-5 text-primary" />
+                    Ouverture rapide caissier
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Entrez le code PIN qui vous a été attribué par l'administrateur de la boutique ou pharmacie.
+                  </p>
+                  <div>
+                    <Label>Code PIN *</Label>
+                    <div className="flex justify-center mt-2">
+                      <InputOTP maxLength={6} value={pinCode} onChange={setPinCode}>
+                        <InputOTPGroup>
+                          <InputOTPSlot index={0} />
+                          <InputOTPSlot index={1} />
+                          <InputOTPSlot index={2} />
+                          <InputOTPSlot index={3} />
+                          <InputOTPSlot index={4} />
+                          <InputOTPSlot index={5} />
+                        </InputOTPGroup>
+                      </InputOTP>
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Fond de caisse initial *</Label>
+                    <Input type="number" min="0" placeholder="0" value={pinOpening} onChange={e => setPinOpening(e.target.value)} />
+                  </div>
+                  <Button onClick={openSessionByPin} disabled={pinLoading || pinCode.length < 4} className="w-full">
+                    {pinLoading ? 'Vérification…' : 'Vérifier & ouvrir la caisse'}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
             <Dialog open={openOpen} onOpenChange={setOpenOpen}>
               <DialogTrigger asChild>
-                <Button><Unlock className="w-4 h-4 mr-1.5" />Ouvrir la caisse</Button>
+                <Button variant="outline"><Unlock className="w-4 h-4 mr-1.5" />Ouverture manuelle</Button>
               </DialogTrigger>
               <DialogContent className="max-w-md">
                 <DialogHeader><DialogTitle>Ouverture de caisse</DialogTitle></DialogHeader>
@@ -199,6 +278,7 @@ export default function CashRegister() {
                 </div>
               </DialogContent>
             </Dialog>
+            </>
           ) : (
             <>
               <Dialog open={movOpen} onOpenChange={setMovOpen}>
