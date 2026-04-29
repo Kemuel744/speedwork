@@ -118,6 +118,7 @@ export default function Reports() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [movements, setMovements] = useState<StockMovement[]>([]);
+  const [activeCashSession, setActiveCashSession] = useState<{ id: string; number: string } | null>(null);
   const [expenseForm, setExpenseForm] = useState({ category: 'other', description: '', amount: '', expense_date: format(new Date(), 'yyyy-MM-dd') });
   const [productForm, setProductForm] = useState({ name: '', description: '', unit_price: '', cost_price: '', quantity_in_stock: '', alert_threshold: '5', category: 'general', category_id: '', supplier_id: '', barcode: '', sku: '', unit: 'unit' });
   const [categoriesList, setCategoriesList] = useState<{ id: string; name: string }[]>([]);
@@ -145,18 +146,20 @@ export default function Reports() {
   // Fetch data
   const fetchAll = useCallback(async () => {
     if (!user) return;
-    const [expRes, prodRes, movRes, catRes, supRes] = await Promise.all([
+    const [expRes, prodRes, movRes, catRes, supRes, sessRes] = await Promise.all([
       supabase.from('expenses').select('*').order('expense_date', { ascending: false }),
       supabase.from('products').select('*').order('name'),
       supabase.from('stock_movements').select('*').order('created_at', { ascending: false }),
       supabase.from('product_categories').select('id, name').order('name'),
       supabase.from('suppliers').select('id, name').eq('is_active', true).order('name'),
+      supabase.from('cash_sessions').select('id, number').eq('status', 'open').maybeSingle(),
     ]);
     if (expRes.data) setExpenses(expRes.data.map((e: any) => ({ id: e.id, category: e.category, description: e.description, amount: Number(e.amount), expense_date: e.expense_date })));
     if (prodRes.data) setProducts(prodRes.data.map((p: any) => ({ id: p.id, name: p.name, description: p.description, unit_price: Number(p.unit_price), quantity_in_stock: p.quantity_in_stock, alert_threshold: p.alert_threshold, category: p.category })));
     if (movRes.data) setMovements(movRes.data.map((m: any) => ({ id: m.id, product_id: m.product_id, movement_type: m.movement_type, quantity: m.quantity, reason: m.reason, created_at: m.created_at })));
     if (catRes.data) setCategoriesList(catRes.data as { id: string; name: string }[]);
     if (supRes.data) setSuppliersList(supRes.data as { id: string; name: string }[]);
+    setActiveCashSession((sessRes.data as any) || null);
   }, [user]);
 
   React.useEffect(() => { fetchAll(); }, [fetchAll]);
@@ -425,6 +428,7 @@ export default function Reports() {
             products={products}
             displayAmount={displayAmount}
             currency={currency}
+            activeSession={activeCashSession}
             onSaleComplete={async (cartItems) => {
               if (!user) return;
               const receiptNo = `REC-${Date.now().toString(36).toUpperCase()}`;
