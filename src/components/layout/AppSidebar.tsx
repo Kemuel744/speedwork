@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import {
-  LayoutDashboard, User, Settings,
+  LayoutDashboard, User, Users, Settings,
   LogOut, ChevronLeft, CreditCard, BarChart3, MessageCircle, BookOpen, Newspaper,
   Store, History, ShoppingCart, Banknote, Megaphone, UserCog, Receipt, Globe, Boxes,
 } from 'lucide-react';
