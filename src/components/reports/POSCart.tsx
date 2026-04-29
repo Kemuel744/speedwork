@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { ShoppingCart, Plus, Minus, Trash2, Receipt, Printer, X, ScanLine } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Trash2, Receipt, Printer, X, ScanLine, Lock, Banknote } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import QRScanner from './QRScanner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,9 +32,10 @@ interface POSCartProps {
   displayAmount: (amount: number, currency: string) => string;
   currency: string;
   onSaleComplete: (items: CartItem[]) => Promise<void>;
+  activeSession?: { id: string; number: string } | null;
 }
 
-export default function POSCart({ products, displayAmount, currency, onSaleComplete }: POSCartProps) {
+export default function POSCart({ products, displayAmount, currency, onSaleComplete, activeSession }: POSCartProps) {
   const { company } = useCompany();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [search, setSearch] = useState('');
@@ -139,6 +141,28 @@ export default function POSCart({ products, displayAmount, currency, onSaleCompl
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Cash session banner */}
+      <div className="lg:col-span-3">
+        {activeSession ? (
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20 text-sm">
+            <Banknote className="w-4 h-4 text-primary shrink-0" />
+            <span className="text-foreground">
+              Caisse ouverte : <span className="font-mono font-semibold">{activeSession.number}</span> — chaque vente sera rattachée à cette session.
+            </span>
+          </div>
+        ) : (
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/30 text-sm">
+            <Lock className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5 sm:mt-0" />
+            <span className="text-foreground flex-1">
+              Aucune caisse ouverte. Les ventes seront enregistrées sans rattachement à une session journalière.
+            </span>
+            <Link to="/cash-register" className="text-xs font-semibold text-primary hover:underline whitespace-nowrap">
+              Ouvrir la caisse →
+            </Link>
+          </div>
+        )}
+      </div>
+
       {/* Product catalog */}
       <div className="lg:col-span-2 space-y-4">
         <div className="flex gap-2">
