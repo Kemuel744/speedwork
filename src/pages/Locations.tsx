@@ -73,9 +73,11 @@ export default function Locations() {
       return;
     }
     // Enforce plan quota for depots/warehouses (shops are unlimited).
-    const isCreatingDepot = form.location_type === 'warehouse';
-    const wasDepot = editing?.location_type === 'warehouse';
-    const wouldAddDepot = isCreatingDepot && (!editing || !wasDepot);
+    // The same rule is also enforced server-side by the trg_enforce_depot_quota trigger,
+    // so this guard is purely a friendlier UX message.
+    const isDepot = form.location_type === 'depot' || form.location_type === 'warehouse';
+    const wasDepot = editing?.location_type === 'depot' || editing?.location_type === 'warehouse';
+    const wouldAddDepot = isDepot && (!editing || !wasDepot);
     if (wouldAddDepot && depotQuota !== null && depotsUsed >= depotQuota) {
       toast({
         title: 'Limite du plan atteinte',
