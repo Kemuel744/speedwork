@@ -265,7 +265,7 @@ function renderReceiptHtml(s: ReceiptSettings, doc: ReceiptDocument): string {
 // Impression CSS (window.print) — universel
 // ============================================================
 
-function printHtmlInIframe(html: string, copies: number): Promise<void> {
+export function printHtmlInIframe(html: string, copies: number = 1): Promise<void> {
   return new Promise((resolve) => {
     const iframe = document.createElement('iframe');
     iframe.style.position = 'fixed';
