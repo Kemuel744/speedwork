@@ -10,8 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Banknote, Plus, Lock, ArrowDownToLine, ArrowUpFromLine, Printer, TrendingUp, TrendingDown, Equal, ShoppingCart, KeyRound } from 'lucide-react';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
+import { Banknote, Plus, Lock, ArrowDownToLine, ArrowUpFromLine, Printer, TrendingUp, TrendingDown, Equal, ShoppingCart, Unlock } from 'lucide-react';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { printReceipt } from '@/lib/thermalPrint';
 
@@ -44,10 +43,10 @@ export default function CashRegister() {
   const [activeSession, setActiveSession] = useState<Session | null>(null);
   const [movements, setMovements] = useState<Movement[]>([]);
   const [liveSales, setLiveSales] = useState<LiveSale[]>([]);
-  const [pinOpen, setPinOpen] = useState(false);
-  const [pinCode, setPinCode] = useState('');
-  const [pinOpening, setPinOpening] = useState('');
-  const [pinLoading, setPinLoading] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openingAmount, setOpeningAmount] = useState('');
+  const [openedByName, setOpenedByName] = useState('');
+  const [openLoading, setOpenLoading] = useState(false);
   const [closeOpen, setCloseOpen] = useState(false);
   const [movOpen, setMovOpen] = useState(false);
   const [zModal, setZModal] = useState<Session | null>(null);
@@ -92,36 +91,26 @@ export default function CashRegister() {
     return () => { supabase.removeChannel(ch); };
   }, [user, activeSession, fetchAll]);
 
-  // Ouverture rapide par caissier via code PIN attribué par l'administrateur
-  const openSessionByPin = async () => {
+  // Ouverture de caisse par l'administrateur / propriétaire.
+  // Les caissiers eux ouvrent via leur Espace employé (/staff) avec leur PIN.
+  const openSession = async () => {
     if (!user) return;
-    if (!/^\d{4,6}$/.test(pinCode)) {
-      toast({ title: 'PIN invalide', description: 'Entrez votre code à 4-6 chiffres', variant: 'destructive' });
-      return;
-    }
-    const opening = Number(pinOpening) || 0;
+    const opening = Number(openingAmount) || 0;
     if (opening < 0) { toast({ title: 'Montant invalide', variant: 'destructive' }); return; }
-    setPinLoading(true);
+    setOpenLoading(true);
     try {
-      const { data, error } = await supabase.rpc('verify_employee_pin', { _pin: pinCode });
-      if (error) { toast({ title: 'Erreur', description: error.message, variant: 'destructive' }); return; }
-      const res = data as { valid: boolean; full_name?: string; error?: string };
-      if (!res?.valid) {
-        toast({ title: 'Accès refusé', description: res?.error || 'PIN incorrect', variant: 'destructive' });
-        return;
-      }
       const { data: numData } = await supabase.rpc('generate_session_number', { _user_id: user.id });
       const number = numData || `CS-${Date.now()}`;
       const { error: insErr } = await supabase.from('cash_sessions').insert({
         user_id: user.id, number, opening_amount: opening,
-        opened_by_name: res.full_name || 'Caissier', status: 'open',
+        opened_by_name: openedByName.trim() || user.name || 'Administrateur', status: 'open',
       } as never);
       if (insErr) { toast({ title: 'Erreur', description: insErr.message, variant: 'destructive' }); return; }
-      toast({ title: `Caisse ouverte (${number})`, description: `Caissier : ${res.full_name}` });
-      setPinOpen(false); setPinCode(''); setPinOpening('');
+      toast({ title: `Caisse ouverte (${number})` });
+      setOpenDialog(false); setOpeningAmount(''); setOpenedByName('');
       fetchAll();
     } finally {
-      setPinLoading(false);
+      setOpenLoading(false);
     }
   };
 
@@ -200,42 +189,31 @@ export default function CashRegister() {
         </div>
         <div className="flex gap-2">
           {!activeSession ? (
-            <Dialog open={pinOpen} onOpenChange={setPinOpen}>
+            <Dialog open={openDialog} onOpenChange={setOpenDialog}>
               <DialogTrigger asChild>
-                <Button variant="default"><KeyRound className="w-4 h-4 mr-1.5" />Ouvrir la caisse</Button>
+                <Button variant="default"><Unlock className="w-4 h-4 mr-1.5" />Ouvrir la caisse</Button>
               </DialogTrigger>
               <DialogContent className="max-w-md">
                 <DialogHeader>
                   <DialogTitle className="flex items-center gap-2">
-                    <KeyRound className="w-5 h-5 text-primary" />
-                    Ouverture rapide caissier
+                    <Unlock className="w-5 h-5 text-primary" />
+                    Ouvrir la caisse du jour
                   </DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    Entrez votre code PIN. L'administrateur de la boutique ou pharmacie peut le générer dans <strong>Employés &amp; caissiers</strong> et vous remettre votre carte d'employé imprimée.
+                    Vos caissiers ouvrent eux‑mêmes la caisse depuis leur <strong>Espace employé</strong> (carte imprimée + PIN). Cet écran est réservé à l'administrateur.
                   </p>
                   <div>
-                    <Label>Code PIN *</Label>
-                    <div className="flex justify-center mt-2">
-                      <InputOTP maxLength={6} value={pinCode} onChange={setPinCode}>
-                        <InputOTPGroup>
-                          <InputOTPSlot index={0} />
-                          <InputOTPSlot index={1} />
-                          <InputOTPSlot index={2} />
-                          <InputOTPSlot index={3} />
-                          <InputOTPSlot index={4} />
-                          <InputOTPSlot index={5} />
-                        </InputOTPGroup>
-                      </InputOTP>
-                    </div>
+                    <Label>Fond de caisse initial *</Label>
+                    <Input type="number" min="0" placeholder="0" value={openingAmount} onChange={e => setOpeningAmount(e.target.value)} />
                   </div>
                   <div>
-                    <Label>Fond de caisse initial *</Label>
-                    <Input type="number" min="0" placeholder="0" value={pinOpening} onChange={e => setPinOpening(e.target.value)} />
+                    <Label>Ouvert par</Label>
+                    <Input placeholder={user?.name || 'Administrateur'} value={openedByName} onChange={e => setOpenedByName(e.target.value)} />
                   </div>
-                  <Button onClick={openSessionByPin} disabled={pinLoading || pinCode.length < 4} className="w-full">
-                    {pinLoading ? 'Vérification…' : 'Vérifier & ouvrir la caisse'}
+                  <Button onClick={openSession} disabled={openLoading} className="w-full">
+                    {openLoading ? 'Ouverture…' : 'Ouvrir la caisse'}
                   </Button>
                 </div>
               </DialogContent>
