@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { useCompany } from '@/contexts/CompanyContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -23,6 +24,7 @@ const todayISO = () => new Date().toISOString().slice(0, 10);
 export default function VatDeclaration() {
   const { user } = useAuth();
   const { displayAmount } = useCurrency();
+  const { company } = useCompany();
   const { toast } = useToast();
   const [start, setStart] = useState(monthStartISO());
   const [end, setEnd] = useState(todayISO());
@@ -41,7 +43,19 @@ export default function VatDeclaration() {
   useEffect(() => { load(); }, [load]);
 
   return (
-    <div className="container mx-auto p-4 lg:p-8 space-y-6">
+    <div className="container mx-auto p-4 lg:p-8 space-y-6 print-zone">
+      <div className="hidden print:block mb-4 pb-3 border-b">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold">{company.name}</h1>
+            <p className="text-xs text-muted-foreground">{company.address}</p>
+          </div>
+          <div className="text-right text-xs">
+            <p className="font-semibold">Déclaration TVA</p>
+            <p>Du {start} au {end}</p>
+          </div>
+        </div>
+      </div>
       <div className="flex flex-wrap items-center justify-between gap-4 print:hidden">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold">Déclaration TVA</h1>
