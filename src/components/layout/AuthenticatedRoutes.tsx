@@ -14,6 +14,7 @@ const Profile = lazy(() => import("@/pages/Profile"));
 const SettingsPage = lazy(() => import("@/pages/Settings"));
 const AdminSubscriptions = lazy(() => import("@/pages/AdminSubscriptions"));
 const AdminBlog = lazy(() => import("@/pages/AdminBlog"));
+const AdminClients = lazy(() => import("@/pages/AdminClients"));
 const Messages = lazy(() => import("@/pages/Messages"));
 const StockHub = lazy(() => import("@/pages/StockHub"));
 const NetworkHub = lazy(() => import("@/pages/NetworkHub"));
@@ -149,6 +150,7 @@ export default function AuthenticatedRoutes() {
                     <Route path="/settings" element={<SettingsPage />} />
                     <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
                     <Route path="/admin/blog" element={<AdminBlog />} />
+                    <Route path="/admin/clients" element={<AdminClients />} />
                     <Route path="/messages" element={<Messages />} />
 
                     {/* Hubs fusionnés à onglets */}
