@@ -48,7 +48,7 @@ const adminSections: NavSection[] = [
     titleKey: 'Finance',
     items: [
       { labelKey: 'Caisse journalière', to: '/cash-register', icon: Banknote },
-      { labelKey: 'Finance & comptabilité', to: '/finance', icon: Receipt },
+      { labelKey: 'Finance & comptabilité', to: '/finance?tab=accounting', icon: Receipt },
     ],
   },
   {
@@ -106,7 +106,7 @@ const clientSections: NavSection[] = [
     titleKey: 'Finance',
     items: [
       { labelKey: 'Caisse journalière', to: '/cash-register', icon: Banknote },
-      { labelKey: 'Finance & comptabilité', to: '/finance', icon: Receipt },
+      { labelKey: 'Finance & comptabilité', to: '/finance?tab=accounting', icon: Receipt },
     ],
   },
   {
