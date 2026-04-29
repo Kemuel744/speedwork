@@ -332,8 +332,6 @@
     border-color: #e5e7eb !important;
     page-break-inside: avoid;
   }
-  body:has(.print-zone) @page { size: A4; margin: 12mm; }
-
   /* Always hide chrome elements */
   aside, nav, [data-lovable], iframe, .print\\:hidden,
   .fixed, [style*="position: fixed"], [style*="position:fixed"] {
