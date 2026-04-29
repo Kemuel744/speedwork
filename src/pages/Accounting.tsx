@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { TrendingUp, TrendingDown, DollarSign, Receipt, FileText, Loader2 } from 'lucide-react';
+import { printElement } from '@/lib/printElement';
 
 interface PnL {
   revenue: number; vat_collected: number; returns: number; net_revenue: number;
@@ -29,6 +30,7 @@ export default function Accounting() {
   const [end, setEnd] = useState(todayISO());
   const [pnl, setPnl] = useState<PnL | null>(null);
   const [loading, setLoading] = useState(false);
+  const printRef = useRef<HTMLDivElement>(null);
 
   const load = useCallback(async () => {
     if (!user) return;
@@ -44,24 +46,11 @@ export default function Accounting() {
 
   useEffect(() => { load(); }, [load]);
 
-  const print = () => window.print();
+  const print = () => printElement(printRef.current, { title: `Comptabilite_${start}_${end}` });
 
   return (
-    <div className="container mx-auto p-4 lg:p-8 space-y-6 print-zone">
-      {/* Print-only header */}
-      <div className="hidden print:block mb-4 pb-3 border-b">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold">{company.name}</h1>
-            <p className="text-xs text-muted-foreground">{company.address}</p>
-          </div>
-          <div className="text-right text-xs">
-            <p className="font-semibold">Compte de résultat</p>
-            <p>Du {start} au {end}</p>
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-wrap items-center justify-between gap-4 print:hidden">
+    <div className="container mx-auto p-4 lg:p-8 space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold">Comptabilité</h1>
           <p className="text-muted-foreground text-sm">Compte de résultat & analyse financière</p>
@@ -69,7 +58,7 @@ export default function Accounting() {
         <Button onClick={print} variant="outline"><FileText className="w-4 h-4 mr-2" />Imprimer</Button>
       </div>
 
-      <Card className="print:hidden">
+      <Card>
         <CardContent className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <Label>Début</Label>
@@ -89,7 +78,19 @@ export default function Accounting() {
       </Card>
 
       {pnl && (
-        <>
+        <div ref={printRef}>
+          <div className="mb-4 pb-3 border-b">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold">{company.name}</h2>
+                {company.address && <p className="text-xs text-muted-foreground">{company.address}</p>}
+              </div>
+              <div className="text-right text-xs">
+                <p className="font-semibold">Compte de résultat</p>
+                <p>Du {start} au {end}</p>
+              </div>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card><CardContent className="p-4">
               <div className="flex items-center gap-2 text-muted-foreground text-xs"><DollarSign className="w-4 h-4" />Chiffre d'affaires</div>
@@ -132,7 +133,7 @@ export default function Accounting() {
               </div>
             </CardContent>
           </Card>
-        </>
+        </div>
       )}
     </div>
   );
