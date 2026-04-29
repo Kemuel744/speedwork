@@ -137,6 +137,7 @@ export default function Reports() {
   };
   const initialTab = routeToTab[location.pathname] || 'pos';
   const [activeTab, setActiveTab] = useState(initialTab);
+  const printRef = useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const t = routeToTab[location.pathname];
