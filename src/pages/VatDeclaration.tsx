@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Receipt, FileText, Loader2 } from 'lucide-react';
+import { printElement } from '@/lib/printElement';
 
 interface VatSummary {
   sales_ht: number; vat_collected: number;
@@ -30,6 +31,7 @@ export default function VatDeclaration() {
   const [end, setEnd] = useState(todayISO());
   const [vat, setVat] = useState<VatSummary | null>(null);
   const [loading, setLoading] = useState(false);
+  const printRef = useRef<HTMLDivElement>(null);
 
   const load = useCallback(async () => {
     if (!user) return;
@@ -43,28 +45,16 @@ export default function VatDeclaration() {
   useEffect(() => { load(); }, [load]);
 
   return (
-    <div className="container mx-auto p-4 lg:p-8 space-y-6 print-zone">
-      <div className="hidden print:block mb-4 pb-3 border-b">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold">{company.name}</h1>
-            <p className="text-xs text-muted-foreground">{company.address}</p>
-          </div>
-          <div className="text-right text-xs">
-            <p className="font-semibold">Déclaration TVA</p>
-            <p>Du {start} au {end}</p>
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-wrap items-center justify-between gap-4 print:hidden">
+    <div className="container mx-auto p-4 lg:p-8 space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold">Déclaration TVA</h1>
           <p className="text-muted-foreground text-sm">TVA collectée, déductible et à payer</p>
         </div>
-        <Button variant="outline" onClick={() => window.print()}><FileText className="w-4 h-4 mr-2" />Imprimer</Button>
+        <Button variant="outline" onClick={() => printElement(printRef.current, { title: `TVA_${start}_${end}` })}><FileText className="w-4 h-4 mr-2" />Imprimer</Button>
       </div>
 
-      <Card className="print:hidden">
+      <Card>
         <CardContent className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div><Label>Début</Label><Input type="date" value={start} onChange={e => setStart(e.target.value)} /></div>
           <div><Label>Fin</Label><Input type="date" value={end} onChange={e => setEnd(e.target.value)} /></div>
@@ -77,8 +67,20 @@ export default function VatDeclaration() {
       </Card>
 
       {vat && (
-        <Card>
+        <Card ref={printRef}>
           <CardContent className="p-6">
+            <div className="mb-4 pb-3 border-b">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold">{company.name}</h2>
+                  {company.address && <p className="text-xs text-muted-foreground">{company.address}</p>}
+                </div>
+                <div className="text-right text-xs">
+                  <p className="font-semibold">Déclaration TVA</p>
+                  <p>Du {start} au {end}</p>
+                </div>
+              </div>
+            </div>
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2"><Receipt className="w-5 h-5" />Récapitulatif TVA — {start} au {end}</h2>
             <div className="overflow-x-auto -mx-2 sm:mx-0">
             <table className="w-full text-sm min-w-[320px]">
