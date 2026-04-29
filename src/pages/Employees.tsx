@@ -346,9 +346,21 @@ export default function Employees() {
                       </div>
                     </div>
 
-                    <div style={{ fontSize: '7.5pt', color: '#64748b', textAlign: 'center', lineHeight: 1.4, marginTop: '3mm' }}>
-                      Saisissez ce code sur l'écran <strong>Caisse journalière</strong> pour ouvrir la caisse.<br />
-                      Document confidentiel — ne pas partager.
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '3mm', marginTop: '3mm' }}>
+                      <div style={{ flexShrink: 0, padding: '1mm', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '3px' }}>
+                        <QRCodeSVG
+                          value={`${window.location.origin}/staff`}
+                          size={64}
+                          level="M"
+                          includeMargin={false}
+                        />
+                      </div>
+                      <div style={{ fontSize: '7.5pt', color: '#475569', lineHeight: 1.4 }}>
+                        <strong style={{ color: '#0f172a' }}>Scannez ce QR</strong> avec votre téléphone pour ouvrir votre espace personnel, puis saisissez votre code PIN.
+                        <div style={{ marginTop: '1mm', fontSize: '6.5pt', color: '#94a3b8' }}>
+                          Document confidentiel — ne pas partager.
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
