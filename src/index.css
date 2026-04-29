@@ -161,7 +161,8 @@
 
   /* When a print-zone is present, hide everything else; otherwise print normally */
   body:has(.a4-preview) > *,
-  body:has(.guide-doc) > * {
+  body:has(.guide-doc) > *,
+  body:has(.print-zone) > * {
     display: none !important;
   }
 
@@ -277,6 +278,61 @@
   body:has(.guide-doc) h2 {
     page-break-after: avoid;
   }
+
+  /* === Generic print-zone (Comptabilité, TVA, rapports internes) === */
+  body:has(.print-zone) #root,
+  body:has(.print-zone) #root * {
+    display: revert !important;
+  }
+  body:has(.print-zone) .no-print,
+  body:has(.print-zone) .print\:hidden,
+  body:has(.print-zone) nav,
+  body:has(.print-zone) aside,
+  body:has(.print-zone) header[role="banner"],
+  body:has(.print-zone) [role="tablist"] {
+    display: none !important;
+  }
+  body:has(.print-zone) {
+    background: #fff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  body:has(.print-zone) .print-zone {
+    display: block !important;
+    width: 190mm !important;
+    max-width: 190mm !important;
+    margin: 0 auto !important;
+    padding: 10mm !important;
+    background: #fff !important;
+    color: #111 !important;
+    box-shadow: none !important;
+    border: none !important;
+    font-size: 11pt;
+  }
+  body:has(.print-zone) .print-zone * {
+    visibility: visible !important;
+    color: inherit;
+  }
+  body:has(.print-zone) .print-zone table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    page-break-inside: auto;
+  }
+  body:has(.print-zone) .print-zone table th,
+  body:has(.print-zone) .print-zone table td {
+    border: 1px solid #ddd !important;
+    padding: 6px 8px !important;
+  }
+  body:has(.print-zone) .print-zone tr { page-break-inside: avoid; }
+  body:has(.print-zone) .print-zone h1,
+  body:has(.print-zone) .print-zone h2 { page-break-after: avoid; }
+  body:has(.print-zone) .print-zone .card,
+  body:has(.print-zone) .print-zone [class*="rounded"] {
+    box-shadow: none !important;
+    border-color: #e5e7eb !important;
+    page-break-inside: avoid;
+  }
+  body:has(.print-zone) @page { size: A4; margin: 12mm; }
 
   /* Always hide chrome elements */
   aside, nav, [data-lovable], iframe, .print\\:hidden,
