@@ -229,6 +229,67 @@ export default function AdminSubscriptions() {
         <p className="text-muted-foreground text-sm mt-1">Suivez et gérez les abonnements de toutes les entreprises</p>
       </div>
 
+      <Card className="border-primary/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Inbox className="w-5 h-5 text-primary" />
+            Demandes d'abonnement en attente
+            {pendingRequests.length > 0 && (
+              <Badge className="bg-primary/15 text-primary border-primary/20">{pendingRequests.length}</Badge>
+            )}
+          </CardTitle>
+          <CardDescription>
+            Activez un abonnement après vérification du paiement reçu
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {loadingRequests ? (
+            <div className="flex items-center justify-center py-6">
+              <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+            </div>
+          ) : pendingRequests.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-4 text-center">Aucune demande en attente</p>
+          ) : (
+            <div className="space-y-3">
+              {pendingRequests.map((req) => {
+                const m = req.metadata || {};
+                const planLbl = m.plan ? planLabels[m.plan] : '—';
+                return (
+                  <div key={req.id} className="flex flex-col md:flex-row md:items-center gap-3 p-3 rounded-lg border border-border bg-card">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-medium text-foreground">{m.full_name || 'Anonyme'}</p>
+                        <Badge variant="outline">{planLbl}</Badge>
+                        {m.payment_method && (
+                          <Badge variant="secondary" className="text-xs">
+                            {paymentMethodLabels[m.payment_method] || m.payment_method}
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground flex-wrap">
+                        {m.email && <span className="flex items-center gap-1"><Mail className="w-3 h-3" />{m.email}</span>}
+                        {m.phone && <span className="flex items-center gap-1"><Phone className="w-3 h-3" />{m.phone}</span>}
+                        {m.deposit_number && <span>Réf. dépôt : <span className="font-medium text-foreground">{m.deposit_number}</span></span>}
+                        <span>{new Date(req.created_at).toLocaleString('fr-FR')}</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 shrink-0">
+                      <Button size="sm" variant="outline" onClick={() => dismissRequest.mutate(req.id)} disabled={dismissRequest.isPending}>
+                        Ignorer
+                      </Button>
+                      <Button size="sm" onClick={() => openActivation(req)}>
+                        <CheckCircle2 className="w-4 h-4 mr-1.5" />
+                        Activer
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: 'Total entreprises', value: stats.total, icon: Building2, color: 'text-primary' },
