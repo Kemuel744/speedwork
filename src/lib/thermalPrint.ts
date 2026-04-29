@@ -311,15 +311,22 @@ function printHtmlInIframe(html: string, copies: number): Promise<void> {
 
         const remaining = Math.max(1, Math.min(5, copies || 1));
         waitForImages().then(() => {
-          let left = remaining;
-          const printOnce = () => {
-            try { win.focus(); win.print(); } catch { /* noop */ }
-            left -= 1;
-            if (left > 0) setTimeout(printOnce, 250);
-            else setTimeout(cleanup, 400);
-          };
-          // Délai minimal pour laisser le navigateur appliquer le layout
-          setTimeout(printOnce, 30);
+          const waitForFonts: Promise<void> = (docw as any).fonts?.ready
+            ? (docw as any).fonts.ready.then(() => undefined).catch(() => undefined)
+            : Promise.resolve();
+          waitForFonts.then(() => {
+            let left = remaining;
+            const printOnce = () => {
+              try { win.focus(); win.print(); } catch { /* noop */ }
+              left -= 1;
+              if (left > 0) setTimeout(printOnce, 350);
+              else setTimeout(cleanup, 1000);
+            };
+            // Double rAF + petit délai = layout stable même sur mobile
+            win.requestAnimationFrame(() => win.requestAnimationFrame(() => {
+              setTimeout(printOnce, 50);
+            }));
+          });
         });
       } catch {
         cleanup();
