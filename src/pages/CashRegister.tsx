@@ -23,6 +23,9 @@ interface Session {
 interface Movement {
   id: string; session_id: string; movement_type: string; amount: number; description: string; created_at: string;
 }
+interface LiveSale {
+  id: string; receipt_number: string; total: number; sale_date: string; payment_method: string; items: any;
+}
 
 const movementTypes: Record<string, { label: string; sign: 1 | -1 }> = {
   deposit: { label: 'Dépôt', sign: 1 },
@@ -39,6 +42,7 @@ export default function CashRegister() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [activeSession, setActiveSession] = useState<Session | null>(null);
   const [movements, setMovements] = useState<Movement[]>([]);
+  const [liveSales, setLiveSales] = useState<LiveSale[]>([]);
   const [openOpen, setOpenOpen] = useState(false);
   const [closeOpen, setCloseOpen] = useState(false);
   const [movOpen, setMovOpen] = useState(false);
@@ -64,12 +68,27 @@ export default function CashRegister() {
     if (open) {
       const { data: m } = await supabase.from('cash_movements').select('*').eq('session_id', open.id).order('created_at', { ascending: false });
       setMovements((m || []) as Movement[]);
+      const { data: s } = await supabase.from('sales').select('id, receipt_number, total, sale_date, payment_method, items')
+        .eq('session_id', open.id).order('sale_date', { ascending: false });
+      setLiveSales((s || []) as LiveSale[]);
     } else {
       setMovements([]);
+      setLiveSales([]);
     }
   }, [user]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
+
+  // Realtime: refresh when sales/movements come in for the active session
+  useEffect(() => {
+    if (!user || !activeSession) return;
+    const ch = supabase
+      .channel(`cash-live-${activeSession.id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'sales', filter: `session_id=eq.${activeSession.id}` }, () => fetchAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'cash_movements', filter: `session_id=eq.${activeSession.id}` }, () => fetchAll())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [user, activeSession, fetchAll]);
 
   const openSession = async () => {
     if (!user) return;
