@@ -116,10 +116,19 @@ ${headStyles}
       };
 
       waitForImages().then(() => {
-        setTimeout(() => {
-          try { win.focus(); win.print(); } catch { /* noop */ }
-          setTimeout(cleanup, 600);
-        }, 60);
+        // Attendre aussi les fonts (typo) pour éviter un rendu vide / mal mesuré
+        const waitForFonts: Promise<void> = (doc as any).fonts?.ready
+          ? (doc as any).fonts.ready.then(() => undefined).catch(() => undefined)
+          : Promise.resolve();
+        waitForFonts.then(() => {
+          // Double rAF garantit que le layout est appliqué avant print()
+          win.requestAnimationFrame(() => win.requestAnimationFrame(() => {
+            try { win.focus(); win.print(); } catch { /* noop */ }
+            // Sur certains navigateurs print() est bloquant et ferme tout seul,
+            // sur d'autres il faut un délai plus long avant de retirer l'iframe.
+            setTimeout(cleanup, 1200);
+          }));
+        });
       });
     };
 
