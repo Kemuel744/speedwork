@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -11,6 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { Printer, Tag, Settings as SettingsIcon } from 'lucide-react';
+import { printElement } from '@/lib/printElement';
 
 interface Product {
   id: string; name: string; unit_price: number; barcode: string | null; sku: string | null;
@@ -46,6 +47,7 @@ export default function Labels() {
   const [search, setSearch] = useState('');
   const [tpl, setTpl] = useState<Template>(defaultTpl);
   const [picks, setPicks] = useState<Record<string, number>>({}); // productId -> qty labels
+  const printRef = useRef<HTMLDivElement>(null);
 
   const load = useCallback(async () => {
     if (!user) return;
@@ -80,21 +82,20 @@ export default function Labels() {
         total_labels: labelsToPrint.length,
       });
     }
-    window.print();
+    await printElement(printRef.current, {
+      title: `Etiquettes_${labelsToPrint.length}`,
+      pageMargin: '5mm',
+      extraCss: `
+        body { background: #fff !important; }
+        .label-print-area { padding: 0 !important; }
+      `,
+    });
   };
 
   const setQty = (id: string, q: number) => setPicks(p => ({ ...p, [id]: Math.max(0, q) }));
 
   return (
-    <div className="container mx-auto p-4 lg:p-8 space-y-6">
-      <style>{`
-        @media print {
-          body * { visibility: hidden !important; }
-          .label-print-area, .label-print-area * { visibility: visible !important; }
-          .label-print-area { position: absolute; top: 0; left: 0; width: 100%; }
-          @page { size: A4; margin: 5mm; }
-        }
-      `}</style>
+      <div className="container mx-auto p-4 lg:p-8 space-y-6">
 
       <div className="flex flex-wrap items-center justify-between gap-4 print:hidden">
         <div>
@@ -155,7 +156,7 @@ export default function Labels() {
       </div>
 
       {/* Print area */}
-      <div className="label-print-area">
+      <div ref={printRef} className="label-print-area">
         <div style={{
           display: 'grid',
           gridTemplateColumns: `repeat(${tpl.cols_per_page}, ${tpl.width_mm}mm)`,
