@@ -6,6 +6,7 @@ import {
   LayoutDashboard, User, Settings,
   LogOut, ChevronLeft, CreditCard, BarChart3, MessageCircle, BookOpen, Newspaper,
   Store, History, ShoppingCart, Banknote, Megaphone, UserCog, Receipt, Globe, Boxes,
+  KeyRound,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import speedworkLogo from '@/assets/logo-small.webp';
@@ -61,6 +62,7 @@ const adminSections: NavSection[] = [
     titleKey: 'Équipe',
     items: [
       { labelKey: 'Employés & caissiers', to: '/employees', icon: UserCog },
+      { labelKey: 'Espace employé (PIN)', to: '/staff', icon: KeyRound },
       { labelKey: 'Reçus & impression', to: '/receipt-settings', icon: Receipt },
     ],
   },
@@ -119,6 +121,7 @@ const clientSections: NavSection[] = [
     titleKey: 'Équipe',
     items: [
       { labelKey: 'Employés & caissiers', to: '/employees', icon: UserCog },
+      { labelKey: 'Espace employé (PIN)', to: '/staff', icon: KeyRound },
       { labelKey: 'Reçus & impression', to: '/receipt-settings', icon: Receipt },
     ],
   },
