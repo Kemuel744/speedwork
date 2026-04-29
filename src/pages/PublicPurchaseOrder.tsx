@@ -106,7 +106,12 @@ export default function PublicPurchaseOrder() {
     <div className="min-h-screen bg-muted/30 py-6 print:bg-white print:py-0">
       <div className="max-w-3xl mx-auto px-4">
         <div className="flex justify-end mb-4 print:hidden">
-          <Button onClick={() => window.print()}><Printer className="w-4 h-4 mr-2" />Imprimer</Button>
+          <Button onClick={async () => {
+            try { await (document as any).fonts?.ready; } catch { /* noop */ }
+            window.print();
+          }}>
+            <Printer className="w-4 h-4 mr-2" />Imprimer / PDF
+          </Button>
         </div>
 
         <div className="a4-preview bg-card rounded-lg shadow-sm p-8 print:shadow-none print:p-0">
