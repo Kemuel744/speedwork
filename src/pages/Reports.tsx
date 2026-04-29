@@ -329,7 +329,7 @@ export default function Reports() {
   const tooltipStyle = { background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: '12px' };
 
   return (
-    <div className="page-container">
+    <div className="page-container print-zone">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
