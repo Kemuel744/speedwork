@@ -6,13 +6,6 @@ import { planQuotas, planNames } from '@/lib/planLimits';
 
 type QuotaKey = 'products' | 'depots' | 'users' | 'pos';
 
-const tableFor: Record<QuotaKey, 'products' | 'cash_registers' | 'employees' | 'locations'> = {
-  products: 'products',
-  pos: 'cash_registers',
-  users: 'employees',
-  depots: 'locations',
-};
-
 /**
  * Returns the current usage and the plan cap for one quota key,
  * plus a boolean indicating if the cap has been reached.
@@ -33,13 +26,23 @@ export function usePlanQuota(key: QuotaKey) {
     let active = true;
     if (!user) return;
     (async () => {
-      const table = tableFor[key];
-      let q = supabase.from(table).select('id', { count: 'exact', head: true }).eq('user_id', user.id);
-      if (key === 'depots') q = q.in('location_type', ['depot', 'warehouse']);
-      const { count } = await q;
+      let count = 0;
+      if (key === 'products') {
+        const r = await supabase.from('products').select('id', { count: 'exact', head: true }).eq('user_id', user.id);
+        count = r.count ?? 0;
+      } else if (key === 'pos') {
+        const r = await supabase.from('cash_registers').select('id', { count: 'exact', head: true }).eq('user_id', user.id);
+        count = r.count ?? 0;
+      } else if (key === 'users') {
+        const r = await supabase.from('employees').select('id', { count: 'exact', head: true }).eq('user_id', user.id);
+        count = r.count ?? 0;
+      } else {
+        const r = await supabase.from('locations').select('id', { count: 'exact', head: true }).eq('user_id', user.id).in('location_type', ['depot', 'warehouse']);
+        count = r.count ?? 0;
+      }
       if (!active) return;
       // Owner counts as 1 user
-      setUsed((count ?? 0) + (key === 'users' ? 1 : 0));
+      setUsed(count + (key === 'users' ? 1 : 0));
     })();
     return () => { active = false; };
   }, [user, plan, key]);
