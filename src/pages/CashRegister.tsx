@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Banknote, Plus, Lock, Unlock, ArrowDownToLine, ArrowUpFromLine, Printer, TrendingUp, TrendingDown, Equal } from 'lucide-react';
+import { Banknote, Plus, Lock, Unlock, ArrowDownToLine, ArrowUpFromLine, Printer, TrendingUp, TrendingDown, Equal, ShoppingCart } from 'lucide-react';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { printReceipt } from '@/lib/thermalPrint';
 
