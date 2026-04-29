@@ -13,6 +13,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Plus, Trash2, Save, Users, KeyRound, Shield, Printer } from 'lucide-react';
 import { printElement } from '@/lib/printElement';
 import { useCompany } from '@/contexts/CompanyContext';
+import { QRCodeSVG } from 'qrcode.react';
+import { useNavigate } from 'react-router-dom';
 
 interface Employee {
   id: string; full_name: string; email: string; phone: string; role: string;
@@ -44,6 +46,7 @@ export default function Employees() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { company } = useCompany();
+  const navigate = useNavigate();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Employee | null>(null);
@@ -77,14 +80,25 @@ export default function Employees() {
     const { pin_code, ...rest } = form;
     const payload: any = { ...rest, user_id: user.id };
     if (pin_code && /^\d{4}$/.test(pin_code)) payload.pin_code = pin_code;
-    const { error } = editing
-      ? await supabase.from('employees').update(payload).eq('id', editing.id)
-      : await supabase.from('employees').insert(payload);
+    const isCreate = !editing;
+    const { data: saved, error } = isCreate
+      ? await supabase.from('employees').insert(payload).select().single()
+      : await supabase.from('employees').update(payload).eq('id', editing!.id).select().single();
     if (error) { toast({ title: 'Erreur', description: error.message, variant: 'destructive' }); return; }
-    toast({ title: editing ? 'Employé modifié' : 'Employé ajouté' });
+    toast({
+      title: isCreate ? 'Employé ajouté ✅' : 'Employé modifié',
+      description: isCreate
+        ? `${(saved as any)?.full_name || form.full_name} peut désormais ouvrir son espace personnel avec son code PIN.`
+        : undefined,
+    });
     setOpen(false); setEditing(null);
     setForm({ full_name: '', email: '', phone: '', role: 'cashier', pin_code: '', is_active: true });
-    load();
+    await load();
+    if (isCreate && saved) {
+      // Ouvre directement le dialogue carte imprimable pour le nouvel employé
+      setCardEmp(saved as Employee);
+      setCardPin(pin_code);
+    }
   };
 
   const remove = async (id: string) => {
@@ -139,7 +153,11 @@ export default function Employees() {
           <h1 className="text-2xl lg:text-3xl font-bold">Employés & caissiers</h1>
           <p className="text-muted-foreground text-sm">Gérez votre équipe et leurs permissions</p>
         </div>
-        <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditing(null); }}>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="outline" onClick={() => navigate('/staff')}>
+            <KeyRound className="w-4 h-4 mr-2" />Ouvrir l'espace employé
+          </Button>
+          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditing(null); }}>
           <DialogTrigger asChild>
             <Button><Plus className="w-4 h-4 mr-2" />Nouvel employé</Button>
           </DialogTrigger>
@@ -175,6 +193,7 @@ export default function Employees() {
             </div>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -327,9 +346,21 @@ export default function Employees() {
                       </div>
                     </div>
 
-                    <div style={{ fontSize: '7.5pt', color: '#64748b', textAlign: 'center', lineHeight: 1.4, marginTop: '3mm' }}>
-                      Saisissez ce code sur l'écran <strong>Caisse journalière</strong> pour ouvrir la caisse.<br />
-                      Document confidentiel — ne pas partager.
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '3mm', marginTop: '3mm' }}>
+                      <div style={{ flexShrink: 0, padding: '1mm', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '3px' }}>
+                        <QRCodeSVG
+                          value={`${window.location.origin}/staff`}
+                          size={64}
+                          level="M"
+                          includeMargin={false}
+                        />
+                      </div>
+                      <div style={{ fontSize: '7.5pt', color: '#475569', lineHeight: 1.4 }}>
+                        <strong style={{ color: '#0f172a' }}>Scannez ce QR</strong> avec votre téléphone pour ouvrir votre espace personnel, puis saisissez votre code PIN.
+                        <div style={{ marginTop: '1mm', fontSize: '6.5pt', color: '#94a3b8' }}>
+                          Document confidentiel — ne pas partager.
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

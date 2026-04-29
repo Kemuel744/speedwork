@@ -5,6 +5,7 @@ import { CompanyProvider } from "@/contexts/CompanyContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { DocumentsProvider } from "@/contexts/DocumentsContext";
 import { LocationProvider } from "@/contexts/LocationContext";
+import { StaffProvider } from "@/contexts/StaffContext";
 
 const AppLayout = lazy(() => import("@/components/layout/AppLayout"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
@@ -25,6 +26,7 @@ const MarketplaceSupplier = lazy(() => import("@/pages/MarketplaceSupplier"));
 const CashRegister = lazy(() => import("@/pages/CashRegister"));
 const Employees = lazy(() => import("@/pages/Employees"));
 const ReceiptSettingsPage = lazy(() => import("@/pages/ReceiptSettings"));
+const StaffSpace = lazy(() => import("@/pages/StaffSpace"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 // Mapping centralisé : ancienne route -> nouvelle destination (avec onglet)
@@ -131,8 +133,12 @@ export default function AuthenticatedRoutes() {
         <CurrencyProvider>
           <LocationProvider>
             <DocumentsProvider>
+              <StaffProvider>
               <Suspense fallback={<PageLoader />}>
                 <Routes>
+                  {/* Espace employé plein écran (hors AppLayout) */}
+                  <Route path="/staff" element={<StaffSpace />} />
+
                   <Route element={<AppLayout />}>
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/reports" element={<Reports />} />
@@ -194,6 +200,7 @@ export default function AuthenticatedRoutes() {
                   <Route path="*" element={<LegacyOrNotFound />} />
                 </Routes>
               </Suspense>
+              </StaffProvider>
             </DocumentsProvider>
           </LocationProvider>
         </CurrencyProvider>
