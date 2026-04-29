@@ -269,24 +269,54 @@ export default function CashRegister() {
               </div>
               <Badge>Ouverte depuis {new Date(activeSession.opened_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</Badge>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+            {(() => {
+              const cashSales = liveSales.filter(s => s.payment_method === 'cash');
+              const liveCashTotal = cashSales.reduce((s, x) => s + Number(x.total), 0);
+              const liveIn = movements.filter(m => movementTypes[m.movement_type]?.sign === 1).reduce((s, m) => s + Number(m.amount), 0);
+              const liveOut = movements.filter(m => movementTypes[m.movement_type]?.sign === -1).reduce((s, m) => s + Number(m.amount), 0);
+              const expected = Number(activeSession.opening_amount) + liveCashTotal + liveIn - liveOut;
+              return (
+                <>
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-sm">
               <div className="bg-card p-3 rounded-lg border">
                 <p className="text-xs text-muted-foreground">Fond initial</p>
                 <p className="font-bold">{displayAmount(activeSession.opening_amount)}</p>
               </div>
               <div className="bg-card p-3 rounded-lg border">
-                <p className="text-xs text-muted-foreground">Mouvements</p>
-                <p className="font-bold">{movements.length}</p>
+                <p className="text-xs text-muted-foreground flex items-center gap-1"><ShoppingCart className="w-3 h-3" />Ventes espèces ({cashSales.length})</p>
+                <p className="font-bold text-primary">+{displayAmount(liveCashTotal)}</p>
               </div>
               <div className="bg-card p-3 rounded-lg border">
                 <p className="text-xs text-muted-foreground flex items-center gap-1"><ArrowDownToLine className="w-3 h-3" />Entrées</p>
-                <p className="font-bold text-green-600">+{displayAmount(movements.filter(m => movementTypes[m.movement_type]?.sign === 1).reduce((s, m) => s + Number(m.amount), 0))}</p>
+                <p className="font-bold text-green-600">+{displayAmount(liveIn)}</p>
               </div>
               <div className="bg-card p-3 rounded-lg border">
                 <p className="text-xs text-muted-foreground flex items-center gap-1"><ArrowUpFromLine className="w-3 h-3" />Sorties</p>
-                <p className="font-bold text-red-600">-{displayAmount(movements.filter(m => movementTypes[m.movement_type]?.sign === -1).reduce((s, m) => s + Number(m.amount), 0))}</p>
+                <p className="font-bold text-red-600">-{displayAmount(liveOut)}</p>
+              </div>
+              <div className="bg-primary/10 p-3 rounded-lg border border-primary/30">
+                <p className="text-xs text-muted-foreground">Attendu en caisse</p>
+                <p className="font-bold text-primary">{displayAmount(expected)}</p>
               </div>
             </div>
+
+            {cashSales.length > 0 && (
+              <div className="mt-4 space-y-1.5">
+                <p className="text-xs font-semibold text-muted-foreground uppercase">Ventes récentes (live)</p>
+                {cashSales.slice(0, 5).map(s => (
+                  <div key={s.id} className="flex items-center justify-between text-sm py-1 border-b border-border/50 last:border-0">
+                    <div className="min-w-0 flex-1">
+                      <span className="font-mono text-xs">{s.receipt_number}</span>
+                      <span className="text-muted-foreground ml-2 text-xs">{new Date(s.sale_date).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                    <span className="text-primary font-semibold">+{displayAmount(Number(s.total))}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+                </>
+              );
+            })()}
 
             {movements.length > 0 && (
               <div className="mt-4 space-y-1.5">
