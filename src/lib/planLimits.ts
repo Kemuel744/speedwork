@@ -14,7 +14,7 @@ export interface PlanLimits {
  */
 export interface PlanQuotas {
   maxProducts: number | null;
-  maxDepots: number;
+  maxDepots: number | null;
   maxUsers: number | null;
   maxPos: number | null;
 }
