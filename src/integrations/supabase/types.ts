@@ -3373,6 +3373,29 @@ export type Database = {
       generate_return_number: { Args: { _user_id: string }; Returns: string }
       generate_session_number: { Args: { _user_id: string }; Returns: string }
       generate_transfer_number: { Args: { _user_id: string }; Returns: string }
+      get_admin_clients_overview: {
+        Args: never
+        Returns: {
+          account_type: string
+          city: string
+          company_name: string
+          country: string
+          created_at: string
+          current_plan: string
+          email: string
+          full_name: string
+          invoiced_revenue: number
+          invoices_count: number
+          paid_invoices_revenue: number
+          phone: string
+          pos_revenue: number
+          pos_sales_count: number
+          subscription_end: string
+          subscription_status: string
+          total_revenue: number
+          user_id: string
+        }[]
+      }
       get_admin_contacts: {
         Args: never
         Returns: {
