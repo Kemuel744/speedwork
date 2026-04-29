@@ -159,17 +159,31 @@
     overflow: visible !important;
   }
 
-  /* When a print-zone is present, hide everything else; otherwise print normally */
-  body:has(.a4-preview) > *,
-  body:has(.guide-doc) > *,
-  body:has(.print-zone) > * {
+  /* When a printable target is present, hide only siblings of the app root.
+     The printable target itself is isolated below with visibility rules so the
+     rest of the app layout cannot leak into A4 output. */
+  body:has(.a4-preview) > *:not(#root),
+  body:has(.guide-doc) > *:not(#root),
+  body:has(.print-zone) > *:not(#root) {
     display: none !important;
   }
 
-  /* === Document preview (factures/devis) === */
   body:has(.a4-preview) #root,
+  body:has(.guide-doc) #root,
+  body:has(.print-zone) #root {
+    display: block !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    background: #fff !important;
+  }
+
+  /* === Document preview (factures/devis) === */
   body:has(.a4-preview) #root * {
-    display: revert !important;
+    visibility: hidden !important;
+  }
+  body:has(.a4-preview) .a4-preview,
+  body:has(.a4-preview) .a4-preview * {
+    visibility: visible !important;
   }
   body:has(.a4-preview) .no-print,
   body:has(.a4-preview) .print\:hidden,
@@ -180,7 +194,7 @@
   }
 
   body:has(.a4-preview) .a4-preview {
-    position: relative !important;
+    position: absolute !important;
     left: 0 !important;
     top: 0 !important;
     width: 210mm;
