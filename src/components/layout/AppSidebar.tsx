@@ -72,6 +72,7 @@ const adminSections: NavSection[] = [
   {
     titleKey: 'nav.administration',
     items: [
+      { labelKey: 'Clients & CA', to: '/admin/clients', icon: Users },
       { labelKey: 'nav.subscriptions', to: '/admin/subscriptions', icon: CreditCard },
       { labelKey: 'nav.blog', to: '/admin/blog', icon: Newspaper },
     ],
