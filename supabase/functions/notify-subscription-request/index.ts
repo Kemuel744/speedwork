@@ -12,28 +12,8 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Require authentication
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return new Response(
-        JSON.stringify({ error: "Non autorisé" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    const supabaseAnon = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
-    const { data: { user } } = await supabaseAnon.auth.getUser();
-    if (!user) {
-      return new Response(
-        JSON.stringify({ error: "Non autorisé" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
+    // Public endpoint: prospects (not yet signed in) submit subscription requests.
+    // Strict input validation below prevents abuse.
     const { full_name, email, phone, plan, amount, payment_method, deposit_number } = await req.json();
 
     if (!full_name || !email || !phone || !plan) {
