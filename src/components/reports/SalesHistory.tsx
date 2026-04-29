@@ -1,10 +1,22 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Receipt, Printer, Trash2, Search, Calendar } from 'lucide-react';
+import { Receipt, Printer, Ban, Search, Calendar, AlertTriangle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
 import { useCompany } from '@/contexts/CompanyContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -17,6 +29,7 @@ interface SaleItem {
   quantity: number;
   unit_price: number;
   total: number;
+  product_id?: string;
 }
 
 interface Sale {
@@ -25,6 +38,9 @@ interface Sale {
   items: SaleItem[];
   total: number;
   sale_date: string;
+  status?: string;
+  session_id?: string | null;
+  payment_method?: string | null;
 }
 
 interface SalesHistoryProps {
@@ -35,10 +51,14 @@ interface SalesHistoryProps {
 export default function SalesHistory({ displayAmount, currency }: SalesHistoryProps) {
   const { company } = useCompany();
   const { user } = useAuth();
+  const { toast } = useToast();
   const [sales, setSales] = useState<Sale[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
+  const [cancelTarget, setCancelTarget] = useState<Sale | null>(null);
+  const [cancelReason, setCancelReason] = useState('');
+  const [cancelling, setCancelling] = useState(false);
 
   const fetchSales = useCallback(async () => {
     if (!user) return;
@@ -55,6 +75,9 @@ export default function SalesHistory({ displayAmount, currency }: SalesHistoryPr
         items: (s.items as SaleItem[]) || [],
         total: Number(s.total),
         sale_date: s.sale_date,
+        status: s.status || 'completed',
+        session_id: s.session_id,
+        payment_method: s.payment_method,
       })));
     }
     setLoading(false);
@@ -67,9 +90,71 @@ export default function SalesHistory({ displayAmount, currency }: SalesHistoryPr
     s.items.some(i => i.name.toLowerCase().includes(search.toLowerCase()))
   );
 
-  const deleteSale = async (id: string) => {
-    await supabase.from('sales').delete().eq('id', id);
-    setSales(prev => prev.filter(s => s.id !== id));
+  const confirmCancelSale = async () => {
+    if (!cancelTarget || !user || cancelling) return;
+    setCancelling(true);
+    try {
+      const sale = cancelTarget;
+      // 1) Mark sale as cancelled (keep traceability instead of hard delete)
+      const { error: upErr } = await supabase
+        .from('sales')
+        .update({
+          status: 'cancelled',
+          notes: cancelReason ? `Annulée : ${cancelReason}` : 'Annulée',
+        } as any)
+        .eq('id', sale.id);
+      if (upErr) throw upErr;
+
+      // 2) Restore stock for each line item with a known product
+      for (const item of sale.items) {
+        if (!item.product_id) continue;
+        const { data: prod } = await supabase
+          .from('products')
+          .select('quantity_in_stock')
+          .eq('id', item.product_id)
+          .maybeSingle();
+        if (prod) {
+          await supabase
+            .from('products')
+            .update({ quantity_in_stock: Number((prod as any).quantity_in_stock || 0) + item.quantity } as any)
+            .eq('id', item.product_id);
+        }
+        await supabase.from('stock_movements').insert({
+          user_id: user.id,
+          product_id: item.product_id,
+          movement_type: 'entry',
+          quantity: item.quantity,
+          reason: `Annulation vente ${sale.receipt_number}`,
+        } as any);
+      }
+
+      // 3) If sale was attached to a cash session and paid in cash, register a cash-out adjustment
+      if (sale.session_id && (sale.payment_method ?? 'cash') === 'cash' && sale.total > 0) {
+        await supabase.from('cash_movements').insert({
+          user_id: user.id,
+          session_id: sale.session_id,
+          movement_type: 'expense',
+          amount: sale.total,
+          description: `Ajustement annulation ${sale.receipt_number}${cancelReason ? ` — ${cancelReason}` : ''}`,
+        } as any);
+      }
+
+      toast({
+        title: 'Vente annulée',
+        description: 'Stock restauré et caisse ajustée.',
+      });
+      setCancelTarget(null);
+      setCancelReason('');
+      await fetchSales();
+    } catch (e: any) {
+      toast({
+        title: 'Annulation impossible',
+        description: e?.message || 'Une erreur est survenue.',
+        variant: 'destructive',
+      });
+    } finally {
+      setCancelling(false);
+    }
   };
 
   const printSaleReceipt = (sale: Sale) => {
@@ -147,15 +232,28 @@ export default function SalesHistory({ displayAmount, currency }: SalesHistoryPr
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-sm font-bold">{displayAmount(sale.total, currency)}</p>
+                    <p className={`text-sm font-bold ${sale.status === 'cancelled' ? 'line-through text-muted-foreground' : ''}`}>
+                      {displayAmount(sale.total, currency)}
+                    </p>
+                    {sale.status === 'cancelled' && (
+                      <Badge variant="destructive" className="text-[10px] mt-1">Annulée</Badge>
+                    )}
                   </div>
                   <div className="flex gap-1 shrink-0">
                     <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => printSaleReceipt(sale)}>
                       <Printer className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => deleteSale(sale.id)}>
-                      <Trash2 className="w-4 h-4 text-destructive" />
-                    </Button>
+                    {sale.status !== 'cancelled' && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        title="Annuler la vente"
+                        onClick={() => { setCancelTarget(sale); setCancelReason(''); }}
+                      >
+                        <Ban className="w-4 h-4 text-destructive" />
+                      </Button>
+                    )}
                   </div>
                 </div>
               </CardContent>
@@ -205,6 +303,47 @@ export default function SalesHistory({ displayAmount, currency }: SalesHistoryPr
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Cancel confirmation */}
+      <AlertDialog open={!!cancelTarget} onOpenChange={(o) => { if (!o) { setCancelTarget(null); setCancelReason(''); } }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-destructive" />
+              Annuler la vente {cancelTarget?.receipt_number} ?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2">
+              <span className="block">
+                Le stock des produits sera restauré automatiquement.
+              </span>
+              {cancelTarget?.session_id && (cancelTarget?.payment_method ?? 'cash') === 'cash' && (
+                <span className="block">
+                  Un mouvement de sortie de <strong>{cancelTarget && displayAmount(cancelTarget.total, currency)}</strong> sera enregistré dans la session de caisse.
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground">Motif (optionnel)</label>
+            <Textarea
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+              placeholder="Erreur de saisie, retour client, doublon…"
+              rows={2}
+            />
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={cancelling}>Retour</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => { e.preventDefault(); confirmCancelSale(); }}
+              disabled={cancelling}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {cancelling ? 'Annulation…' : 'Confirmer l\'annulation'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
