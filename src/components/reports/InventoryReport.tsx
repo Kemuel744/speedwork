@@ -1,10 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { ClipboardCheck, AlertCircle, AlertTriangle, CheckCircle2, Printer, Package } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { printElement } from '@/lib/printElement';
 
 interface Product {
   id: string;
@@ -24,6 +25,7 @@ interface InventoryReportProps {
 
 export default function InventoryReport({ products, displayAmount, currency }: InventoryReportProps) {
   const [open, setOpen] = useState(false);
+  const printRef = useRef<HTMLDivElement>(null);
 
   const categorized = useMemo(() => {
     const outOfStock: Product[] = [];
@@ -46,7 +48,7 @@ export default function InventoryReport({ products, displayAmount, currency }: I
     return { outOfStock, lowStock, healthyStock, totalValue, totalUnits };
   }, [products]);
 
-  const printReport = () => window.print();
+  const printReport = () => printElement(printRef.current, { title: `Inventaire_${format(new Date(), 'yyyy-MM-dd')}` });
 
   const Section = ({
     title,
@@ -119,6 +121,7 @@ export default function InventoryReport({ products, displayAmount, currency }: I
           </DialogTitle>
         </DialogHeader>
 
+        <div ref={printRef}>
         {/* Summary KPIs */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 my-4">
           <div className="rounded-lg border border-border bg-card p-3">
@@ -158,6 +161,7 @@ export default function InventoryReport({ products, displayAmount, currency }: I
             icon={CheckCircle2}
             variant="success"
           />
+        </div>
         </div>
 
         {products.length === 0 && (
