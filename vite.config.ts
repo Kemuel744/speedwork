@@ -147,6 +147,8 @@ export default defineConfig(({ mode }) => ({
         manualChunks: {
           "vendor-react": ["react", "react-dom", "react-router-dom"],
           "vendor-supabase": ["@supabase/supabase-js"],
+          "vendor-motion": ["framer-motion"],
+          "vendor-icons": ["lucide-react"],
           "vendor-ui": [
             "@radix-ui/react-dialog",
             "@radix-ui/react-dropdown-menu",
@@ -160,5 +162,8 @@ export default defineConfig(({ mode }) => ({
         },
       },
     },
+    target: "es2020",
+    cssCodeSplit: true,
+    reportCompressedSize: false,
   },
 }));
