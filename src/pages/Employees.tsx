@@ -349,7 +349,7 @@ export default function Employees() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '3mm', marginTop: '3mm' }}>
                       <div style={{ flexShrink: 0, padding: '1mm', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '3px' }}>
                         <QRCodeSVG
-                          value={`${window.location.origin}/staff`}
+                          value={`https://speedwork.pro/staff`}
                           size={64}
                           level="M"
                           includeMargin={false}
