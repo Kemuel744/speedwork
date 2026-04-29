@@ -58,10 +58,11 @@ export default function Locations() {
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
-  // Plan-based depot quota (shop is always allowed; only depot/warehouse counts)
+  // Plan-based depot quota (shop is always allowed; only depot/warehouse counts).
+  // null = unlimited (Pro plan).
   const depotQuota = planQuotas[plan].maxDepots;
   const depotsUsed = items.filter(l => l.location_type === 'warehouse').length;
-  const depotLimitReached = depotsUsed >= depotQuota;
+  const depotLimitReached = depotQuota !== null && depotsUsed >= depotQuota;
 
   const openNew = () => { setEditing(null); setForm(empty); setOpen(true); };
   const openEdit = (l: LocationRow) => { setEditing(l); const { id, ...rest } = l; setForm(rest); setOpen(true); };
@@ -75,7 +76,7 @@ export default function Locations() {
     const isCreatingDepot = form.location_type === 'warehouse';
     const wasDepot = editing?.location_type === 'warehouse';
     const wouldAddDepot = isCreatingDepot && (!editing || !wasDepot);
-    if (wouldAddDepot && depotsUsed >= depotQuota) {
+    if (wouldAddDepot && depotQuota !== null && depotsUsed >= depotQuota) {
       toast({
         title: 'Limite du plan atteinte',
         description: `Le plan ${planNames[plan]} autorise ${depotQuota} dépôt${depotQuota > 1 ? 's' : ''}. Mettez à niveau votre abonnement pour en ajouter davantage.`,

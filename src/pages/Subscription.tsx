@@ -20,7 +20,7 @@ const plans = [
   {
     id: 'monthly',
     name: 'Starter',
-    price: 7500,
+    price: 5000,
     period: '/mois',
     description: 'Pour petites boutiques',
     features: [
@@ -37,7 +37,7 @@ const plans = [
   {
     id: 'annual',
     name: 'Business',
-    price: 15000,
+    price: 10000,
     period: '/mois',
     description: 'Pour commerces en croissance',
     features: [
@@ -55,7 +55,7 @@ const plans = [
   {
     id: 'enterprise',
     name: 'Pro',
-    price: 35000,
+    price: 30000,
     period: '/mois',
     description: 'Pour structures avancées',
     features: [
@@ -131,7 +131,7 @@ export default function Subscription() {
     setSubmitting(true);
     try {
       const plan = plans.find(p => p.id === selectedPlan);
-      const amount = plan?.price ?? (selectedPlan === 'enterprise' ? 35000 : selectedPlan === 'annual' ? 15000 : 7500);
+      const amount = plan?.price ?? (selectedPlan === 'enterprise' ? 30000 : selectedPlan === 'annual' ? 10000 : 5000);
       const method = depositMethods.find(m => m.id === selectedMethod);
 
       // Send notification to admin via edge function
@@ -167,7 +167,7 @@ export default function Subscription() {
       <PublicNavbar />
       <SEO
         title="Tarifs – Gestion d'entreprise tout-en-un"
-        description="Abonnement SpeedWork pour boutiques, dépôts et pharmacies : Starter 7 500 FCFA, Business 15 000 FCFA, Pro 35 000 FCFA / mois. Paiement par Mobile Money."
+        description="Abonnement SpeedWork pour boutiques, dépôts et pharmacies : Starter 5 000 FCFA, Business 10 000 FCFA, Pro 30 000 FCFA / mois. Paiement par Mobile Money."
         path="/tarifs"
       />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
@@ -177,7 +177,7 @@ export default function Subscription() {
           {
             "@type": "Question",
             "name": "Combien coûte SpeedWork ?",
-            "acceptedAnswer": { "@type": "Answer", "text": "SpeedWork propose trois formules : Starter à 7 500 FCFA/mois pour petites boutiques, Business à 15 000 FCFA/mois pour commerces en croissance, et Pro à 35 000 FCFA/mois pour les structures avancées." }
+            "acceptedAnswer": { "@type": "Answer", "text": "SpeedWork propose trois formules : Starter à 5 000 FCFA/mois pour petites boutiques, Business à 10 000 FCFA/mois pour commerces en croissance, et Pro à 30 000 FCFA/mois pour les structures avancées." }
           },
           {
             "@type": "Question",
@@ -337,7 +337,7 @@ export default function Subscription() {
               </Button>
             </div>
             <p className="text-sm text-muted-foreground mb-2">
-              Plan sélectionné : <strong>{selectedPlan === 'annual' ? 'Business — 15 000 FCFA/mois' : selectedPlan === 'enterprise' ? 'Pro — 35 000 FCFA/mois' : 'Starter — 7 500 FCFA/mois'}</strong>
+              Plan sélectionné : <strong>{selectedPlan === 'annual' ? 'Business — 10 000 FCFA/mois' : selectedPlan === 'enterprise' ? 'Pro — 30 000 FCFA/mois' : 'Starter — 5 000 FCFA/mois'}</strong>
             </p>
             <p className="text-sm text-muted-foreground mb-6">
               Envoyez le montant à l'un des numéros ci-dessous, puis cliquez sur "J'ai effectué le dépôt".
@@ -370,7 +370,7 @@ export default function Subscription() {
 
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-sm text-amber-800">
               <p className="font-semibold mb-1">⚠️ Important</p>
-              <p>Envoyez exactement <strong>{selectedPlan === 'annual' ? '15 000' : selectedPlan === 'enterprise' ? '35 000' : '7 500'} FCFA</strong> au numéro indiqué. Après le dépôt, remplissez le formulaire ci-dessous pour recevoir votre clé d'activation.</p>
+              <p>Envoyez exactement <strong>{selectedPlan === 'annual' ? '10 000' : selectedPlan === 'enterprise' ? '30 000' : '5 000'} FCFA</strong> au numéro indiqué. Après le dépôt, remplissez le formulaire ci-dessous pour recevoir votre clé d'activation.</p>
             </div>
 
             <Button

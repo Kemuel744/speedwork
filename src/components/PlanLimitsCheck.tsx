@@ -98,7 +98,7 @@ export default function PlanLimitsCheck({ userId, planId }: Props) {
       label: 'Dépôts',
       used: data.depots,
       cap: quotas.maxDepots,
-      exceeded: data.depots > quotas.maxDepots,
+      exceeded: quotas.maxDepots !== null && data.depots > quotas.maxDepots,
     },
     {
       key: 'users',

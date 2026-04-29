@@ -236,7 +236,7 @@ export default function AdminSubscriptions() {
               {[
                 ['Entreprise', selectedSub.profiles?.company_name || '—'],
                 ['Email', selectedSub.profiles?.email || '—'],
-                ['Plan', selectedSub.plan === 'monthly' ? 'Starter — 7 500 FCFA/mois' : selectedSub.plan === 'enterprise' ? 'Pro — 35 000 FCFA/mois' : 'Business — 15 000 FCFA/mois'],
+                ['Plan', selectedSub.plan === 'monthly' ? 'Starter — 5 000 FCFA/mois' : selectedSub.plan === 'enterprise' ? 'Pro — 30 000 FCFA/mois' : 'Business — 10 000 FCFA/mois'],
                 ['Montant', `${selectedSub.amount.toLocaleString()} FCFA`],
                 ['Paiement', paymentMethodLabels[selectedSub.payment_method] || selectedSub.payment_method],
                 ['Début', new Date(selectedSub.start_date).toLocaleDateString('fr-FR')],

@@ -31,6 +31,7 @@ import {
   PieChart, Pie, Cell, Legend, AreaChart, Area,
 } from 'recharts';
 import { printElement } from '@/lib/printElement';
+import { usePlanQuota } from '@/hooks/usePlanQuota';
 
 
 const EXPENSE_CATEGORIES = [
@@ -114,6 +115,7 @@ export default function Reports() {
 
   const isAdmin = user?.role === 'admin';
   const hasProAccess = isAdmin || (!trialStatus.trialExpired && !trialStatus.isLoading);
+  const productsQuota = usePlanQuota('products');
 
   const [period, setPeriod] = useState<Period>('month');
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -271,6 +273,14 @@ export default function Reports() {
 
   const addProduct = async () => {
     if (!user || !productForm.name) return;
+    if (productsQuota.cap !== null && productsQuota.used >= productsQuota.cap) {
+      toast({
+        title: 'Limite du plan atteinte',
+        description: `Le plan ${productsQuota.planName} autorise ${productsQuota.cap} produits. Mettez à niveau votre abonnement pour en ajouter davantage.`,
+        variant: 'destructive',
+      });
+      return;
+    }
     const payload: any = {
       user_id: user.id,
       name: productForm.name,
