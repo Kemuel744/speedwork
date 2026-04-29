@@ -3350,6 +3350,10 @@ export type Database = {
       }
     }
     Functions: {
+      cancel_sale: {
+        Args: { _reason?: string; _sale_id: string }
+        Returns: Json
+      }
       close_cash_session: {
         Args: {
           _closed_by_name?: string
