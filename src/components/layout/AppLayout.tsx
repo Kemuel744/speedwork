@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useStaff } from '@/contexts/StaffContext';
 import AppSidebar from './AppSidebar';
 import ChatBot from '@/components/chat/ChatBot';
 import NotificationBell from '@/components/NotificationBell';
@@ -11,6 +12,7 @@ import { cn } from '@/lib/utils';
 
 export default function AppLayout() {
   const { user, isLoading } = useAuth();
+  const { staff } = useStaff();
   // Sur mobile (<1024px) la sidebar est cachée par défaut (collapsed=true).
   // Sur desktop, elle est ouverte. Évite que la sidebar masque le contenu sur mobile au chargement.
   const [collapsed, setCollapsed] = useState(() =>
@@ -37,6 +39,11 @@ export default function AppLayout() {
   const location = useLocation();
 
   if (!user) return <Navigate to="/login" replace />;
+
+  // Si un employé est connecté via PIN dans l'Espace employé,
+  // il ne doit PAS pouvoir naviguer dans le reste du site (sidebar admin, etc.).
+  // On le renvoie systématiquement vers /staff.
+  if (staff) return <Navigate to="/staff" replace />;
 
   // Block non-admin users from accessing admin routes
   if (user.role !== 'admin' && location.pathname.startsWith('/admin')) {
