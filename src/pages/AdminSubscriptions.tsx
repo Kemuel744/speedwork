@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Search, Building2, CreditCard, Users, TrendingUp, Ban, RefreshCw, Eye, Loader2 } from 'lucide-react';
+import { Search, Building2, CreditCard, Users, TrendingUp, Ban, RefreshCw, Eye, Loader2, Inbox, CheckCircle2, Mail, Phone, Copy } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -20,6 +20,32 @@ type SubscriptionRow = Tables<'subscriptions'>;
 interface SubscriptionWithProfile extends SubscriptionRow {
   profiles: { company_name: string; email: string } | null;
 }
+
+interface PendingRequest {
+  id: string;
+  created_at: string;
+  metadata: {
+    full_name?: string;
+    email?: string;
+    phone?: string;
+    plan?: 'monthly' | 'annual' | 'enterprise';
+    amount?: number;
+    payment_method?: string;
+    deposit_number?: string;
+  };
+}
+
+const planAmounts: Record<string, number> = {
+  monthly: 7500,
+  annual: 15000,
+  enterprise: 35000,
+};
+
+const planLabels: Record<string, string> = {
+  monthly: 'Starter',
+  annual: 'Business',
+  enterprise: 'Pro',
+};
 
 const paymentMethodLabels: Record<string, string> = {
   mtn_mobile_money: 'MTN Mobile Money',
@@ -41,6 +67,93 @@ export default function AdminSubscriptions() {
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterPlan, setFilterPlan] = useState<string>('all');
   const [selectedSub, setSelectedSub] = useState<SubscriptionWithProfile | null>(null);
+  const [activatingRequest, setActivatingRequest] = useState<PendingRequest | null>(null);
+  const [activationPlan, setActivationPlan] = useState<'monthly' | 'annual' | 'enterprise'>('monthly');
+  const [activationMethod, setActivationMethod] = useState<string>('mtn_mobile_money');
+  const [activationAmount, setActivationAmount] = useState<number>(7500);
+  const [activationResult, setActivationResult] = useState<{ access_code: string; end_date: string; email?: string } | null>(null);
+
+  // Pending subscription requests (from prospects via /tarifs)
+  const { data: pendingRequests = [], isLoading: loadingRequests } = useQuery({
+    queryKey: ['admin-pending-subscription-requests'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('id, created_at, metadata, is_read')
+        .eq('type', 'subscription_request')
+        .eq('is_read', false)
+        .order('created_at', { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      return (data || []) as unknown as PendingRequest[];
+    },
+    refetchInterval: 30000,
+  });
+
+  const activateRequest = useMutation({
+    mutationFn: async (req: PendingRequest) => {
+      const email = req.metadata?.email?.trim().toLowerCase();
+      if (!email) throw new Error("Email manquant dans la demande.");
+
+      // Find the registered user by email in profiles
+      const { data: profile, error: profErr } = await supabase
+        .from('profiles')
+        .select('user_id, email')
+        .ilike('email', email)
+        .maybeSingle();
+      if (profErr) throw profErr;
+      if (!profile?.user_id) {
+        throw new Error(`Aucun compte trouvé pour ${email}. Le client doit d'abord créer son compte.`);
+      }
+
+      const { data, error } = await supabase.functions.invoke('generate-access-code', {
+        body: {
+          plan: activationPlan,
+          payment_method: activationMethod,
+          amount: activationAmount,
+          user_id: profile.user_id,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      // Mark notification as read so it disappears from the pending list
+      await supabase.from('notifications').update({ is_read: true }).eq('id', req.id);
+
+      return { ...data, email: profile.email } as { access_code: string; plan: string; end_date: string; email: string };
+    },
+    onSuccess: (data) => {
+      setActivationResult({ access_code: data.access_code, end_date: data.end_date, email: data.email });
+      setActivatingRequest(null);
+      queryClient.invalidateQueries({ queryKey: ['admin-pending-subscription-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-subscriptions'] });
+      toast({ title: 'Abonnement activé', description: `Code d'accès : ${data.access_code}` });
+    },
+    onError: (err: Error) => {
+      toast({ title: "Activation impossible", description: err.message, variant: 'destructive' });
+    },
+  });
+
+  const dismissRequest = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('notifications').update({ is_read: true }).eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-pending-subscription-requests'] });
+      toast({ title: 'Demande archivée' });
+    },
+  });
+
+  const openActivation = (req: PendingRequest) => {
+    const plan = (req.metadata?.plan || 'monthly') as 'monthly' | 'annual' | 'enterprise';
+    setActivationPlan(plan);
+    setActivationAmount(req.metadata?.amount && req.metadata.amount > 0 ? req.metadata.amount : planAmounts[plan]);
+    setActivationMethod(req.metadata?.payment_method && ['mtn_mobile_money','airtel_money','orange_money','bank_card'].includes(req.metadata.payment_method)
+      ? req.metadata.payment_method
+      : 'mtn_mobile_money');
+    setActivatingRequest(req);
+  };
 
   const { data: subscriptions = [], isLoading } = useQuery({
     queryKey: ['admin-subscriptions'],
