@@ -20,29 +20,29 @@ export interface PlanQuotas {
 }
 
 export const planQuotas: Record<PlanId, PlanQuotas> = {
-  monthly:    { maxProducts: 750,  maxDepots: 0, maxUsers: 1,    maxPos: 1 },
-  annual:     { maxProducts: 1000, maxDepots: 1, maxUsers: null, maxPos: 1 },
-  enterprise: { maxProducts: null, maxDepots: 2, maxUsers: null, maxPos: null },
+  monthly:    { maxProducts: 500,  maxDepots: 0, maxUsers: 1,    maxPos: 1 },
+  annual:     { maxProducts: 2000, maxDepots: 1, maxUsers: 3,    maxPos: 1 },
+  enterprise: { maxProducts: null, maxDepots: null, maxUsers: null, maxPos: null },
 };
 
 /** Source of truth — used on public pricing cards AND admin screens. */
 export const planLimits: Record<PlanId, PlanLimits> = {
   monthly: {
-    products: "Jusqu'à 750",
+    products: "Jusqu'à 500",
     depots: 'Aucun',
     users: '1 utilisateur',
     pos: '1 point de vente',
   },
   annual: {
-    products: '750 à 1 000',
+    products: "Jusqu'à 2 000",
     depots: '1 dépôt',
-    users: 'Plusieurs utilisateurs',
+    users: "Jusqu'à 3 utilisateurs",
     pos: '1 point de vente',
   },
   enterprise: {
-    products: 'Plus de 1 000',
-    depots: '2 dépôts',
-    users: 'Plusieurs utilisateurs',
+    products: 'Illimités',
+    depots: 'Illimités',
+    users: 'Illimités',
     pos: 'Multi-points de vente',
   },
 };

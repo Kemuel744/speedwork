@@ -157,19 +157,19 @@ export default function Guide() {
             </thead>
             <tbody>
               <tr>
-                <td style={styles.td}><strong>Mensuel</strong></td>
+                <td style={styles.td}><strong>Starter</strong></td>
                 <td style={styles.td}>5 000 FCFA/mois</td>
-                <td style={styles.td}>Factures & devis illimités, export PDF, signature électronique</td>
+                <td style={styles.td}>Petites boutiques : stock, facturation, ventes quotidiennes (jusqu'à 500 produits, 1 utilisateur, 1 point de vente)</td>
               </tr>
               <tr style={{ background: '#f0f7ff' }}>
-                <td style={styles.td}><strong>Annuel ⭐</strong></td>
-                <td style={styles.td}>3 000 FCFA/mois (36 000 FCFA/an)</td>
-                <td style={styles.td}>Tout le plan Mensuel + tableau de bord avancé, multi-utilisateurs, support prioritaire. Économisez 40% !</td>
+                <td style={styles.td}><strong>Business ⭐</strong></td>
+                <td style={styles.td}>10 000 FCFA/mois</td>
+                <td style={styles.td}>Commerces en croissance : 1 dépôt, fournisseurs, rapports, jusqu'à 2 000 produits et 3 utilisateurs</td>
               </tr>
               <tr>
-                <td style={styles.td}><strong>Entreprise</strong></td>
-                <td style={styles.td}>15 000 FCFA/mois</td>
-                <td style={styles.td}>1 admin + 3 collaborateurs, messagerie interne, gestion centralisée</td>
+                <td style={styles.td}><strong>Pro</strong></td>
+                <td style={styles.td}>30 000 FCFA/mois</td>
+                <td style={styles.td}>Structures avancées : multi-dépôts illimités, multi-points de vente, transferts de stock, utilisateurs illimités, support prioritaire</td>
               </tr>
             </tbody>
           </table>

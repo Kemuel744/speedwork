@@ -485,7 +485,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'enterprise.title': 'Fonctionnalité Premium',
     'enterprise.desc': "Cette fonctionnalité est réservée à l'abonnement Premium.",
     'enterprise.plan': 'Plan Premium',
-    'enterprise.price': '15 000 FCFA / mois',
+    'enterprise.price': '30 000 FCFA / mois',
     'enterprise.feat1': 'Multi-boutiques',
     'enterprise.feat2': 'Rapports avancés',
     'enterprise.feat3': 'Export comptable',
