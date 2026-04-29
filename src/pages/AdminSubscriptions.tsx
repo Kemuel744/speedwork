@@ -445,6 +445,123 @@ export default function AdminSubscriptions() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Activation dialog */}
+      <Dialog open={!!activatingRequest} onOpenChange={(o) => !o && setActivatingRequest(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Activer l'abonnement</DialogTitle>
+          </DialogHeader>
+          {activatingRequest && (
+            <div className="space-y-4 text-sm">
+              <div className="p-3 rounded-lg bg-muted/50 space-y-1">
+                <p className="font-medium text-foreground">{activatingRequest.metadata?.full_name}</p>
+                <p className="text-xs text-muted-foreground">{activatingRequest.metadata?.email}</p>
+                {activatingRequest.metadata?.phone && (
+                  <p className="text-xs text-muted-foreground">{activatingRequest.metadata.phone}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Plan</label>
+                <Select value={activationPlan} onValueChange={(v: 'monthly'|'annual'|'enterprise') => { setActivationPlan(v); setActivationAmount(planAmounts[v]); }}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="monthly">Starter — Mensuel</SelectItem>
+                    <SelectItem value="annual">Business — Annuel</SelectItem>
+                    <SelectItem value="enterprise">Pro — Entreprise</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Moyen de paiement reçu</label>
+                <Select value={activationMethod} onValueChange={setActivationMethod}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="mtn_mobile_money">MTN Mobile Money</SelectItem>
+                    <SelectItem value="airtel_money">Airtel Money</SelectItem>
+                    <SelectItem value="orange_money">Orange Money</SelectItem>
+                    <SelectItem value="bank_card">Carte Bancaire</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Montant payé (FCFA)</label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={activationAmount}
+                  onChange={(e) => setActivationAmount(Number(e.target.value))}
+                />
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                Un code d'accès à 6 chiffres sera généré et l'abonnement sera activé immédiatement pour le compte associé à <span className="font-medium text-foreground">{activatingRequest.metadata?.email}</span>.
+              </p>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setActivatingRequest(null)} disabled={activateRequest.isPending}>
+              Annuler
+            </Button>
+            <Button
+              onClick={() => activatingRequest && activateRequest.mutate(activatingRequest)}
+              disabled={activateRequest.isPending || !activationAmount}
+            >
+              {activateRequest.isPending ? <><Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> Activation…</> : <><CheckCircle2 className="w-4 h-4 mr-1.5" /> Confirmer et activer</>}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Activation result dialog */}
+      <Dialog open={!!activationResult} onOpenChange={(o) => !o && setActivationResult(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+              Abonnement activé
+            </DialogTitle>
+          </DialogHeader>
+          {activationResult && (
+            <div className="space-y-4 text-sm">
+              <p className="text-muted-foreground">
+                Communiquez ce code d'accès au client. Il pourra l'utiliser pour activer son compte.
+              </p>
+              <div className="p-4 rounded-lg bg-primary/10 border border-primary/30 text-center">
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Code d'accès</p>
+                <p className="text-3xl font-bold tracking-widest text-primary">{activationResult.access_code}</p>
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Expire le</span>
+                <span className="font-medium text-foreground">{new Date(activationResult.end_date).toLocaleDateString('fr-FR')}</span>
+              </div>
+              {activationResult.email && (
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Compte</span>
+                  <span className="font-medium text-foreground">{activationResult.email}</span>
+                </div>
+              )}
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => {
+                  navigator.clipboard.writeText(activationResult.access_code);
+                  toast({ title: 'Code copié' });
+                }}
+              >
+                <Copy className="w-4 h-4 mr-1.5" />
+                Copier le code
+              </Button>
+            </div>
+          )}
+          <DialogFooter>
+            <Button onClick={() => setActivationResult(null)}>Fermer</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
