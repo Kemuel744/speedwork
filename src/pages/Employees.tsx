@@ -15,6 +15,7 @@ import { printElement } from '@/lib/printElement';
 import { useCompany } from '@/contexts/CompanyContext';
 import { QRCodeSVG } from 'qrcode.react';
 import { useNavigate } from 'react-router-dom';
+import { usePlanQuota } from '@/hooks/usePlanQuota';
 
 interface Employee {
   id: string; full_name: string; email: string; phone: string; role: string;
@@ -47,6 +48,7 @@ export default function Employees() {
   const { toast } = useToast();
   const { company } = useCompany();
   const navigate = useNavigate();
+  const { used: usersUsed, cap: usersCap, limitReached: usersLimitReached, planName } = usePlanQuota('users');
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Employee | null>(null);
@@ -75,6 +77,15 @@ export default function Employees() {
     }
     if (!editing && !/^\d{4}$/.test(form.pin_code)) {
       toast({ title: 'PIN à 4 chiffres requis', variant: 'destructive' });
+      return;
+    }
+    // Plan quota: owner + employees must not exceed maxUsers
+    if (!editing && usersCap !== null && usersUsed >= usersCap) {
+      toast({
+        title: 'Limite du plan atteinte',
+        description: `Le plan ${planName} autorise ${usersCap} utilisateur${usersCap > 1 ? 's' : ''} (vous-même inclus). Mettez à niveau pour en ajouter davantage.`,
+        variant: 'destructive',
+      });
       return;
     }
     const { pin_code, ...rest } = form;

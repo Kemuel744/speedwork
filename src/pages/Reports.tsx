@@ -31,6 +31,7 @@ import {
   PieChart, Pie, Cell, Legend, AreaChart, Area,
 } from 'recharts';
 import { printElement } from '@/lib/printElement';
+import { usePlanQuota } from '@/hooks/usePlanQuota';
 
 
 const EXPENSE_CATEGORIES = [
