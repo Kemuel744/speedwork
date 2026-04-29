@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Banknote, Plus, Lock, Unlock, ArrowDownToLine, ArrowUpFromLine, Printer, TrendingUp, TrendingDown, Equal, ShoppingCart, KeyRound } from 'lucide-react';
+import { Banknote, Plus, Lock, ArrowDownToLine, ArrowUpFromLine, Printer, TrendingUp, TrendingDown, Equal, ShoppingCart, KeyRound } from 'lucide-react';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { printReceipt } from '@/lib/thermalPrint';
@@ -44,7 +44,6 @@ export default function CashRegister() {
   const [activeSession, setActiveSession] = useState<Session | null>(null);
   const [movements, setMovements] = useState<Movement[]>([]);
   const [liveSales, setLiveSales] = useState<LiveSale[]>([]);
-  const [openOpen, setOpenOpen] = useState(false);
   const [pinOpen, setPinOpen] = useState(false);
   const [pinCode, setPinCode] = useState('');
   const [pinOpening, setPinOpening] = useState('');
@@ -53,8 +52,6 @@ export default function CashRegister() {
   const [movOpen, setMovOpen] = useState(false);
   const [zModal, setZModal] = useState<Session | null>(null);
 
-  const [openingAmount, setOpeningAmount] = useState('');
-  const [openedByName, setOpenedByName] = useState('');
   const [countedAmount, setCountedAmount] = useState('');
   const [closedByName, setClosedByName] = useState('');
   const [closeNotes, setCloseNotes] = useState('');
@@ -94,21 +91,6 @@ export default function CashRegister() {
       .subscribe();
     return () => { supabase.removeChannel(ch); };
   }, [user, activeSession, fetchAll]);
-
-  const openSession = async () => {
-    if (!user) return;
-    const opening = Number(openingAmount) || 0;
-    if (opening < 0) { toast({ title: 'Montant invalide', variant: 'destructive' }); return; }
-    const { data: numData } = await supabase.rpc('generate_session_number', { _user_id: user.id });
-    const number = numData || `CS-${Date.now()}`;
-    const { error } = await supabase.from('cash_sessions').insert({
-      user_id: user.id, number, opening_amount: opening, opened_by_name: openedByName, status: 'open',
-    } as never);
-    if (error) { toast({ title: 'Erreur', description: error.message, variant: 'destructive' }); return; }
-    toast({ title: `Caisse ouverte (${number})` });
-    setOpenOpen(false); setOpeningAmount(''); setOpenedByName('');
-    fetchAll();
-  };
 
   // Ouverture rapide par caissier via code PIN attribué par l'administrateur
   const openSessionByPin = async () => {
@@ -218,10 +200,9 @@ export default function CashRegister() {
         </div>
         <div className="flex gap-2">
           {!activeSession ? (
-            <>
             <Dialog open={pinOpen} onOpenChange={setPinOpen}>
               <DialogTrigger asChild>
-                <Button variant="default"><KeyRound className="w-4 h-4 mr-1.5" />Ouvrir avec code caissier</Button>
+                <Button variant="default"><KeyRound className="w-4 h-4 mr-1.5" />Ouvrir la caisse</Button>
               </DialogTrigger>
               <DialogContent className="max-w-md">
                 <DialogHeader>
@@ -232,7 +213,7 @@ export default function CashRegister() {
                 </DialogHeader>
                 <div className="space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    Entrez le code PIN qui vous a été attribué par l'administrateur de la boutique ou pharmacie.
+                    Entrez votre code PIN. L'administrateur de la boutique ou pharmacie peut le générer dans <strong>Employés &amp; caissiers</strong> et vous remettre votre carte d'employé imprimée.
                   </p>
                   <div>
                     <Label>Code PIN *</Label>
@@ -259,26 +240,6 @@ export default function CashRegister() {
                 </div>
               </DialogContent>
             </Dialog>
-            <Dialog open={openOpen} onOpenChange={setOpenOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline"><Unlock className="w-4 h-4 mr-1.5" />Ouverture manuelle</Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md">
-                <DialogHeader><DialogTitle>Ouverture de caisse</DialogTitle></DialogHeader>
-                <div className="space-y-3">
-                  <div>
-                    <Label>Fond de caisse initial *</Label>
-                    <Input type="number" min="0" placeholder="0" value={openingAmount} onChange={e => setOpeningAmount(e.target.value)} />
-                  </div>
-                  <div>
-                    <Label>Caissier</Label>
-                    <Input placeholder="Nom du caissier" value={openedByName} onChange={e => setOpenedByName(e.target.value)} />
-                  </div>
-                  <Button onClick={openSession} className="w-full">Ouvrir</Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-            </>
           ) : (
             <>
               <Dialog open={movOpen} onOpenChange={setMovOpen}>

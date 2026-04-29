@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Trash2, Save, Users, KeyRound, Shield } from 'lucide-react';
+import { Plus, Trash2, Save, Users, KeyRound, Shield, Printer } from 'lucide-react';
+import { printElement } from '@/lib/printElement';
+import { useCompany } from '@/contexts/CompanyContext';
 
 interface Employee {
   id: string; full_name: string; email: string; phone: string; role: string;
@@ -41,11 +43,15 @@ const defaultPerm = (employee_id: string): Permissions => ({
 export default function Employees() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { company } = useCompany();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Employee | null>(null);
   const [perm, setPerm] = useState<Permissions | null>(null);
   const [permOpen, setPermOpen] = useState(false);
+  const [cardEmp, setCardEmp] = useState<Employee | null>(null);
+  const [cardPin, setCardPin] = useState('');
+  const cardRef = useRef<HTMLDivElement>(null);
   const [form, setForm] = useState({
     full_name: '', email: '', phone: '', role: 'cashier', pin_code: '', is_active: true,
   });
@@ -108,6 +114,22 @@ export default function Employees() {
       : await supabase.from('employee_permissions').insert(payload);
     if (error) toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
     else { toast({ title: 'Permissions enregistrées' }); setPermOpen(false); }
+  };
+
+  const openCard = (emp: Employee) => {
+    setCardEmp(emp);
+    setCardPin('');
+  };
+
+  const printCard = async () => {
+    if (!cardEmp || !/^\d{4}$/.test(cardPin)) {
+      toast({ title: 'PIN requis', description: 'Saisissez le PIN à 4 chiffres pour l\'imprimer sur la carte.', variant: 'destructive' });
+      return;
+    }
+    await printElement(cardRef.current, {
+      title: `Carte_${cardEmp.full_name.replace(/\s+/g, '_')}`,
+      pageMargin: '0',
+    });
   };
 
   return (
@@ -178,6 +200,9 @@ export default function Employees() {
                   <Button size="sm" variant="outline" onClick={() => openPermissions(e)} className="flex-1">
                     <Shield className="w-3.5 h-3.5 mr-1" />Permissions
                   </Button>
+                  <Button size="sm" variant="outline" onClick={() => openCard(e)} title="Imprimer la carte d'employé">
+                    <Printer className="w-3.5 h-3.5" />
+                  </Button>
                   <Button size="sm" variant="ghost" onClick={() => startEdit(e)}>Modifier</Button>
                   <Button size="sm" variant="ghost" onClick={() => remove(e.id)} className="text-destructive">
                     <Trash2 className="w-4 h-4" />
@@ -220,6 +245,95 @@ export default function Employees() {
                   onChange={e => setPerm({ ...perm, max_discount_pct: parseFloat(e.target.value) || 0 })} />
               </div>
               <Button onClick={savePermissions} className="w-full"><Save className="w-4 h-4 mr-2" />Enregistrer</Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog impression carte employé */}
+      <Dialog open={!!cardEmp} onOpenChange={(v) => { if (!v) setCardEmp(null); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Printer className="w-5 h-5 text-primary" />
+              Carte d'employé imprimable
+            </DialogTitle>
+          </DialogHeader>
+          {cardEmp && (
+            <div className="space-y-4">
+              <div className="rounded-lg bg-muted/40 border border-border p-3 text-sm">
+                <p className="font-medium mb-1">{cardEmp.full_name}</p>
+                <p className="text-muted-foreground text-xs">
+                  Pour des raisons de sécurité, le PIN n'est pas stocké en clair.
+                  Ressaisissez-le ci-dessous pour l'imprimer sur la carte à remettre au caissier.
+                </p>
+              </div>
+              <div>
+                <Label>PIN à imprimer (4 chiffres)</Label>
+                <Input
+                  maxLength={4}
+                  inputMode="numeric"
+                  pattern="\d{4}"
+                  value={cardPin}
+                  onChange={(e) => setCardPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                  placeholder="••••"
+                  className="text-center text-xl tracking-[0.5em] font-mono"
+                />
+              </div>
+              <Button onClick={printCard} className="w-full" disabled={cardPin.length !== 4}>
+                <Printer className="w-4 h-4 mr-2" />Imprimer la carte
+              </Button>
+
+              {/* Aperçu / contenu imprimé (caché à l'écran sauf preview) */}
+              <div className="border-t pt-4">
+                <p className="text-xs text-muted-foreground mb-2">Aperçu :</p>
+                <div className="overflow-hidden rounded-lg border border-border">
+                  <div ref={cardRef} style={{
+                    width: '105mm', minHeight: '74mm', padding: '8mm', boxSizing: 'border-box',
+                    background: '#ffffff', color: '#0f172a', fontFamily: 'Inter, system-ui, sans-serif',
+                    display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+                    border: '1px solid #e2e8f0', margin: '0 auto',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '2px solid #2563eb', paddingBottom: '4mm' }}>
+                      <div>
+                        <div style={{ fontSize: '10pt', color: '#64748b', fontWeight: 500 }}>Carte d'employé</div>
+                        <div style={{ fontSize: '13pt', fontWeight: 700, color: '#0f172a', marginTop: '2px' }}>
+                          {company.name || 'Ma Boutique'}
+                        </div>
+                      </div>
+                      {company.logo && (
+                        <img src={company.logo} alt="" style={{ height: '14mm', width: 'auto', objectFit: 'contain' }} />
+                      )}
+                    </div>
+
+                    <div style={{ textAlign: 'center', padding: '4mm 0' }}>
+                      <div style={{ fontSize: '16pt', fontWeight: 700, color: '#0f172a', lineHeight: 1.2 }}>
+                        {cardEmp.full_name}
+                      </div>
+                      <div style={{ fontSize: '10pt', color: '#64748b', marginTop: '1mm', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        {(roleLabels[cardEmp.role] || roleLabels.cashier).label}
+                      </div>
+                    </div>
+
+                    <div style={{
+                      background: '#eff6ff', border: '1px dashed #2563eb', borderRadius: '4px',
+                      padding: '3mm', textAlign: 'center',
+                    }}>
+                      <div style={{ fontSize: '8pt', color: '#1e40af', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>
+                        Code PIN d'ouverture de caisse
+                      </div>
+                      <div style={{ fontSize: '28pt', fontWeight: 800, color: '#1d4ed8', letterSpacing: '8px', fontFamily: 'monospace', marginTop: '1mm' }}>
+                        {cardPin || '••••'}
+                      </div>
+                    </div>
+
+                    <div style={{ fontSize: '7.5pt', color: '#64748b', textAlign: 'center', lineHeight: 1.4, marginTop: '3mm' }}>
+                      Saisissez ce code sur l'écran <strong>Caisse journalière</strong> pour ouvrir la caisse.<br />
+                      Document confidentiel — ne pas partager.
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </DialogContent>
