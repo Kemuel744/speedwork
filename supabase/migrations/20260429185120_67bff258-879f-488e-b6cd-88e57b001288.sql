@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.enforce_depot_quota() FROM PUBLIC, anon, authenticated;
