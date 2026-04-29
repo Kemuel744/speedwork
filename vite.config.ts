@@ -74,7 +74,7 @@ export default defineConfig(({ mode }) => ({
         globPatterns: ["**/*.{js,css,html,ico,svg,woff,woff2}", "**/*.{png,webp}"],
         globIgnores: [
           "**/promo-revolution*.png", "**/promo-hero*.webp", "**/promo-comparison*.webp", "**/logo*.webp",
-          "**/vendor-charts*.js", "**/vendor-supabase*.js",
+          "**/vendor-charts*.js", "**/vendor-supabase*.js", "**/vendor-motion*.js", "**/vendor-icons*.js",
         ],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MiB
         navigateFallback: null,
@@ -82,7 +82,7 @@ export default defineConfig(({ mode }) => ({
         runtimeCaching: [
           {
             // Cache lazy-loaded vendor JS chunks on demand
-            urlPattern: /\/assets\/vendor-(?:charts|supabase)-.*\.js$/i,
+            urlPattern: /\/assets\/vendor-(?:charts|supabase|motion|icons)-.*\.js$/i,
             handler: "CacheFirst",
             options: {
               cacheName: "lazy-vendor-js",
