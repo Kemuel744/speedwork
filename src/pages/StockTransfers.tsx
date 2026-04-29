@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Truck, Plus, QrCode, Trash2, ArrowRight, ScanLine, Store, Warehouse } from 'lucide-react';
 import QRScanner from '@/components/reports/QRScanner';
 import QRCodeLib from 'qrcode';
+import { printHtmlInIframe } from '@/lib/thermalPrint';
 
 interface TransferItem {
   product_id: string;
@@ -171,10 +172,10 @@ export default function StockTransfers() {
 
   const printQR = () => {
     if (!qrDataUrl || !qrModal) return;
-    const w = window.open('', '_blank');
-    if (!w) return;
-    w.document.write(`<html><head><title>${qrModal.number}</title></head><body style="text-align:center;padding:40px;font-family:sans-serif"><h2>Transfert ${qrModal.number}</h2><img src="${qrDataUrl}" style="max-width:320px"/><p style="color:#666;margin-top:16px">Scanner à la réception pour valider</p></body></html>`);
-    w.document.close(); setTimeout(() => w.print(), 200);
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"/><title>${qrModal.number}</title>
+<style>@page{size:A4;margin:20mm}body{text-align:center;padding:40px;font-family:'Segoe UI',Arial,sans-serif;color:#111}h2{margin:0 0 20px}img{max-width:320px;height:auto}p{color:#666;margin-top:16px}</style>
+</head><body><h2>Transfert ${qrModal.number}</h2><img src="${qrDataUrl}" alt="QR ${qrModal.number}"/><p>Scanner à la réception pour valider</p></body></html>`;
+    void printHtmlInIframe(html, 1);
   };
 
   return (
