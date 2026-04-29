@@ -17,7 +17,24 @@ export default function Guide() {
   useAdSense();
   const navigate = useNavigate();
 
-  const handlePrint = () => {
+  const handlePrint = async () => {
+    // Attendre que toutes les images du document soient chargées avant
+    // d'ouvrir la boîte de dialogue d'impression — évite les pages blanches
+    // ou les logos manquants quand l'utilisateur clique trop tôt.
+    const imgs = Array.from(document.querySelectorAll('.guide-doc img')) as HTMLImageElement[];
+    await Promise.race([
+      Promise.all(imgs.map(img =>
+        img.complete && img.naturalWidth > 0
+          ? Promise.resolve()
+          : new Promise<void>(res => {
+              img.addEventListener('load', () => res(), { once: true });
+              img.addEventListener('error', () => res(), { once: true });
+            }),
+      )),
+      new Promise<void>(res => setTimeout(res, 3000)),
+    ]);
+    // Fonts ready (si supporté)
+    try { await (document as any).fonts?.ready; } catch { /* noop */ }
     window.print();
   };
 
