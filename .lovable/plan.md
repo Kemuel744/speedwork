@@ -1,103 +1,49 @@
+Je vais corriger le problème d’impression blanche en remplaçant l’isolation CSS fragile actuelle par un système d’impression plus sûr et ciblé.
 
+Constat principal : les règles globales d’impression cachent tout le contenu de l’application avec `visibility: hidden`, puis tentent de réafficher `.print-zone`. Sur certaines pages, notamment les pages à onglets comme Finance, un contenu imprimable peut exister dans un onglet non actif ou être caché par Radix/Tailwind (`display: none`, `hidden`, `print:hidden`). Résultat : le navigateur imprime une page blanche.
 
-# Plan : Pivot complet vers la gestion de boutiques et pharmacies
+Plan d’implémentation :
 
-## Contexte
+1. Stabiliser les règles globales d’impression
+   - Réécrire la section `@media print` de `src/index.css` pour éviter de rendre tout le site invisible de façon trop agressive.
+   - Conserver l’isolation de `.a4-preview`, `.guide-doc`, `.label-print-area` et `.print-zone`, mais avec des règles qui ne dépendent pas d’un contenu caché par un onglet inactif.
+   - Masquer les éléments d’interface uniquement avec une classe dédiée (`.no-print`, `print:hidden`, navigation, sidebar, chat, header fixe), sans casser le contenu réel à imprimer.
 
-SpeedWork passe d'une plateforme de gestion d'entreprise généraliste (facturation, missions terrain, pointage, etc.) à un **logiciel spécialisé de gestion de magasin** (boutiques, dépôts, pharmacies). Toutes les fonctionnalités non pertinentes seront supprimées.
+2. Empêcher les onglets cachés de déclencher une impression blanche
+   - Sur la page Finance, ne pas rendre tous les onglets en même temps comme contenu imprimable.
+   - Faire en sorte que seule la page active puisse contenir une zone imprimable.
+   - Pour les pages Comptabilité/TVA, garder leurs boutons et filtres masqués à l’impression, mais garantir que le rapport lui-même reste visible.
 
-## Ce qui est conservé
+3. Corriger les pages de rapports internes
+   - Sur `Reports.tsx`, éviter que toute la page “Ma Boutique” soit imprimée en bloc avec tous les onglets.
+   - Ajouter une zone d’impression claire pour les statistiques/rapports visibles, et masquer les parties interactives non destinées au papier.
+   - Vérifier que le bouton “Imprimer” n’imprime plus les menus, la sidebar, les filtres ou une page vide.
 
-- **Ma Boutique** (caisse POS, panier, reçus, scanner QR)
-- **Produits & Stock** (inventaire, alertes, codes QR, PDF)
-- **Historique des ventes**
-- **Statistiques de ventes** (onglet existant)
-- **Authentification, profils, abonnements**
-- **Blog, Guide, À propos, Contact**
-- **Messagerie** (support client)
-- **Paramètres entreprise** (logo, coordonnées sur les reçus)
-- **Mode hors ligne**
-- **Notifications**
+4. Corriger le rapport d’inventaire dans la boîte de dialogue
+   - Le composant `InventoryReport.tsx` appelle `window.print()` mais son contenu n’est pas marqué comme zone imprimable.
+   - Ajouter une zone dédiée au contenu du rapport d’inventaire, avec les boutons masqués à l’impression, pour éviter une page blanche ou l’impression de l’arrière-plan.
 
-## Ce qui est supprimé
+5. Préserver les impressions spéciales existantes
+   - Ne pas casser les documents A4 (`.a4-preview`) comme factures/devis/bons de commande.
+   - Ne pas casser le guide utilisateur (`.guide-doc`).
+   - Ne pas casser les tickets thermiques et rapports Z, qui s’impriment déjà via une iframe dédiée.
+   - Conserver les étiquettes produits (`.label-print-area`) avec leur mise en page A4.
 
-| Module supprimé | Pages / composants concernés |
-|---|---|
-| Facturation / Documents | Documents, CreateDocument, DocumentDetail, SharedDocument |
-| Équipes terrain | Teams, TeamDetail, TeamsMap, TeamManagement |
-| Workers / Ouvriers | Workers, WorkerDetail, WorkerDashboard, WorkerOnboarding |
-| Missions | Missions, MissionsMap, MissionProofs |
-| Pointage | Attendance |
-| Paie | Payroll |
-| Tâches terrain | WorkTasks |
-| Analytics terrain | ProductivityAnalytics, ProductivityMap, ReliabilityScores |
-| Bilan annuel | AnnualReview |
-| Relances factures | Reminders |
-| Client dashboard | ClientDashboard, ClientDetail, Clients |
-| Admin clients | AdminClients |
-| Rapports terrain | FieldReportForm, FieldReportsList |
-| Convertisseur devises | CurrencyConverter |
-
-## Étapes d'implémentation
-
-### 1. Refonte de la page d'accueil et du SEO
-- Réécrire `HeroSection`, `ProblemSection`, `SolutionSection`, `BenefitsSection`, etc. pour cibler les gérants de boutiques, dépôts et pharmacies
-- Nouveau slogan : "Le logiciel de gestion simple et puissant pour boutiques, dépôts et pharmacies en Afrique"
-- Mettre à jour les métadonnées SEO, sitemap, robots.txt
-
-### 2. Simplifier la navigation (AppSidebar)
-Nouvelle structure de la sidebar :
+Détails techniques :
 
 ```text
-PRINCIPAL
-  ├── Tableau de bord  (stats ventes, stock bas, CA)
-  └── Ma Boutique      (caisse POS)
+Avant :
+body:has(.print-zone) #root * { visibility: hidden }
+.print-zone, .print-zone * { visibility: visible }
 
-GESTION
-  ├── Produits & Stock
-  ├── Historique ventes
-  └── Statistiques
+Problème : si .print-zone est dans un onglet non actif ou si ses enfants sont display:none,
+le navigateur voit une zone imprimable mais aucun contenu visible -> page blanche.
 
-COMMUNICATION
-  ├── Messages
-  └── Notifications
-
-ADMINISTRATION (admin only)
-  ├── Abonnements
-  └── Blog
+Après :
+- isolation plus ciblée par type de document
+- classes no-print/print:hidden pour masquer l’interface
+- zones imprimables uniquement sur le contenu réellement actif
+- compatibilité A4 et tickets/iframes préservée
 ```
 
-### 3. Nouveau tableau de bord commerce
-- Remplacer le Dashboard actuel par un tableau de bord centré sur :
-  - CA du jour / semaine / mois
-  - Nombre de ventes aujourd'hui
-  - Produits les plus vendus
-  - Alertes de stock bas
-  - Graphique des ventes récentes
-
-### 4. Supprimer les pages et composants inutiles
-- Retirer les imports et routes de ~25 pages dans `AuthenticatedRoutes.tsx` et `App.tsx`
-- Supprimer les fichiers des modules terrain (pages + composants)
-- Nettoyer `AppSidebar.tsx` (retirer les sections terrain, facturation, etc.)
-
-### 5. Mettre à jour les traductions
-- Nettoyer `translations.ts` des clés inutilisées
-- Ajouter les nouvelles clés commerce/pharmacie
-
-### 6. Mettre à jour la page Fonctionnalités et Tarifs
-- Recentrer sur les fonctionnalités boutique : caisse, stock, QR, inventaire PDF, mode hors ligne
-- Adapter les plans tarifaires au contexte commerce
-
-### 7. Page d'inscription / profil
-- Remplacer les types de compte (enterprise, freelance, PME, ONG) par : Boutique, Dépôt, Pharmacie, Autre
-- Simplifier le formulaire d'inscription
-
----
-
-## Détails techniques
-
-- **Aucune migration DB destructive** : les tables terrain (workers, missions, teams, etc.) restent en base mais ne sont plus accessibles depuis l'UI. Cela évite toute perte de données.
-- **Routes** : les anciennes URLs (ex: `/workers`, `/missions`) redirigeront vers `/dashboard` ou afficheront la page 404.
-- **Fichiers supprimés** : ~30 fichiers de pages/composants seront retirés du code source.
-- **Contextes** : `DocumentsContext` sera supprimé. `CompanyContext` et `CurrencyContext` sont conservés.
-
+Après approbation, j’appliquerai les changements dans les fichiers concernés et je vérifierai le parcours principal depuis `/finance?tab=cash`, notamment le bouton Z et les onglets Comptabilité/TVA.
