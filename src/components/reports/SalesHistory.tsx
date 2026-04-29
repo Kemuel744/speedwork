@@ -95,53 +95,29 @@ export default function SalesHistory({ displayAmount, currency }: SalesHistoryPr
     setCancelling(true);
     try {
       const sale = cancelTarget;
-      // 1) Mark sale as cancelled (keep traceability instead of hard delete)
-      const { error: upErr } = await supabase
-        .from('sales')
-        .update({
-          status: 'cancelled',
-          notes: cancelReason ? `Annulée : ${cancelReason}` : 'Annulée',
-        } as any)
-        .eq('id', sale.id);
-      if (upErr) throw upErr;
-
-      // 2) Restore stock for each line item with a known product
-      for (const item of sale.items) {
-        if (!item.product_id) continue;
-        const { data: prod } = await supabase
-          .from('products')
-          .select('quantity_in_stock')
-          .eq('id', item.product_id)
-          .maybeSingle();
-        if (prod) {
-          await supabase
-            .from('products')
-            .update({ quantity_in_stock: Number((prod as any).quantity_in_stock || 0) + item.quantity } as any)
-            .eq('id', item.product_id);
-        }
-        await supabase.from('stock_movements').insert({
-          user_id: user.id,
-          product_id: item.product_id,
-          movement_type: 'entry',
-          quantity: item.quantity,
-          reason: `Annulation vente ${sale.receipt_number}`,
-        } as any);
+      // Idempotent server-side: a single transactional RPC handles
+      // status update + stock restoration + cash adjustment, and refuses
+      // to run twice on the same sale (row lock + status guard).
+      if (sale.status === 'cancelled') {
+        toast({ title: 'Déjà annulée', description: 'Cette vente est déjà annulée.' });
+        setCancelTarget(null);
+        setCancelReason('');
+        return;
       }
-
-      // 3) If sale was attached to a cash session and paid in cash, register a cash-out adjustment
-      if (sale.session_id && (sale.payment_method ?? 'cash') === 'cash' && sale.total > 0) {
-        await supabase.from('cash_movements').insert({
-          user_id: user.id,
-          session_id: sale.session_id,
-          movement_type: 'expense',
-          amount: sale.total,
-          description: `Ajustement annulation ${sale.receipt_number}${cancelReason ? ` — ${cancelReason}` : ''}`,
-        } as any);
+      const { data, error } = await supabase.rpc('cancel_sale' as any, {
+        _sale_id: sale.id,
+        _reason: cancelReason || '',
+      });
+      if (error) throw error;
+      const result = (data as any) || {};
+      if (result.success === false) {
+        throw new Error(result.error || 'Annulation refusée');
       }
-
       toast({
-        title: 'Vente annulée',
-        description: 'Stock restauré et caisse ajustée.',
+        title: result.already_cancelled ? 'Déjà annulée' : 'Vente annulée',
+        description: result.already_cancelled
+          ? 'Aucune opération supplémentaire nécessaire.'
+          : 'Stock restauré et caisse ajustée.',
       });
       setCancelTarget(null);
       setCancelReason('');
