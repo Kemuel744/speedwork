@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { QRCodeSVG } from 'qrcode.react';
+import { printHtmlInIframe } from '@/lib/thermalPrint';
 
 interface Product {
   id: string;
@@ -89,10 +90,8 @@ export default function SalesTab({ products, movements, displayAmount, currency 
     : 0;
 
   const downloadInventoryPDF = () => {
-    const win = window.open('', '_blank');
-    if (!win) return;
     const now = new Date();
-    win.document.write(`<!DOCTYPE html><html><head><title>Inventaire</title>
+    const html = `<!DOCTYPE html><html><head><title>Inventaire</title>
       <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a1a; }
@@ -135,9 +134,8 @@ export default function SalesTab({ products, movements, displayAmount, currency 
         </tbody>
       </table>
       <div class="footer">Document généré automatiquement — SpeedWork</div>
-    </div></body></html>`);
-    win.document.close();
-    setTimeout(() => win.print(), 500);
+    </div></body></html>`;
+    void printHtmlInIframe(html, 1);
   };
 
   return (
