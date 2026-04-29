@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Search, Building2, CreditCard, Users, TrendingUp, Ban, RefreshCw, Eye, Loader2 } from 'lucide-react';
+import { Search, Building2, CreditCard, Users, TrendingUp, Ban, RefreshCw, Eye, Loader2, Inbox, CheckCircle2, Mail, Phone, Copy } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -20,6 +20,32 @@ type SubscriptionRow = Tables<'subscriptions'>;
 interface SubscriptionWithProfile extends SubscriptionRow {
   profiles: { company_name: string; email: string } | null;
 }
+
+interface PendingRequest {
+  id: string;
+  created_at: string;
+  metadata: {
+    full_name?: string;
+    email?: string;
+    phone?: string;
+    plan?: 'monthly' | 'annual' | 'enterprise';
+    amount?: number;
+    payment_method?: string;
+    deposit_number?: string;
+  };
+}
+
+const planAmounts: Record<string, number> = {
+  monthly: 7500,
+  annual: 15000,
+  enterprise: 35000,
+};
+
+const planLabels: Record<string, string> = {
+  monthly: 'Starter',
+  annual: 'Business',
+  enterprise: 'Pro',
+};
 
 const paymentMethodLabels: Record<string, string> = {
   mtn_mobile_money: 'MTN Mobile Money',
@@ -41,6 +67,93 @@ export default function AdminSubscriptions() {
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterPlan, setFilterPlan] = useState<string>('all');
   const [selectedSub, setSelectedSub] = useState<SubscriptionWithProfile | null>(null);
+  const [activatingRequest, setActivatingRequest] = useState<PendingRequest | null>(null);
+  const [activationPlan, setActivationPlan] = useState<'monthly' | 'annual' | 'enterprise'>('monthly');
+  const [activationMethod, setActivationMethod] = useState<string>('mtn_mobile_money');
+  const [activationAmount, setActivationAmount] = useState<number>(7500);
+  const [activationResult, setActivationResult] = useState<{ access_code: string; end_date: string; email?: string } | null>(null);
+
+  // Pending subscription requests (from prospects via /tarifs)
+  const { data: pendingRequests = [], isLoading: loadingRequests } = useQuery({
+    queryKey: ['admin-pending-subscription-requests'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('id, created_at, metadata, is_read')
+        .eq('type', 'subscription_request')
+        .eq('is_read', false)
+        .order('created_at', { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      return (data || []) as unknown as PendingRequest[];
+    },
+    refetchInterval: 30000,
+  });
+
+  const activateRequest = useMutation({
+    mutationFn: async (req: PendingRequest) => {
+      const email = req.metadata?.email?.trim().toLowerCase();
+      if (!email) throw new Error("Email manquant dans la demande.");
+
+      // Find the registered user by email in profiles
+      const { data: profile, error: profErr } = await supabase
+        .from('profiles')
+        .select('user_id, email')
+        .ilike('email', email)
+        .maybeSingle();
+      if (profErr) throw profErr;
+      if (!profile?.user_id) {
+        throw new Error(`Aucun compte trouvé pour ${email}. Le client doit d'abord créer son compte.`);
+      }
+
+      const { data, error } = await supabase.functions.invoke('generate-access-code', {
+        body: {
+          plan: activationPlan,
+          payment_method: activationMethod,
+          amount: activationAmount,
+          user_id: profile.user_id,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      // Mark notification as read so it disappears from the pending list
+      await supabase.from('notifications').update({ is_read: true }).eq('id', req.id);
+
+      return { ...data, email: profile.email } as { access_code: string; plan: string; end_date: string; email: string };
+    },
+    onSuccess: (data) => {
+      setActivationResult({ access_code: data.access_code, end_date: data.end_date, email: data.email });
+      setActivatingRequest(null);
+      queryClient.invalidateQueries({ queryKey: ['admin-pending-subscription-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-subscriptions'] });
+      toast({ title: 'Abonnement activé', description: `Code d'accès : ${data.access_code}` });
+    },
+    onError: (err: Error) => {
+      toast({ title: "Activation impossible", description: err.message, variant: 'destructive' });
+    },
+  });
+
+  const dismissRequest = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('notifications').update({ is_read: true }).eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-pending-subscription-requests'] });
+      toast({ title: 'Demande archivée' });
+    },
+  });
+
+  const openActivation = (req: PendingRequest) => {
+    const plan = (req.metadata?.plan || 'monthly') as 'monthly' | 'annual' | 'enterprise';
+    setActivationPlan(plan);
+    setActivationAmount(req.metadata?.amount && req.metadata.amount > 0 ? req.metadata.amount : planAmounts[plan]);
+    setActivationMethod(req.metadata?.payment_method && ['mtn_mobile_money','airtel_money','orange_money','bank_card'].includes(req.metadata.payment_method)
+      ? req.metadata.payment_method
+      : 'mtn_mobile_money');
+    setActivatingRequest(req);
+  };
 
   const { data: subscriptions = [], isLoading } = useQuery({
     queryKey: ['admin-subscriptions'],
@@ -115,6 +228,67 @@ export default function AdminSubscriptions() {
         <h1 className="text-2xl font-bold text-foreground">Gestion des abonnements</h1>
         <p className="text-muted-foreground text-sm mt-1">Suivez et gérez les abonnements de toutes les entreprises</p>
       </div>
+
+      <Card className="border-primary/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Inbox className="w-5 h-5 text-primary" />
+            Demandes d'abonnement en attente
+            {pendingRequests.length > 0 && (
+              <Badge className="bg-primary/15 text-primary border-primary/20">{pendingRequests.length}</Badge>
+            )}
+          </CardTitle>
+          <CardDescription>
+            Activez un abonnement après vérification du paiement reçu
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {loadingRequests ? (
+            <div className="flex items-center justify-center py-6">
+              <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+            </div>
+          ) : pendingRequests.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-4 text-center">Aucune demande en attente</p>
+          ) : (
+            <div className="space-y-3">
+              {pendingRequests.map((req) => {
+                const m = req.metadata || {};
+                const planLbl = m.plan ? planLabels[m.plan] : '—';
+                return (
+                  <div key={req.id} className="flex flex-col md:flex-row md:items-center gap-3 p-3 rounded-lg border border-border bg-card">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-medium text-foreground">{m.full_name || 'Anonyme'}</p>
+                        <Badge variant="outline">{planLbl}</Badge>
+                        {m.payment_method && (
+                          <Badge variant="secondary" className="text-xs">
+                            {paymentMethodLabels[m.payment_method] || m.payment_method}
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground flex-wrap">
+                        {m.email && <span className="flex items-center gap-1"><Mail className="w-3 h-3" />{m.email}</span>}
+                        {m.phone && <span className="flex items-center gap-1"><Phone className="w-3 h-3" />{m.phone}</span>}
+                        {m.deposit_number && <span>Réf. dépôt : <span className="font-medium text-foreground">{m.deposit_number}</span></span>}
+                        <span>{new Date(req.created_at).toLocaleString('fr-FR')}</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 shrink-0">
+                      <Button size="sm" variant="outline" onClick={() => dismissRequest.mutate(req.id)} disabled={dismissRequest.isPending}>
+                        Ignorer
+                      </Button>
+                      <Button size="sm" onClick={() => openActivation(req)}>
+                        <CheckCircle2 className="w-4 h-4 mr-1.5" />
+                        Activer
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
@@ -268,6 +442,123 @@ export default function AdminSubscriptions() {
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setSelectedSub(null)}>Fermer</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Activation dialog */}
+      <Dialog open={!!activatingRequest} onOpenChange={(o) => !o && setActivatingRequest(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Activer l'abonnement</DialogTitle>
+          </DialogHeader>
+          {activatingRequest && (
+            <div className="space-y-4 text-sm">
+              <div className="p-3 rounded-lg bg-muted/50 space-y-1">
+                <p className="font-medium text-foreground">{activatingRequest.metadata?.full_name}</p>
+                <p className="text-xs text-muted-foreground">{activatingRequest.metadata?.email}</p>
+                {activatingRequest.metadata?.phone && (
+                  <p className="text-xs text-muted-foreground">{activatingRequest.metadata.phone}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Plan</label>
+                <Select value={activationPlan} onValueChange={(v: 'monthly'|'annual'|'enterprise') => { setActivationPlan(v); setActivationAmount(planAmounts[v]); }}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="monthly">Starter — Mensuel</SelectItem>
+                    <SelectItem value="annual">Business — Annuel</SelectItem>
+                    <SelectItem value="enterprise">Pro — Entreprise</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Moyen de paiement reçu</label>
+                <Select value={activationMethod} onValueChange={setActivationMethod}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="mtn_mobile_money">MTN Mobile Money</SelectItem>
+                    <SelectItem value="airtel_money">Airtel Money</SelectItem>
+                    <SelectItem value="orange_money">Orange Money</SelectItem>
+                    <SelectItem value="bank_card">Carte Bancaire</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Montant payé (FCFA)</label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={activationAmount}
+                  onChange={(e) => setActivationAmount(Number(e.target.value))}
+                />
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                Un code d'accès à 6 chiffres sera généré et l'abonnement sera activé immédiatement pour le compte associé à <span className="font-medium text-foreground">{activatingRequest.metadata?.email}</span>.
+              </p>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setActivatingRequest(null)} disabled={activateRequest.isPending}>
+              Annuler
+            </Button>
+            <Button
+              onClick={() => activatingRequest && activateRequest.mutate(activatingRequest)}
+              disabled={activateRequest.isPending || !activationAmount}
+            >
+              {activateRequest.isPending ? <><Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> Activation…</> : <><CheckCircle2 className="w-4 h-4 mr-1.5" /> Confirmer et activer</>}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Activation result dialog */}
+      <Dialog open={!!activationResult} onOpenChange={(o) => !o && setActivationResult(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+              Abonnement activé
+            </DialogTitle>
+          </DialogHeader>
+          {activationResult && (
+            <div className="space-y-4 text-sm">
+              <p className="text-muted-foreground">
+                Communiquez ce code d'accès au client. Il pourra l'utiliser pour activer son compte.
+              </p>
+              <div className="p-4 rounded-lg bg-primary/10 border border-primary/30 text-center">
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Code d'accès</p>
+                <p className="text-3xl font-bold tracking-widest text-primary">{activationResult.access_code}</p>
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Expire le</span>
+                <span className="font-medium text-foreground">{new Date(activationResult.end_date).toLocaleDateString('fr-FR')}</span>
+              </div>
+              {activationResult.email && (
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Compte</span>
+                  <span className="font-medium text-foreground">{activationResult.email}</span>
+                </div>
+              )}
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => {
+                  navigator.clipboard.writeText(activationResult.access_code);
+                  toast({ title: 'Code copié' });
+                }}
+              >
+                <Copy className="w-4 h-4 mr-1.5" />
+                Copier le code
+              </Button>
+            </div>
+          )}
+          <DialogFooter>
+            <Button onClick={() => setActivationResult(null)}>Fermer</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
