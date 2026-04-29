@@ -667,7 +667,6 @@ export type Database = {
           location_id: string | null
           notes: string
           phone: string
-          pin_code: string
           pin_hash: string | null
           role: string
           updated_at: string
@@ -683,7 +682,6 @@ export type Database = {
           location_id?: string | null
           notes?: string
           phone?: string
-          pin_code?: string
           pin_hash?: string | null
           role?: string
           updated_at?: string
@@ -699,7 +697,6 @@ export type Database = {
           location_id?: string | null
           notes?: string
           phone?: string
-          pin_code?: string
           pin_hash?: string | null
           role?: string
           updated_at?: string
@@ -3500,6 +3497,10 @@ export type Database = {
       is_org_admin: { Args: { _user_id: string }; Returns: boolean }
       receive_stock_transfer: { Args: { _qr_token: string }; Returns: Json }
       same_org: { Args: { _user1: string; _user2: string }; Returns: boolean }
+      set_employee_pin: {
+        Args: { _employee_id: string; _pin: string }
+        Returns: Json
+      }
       validate_promo_code: {
         Args: { _code: string; _subtotal: number }
         Returns: Json

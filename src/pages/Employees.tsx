@@ -19,7 +19,7 @@ import { usePlanQuota } from '@/hooks/usePlanQuota';
 
 interface Employee {
   id: string; full_name: string; email: string; phone: string; role: string;
-  pin_code: string; is_active: boolean; hired_at: string;
+  is_active: boolean; hired_at: string;
 }
 interface Permissions {
   id?: string; employee_id: string;
@@ -90,12 +90,21 @@ export default function Employees() {
     }
     const { pin_code, ...rest } = form;
     const payload: any = { ...rest, user_id: user.id };
-    if (pin_code && /^\d{4}$/.test(pin_code)) payload.pin_code = pin_code;
     const isCreate = !editing;
     const { data: saved, error } = isCreate
       ? await supabase.from('employees').insert(payload).select().single()
       : await supabase.from('employees').update(payload).eq('id', editing!.id).select().single();
     if (error) { toast({ title: 'Erreur', description: error.message, variant: 'destructive' }); return; }
+    // Définir le PIN via la RPC sécurisée (hash côté serveur, jamais stocké en clair)
+    if (pin_code && /^\d{4}$/.test(pin_code) && saved) {
+      const { error: pinErr } = await supabase.rpc('set_employee_pin', {
+        _employee_id: (saved as any).id,
+        _pin: pin_code,
+      });
+      if (pinErr) {
+        toast({ title: 'PIN non enregistré', description: pinErr.message, variant: 'destructive' });
+      }
+    }
     toast({
       title: isCreate ? 'Employé ajouté ✅' : 'Employé modifié',
       description: isCreate
