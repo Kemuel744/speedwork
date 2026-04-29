@@ -331,7 +331,7 @@ export default function Reports() {
   const tooltipStyle = { background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: '12px' };
 
   return (
-    <div className="page-container print-zone">
+    <div className="page-container">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
@@ -359,13 +359,14 @@ export default function Reports() {
           {hasProAccess && (
             <>
               <Button variant="outline" size="sm" onClick={exportCSV}><Download className="w-4 h-4 mr-1" />CSV</Button>
-              <Button variant="outline" size="sm" onClick={() => window.print()}><Printer className="w-4 h-4 mr-1" />Imprimer</Button>
+              <Button variant="outline" size="sm" onClick={() => printElement(printRef.current, { title: `Statistiques_${period}` })}><Printer className="w-4 h-4 mr-1" />Imprimer</Button>
             </>
           )}
         </div>
       </div>
 
       {/* KPIs - always visible */}
+      <div ref={printRef}>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4">
         <StatCard icon={DollarSign} label="Chiffre d'affaires" value={displayAmount(stats.totalRevenue, currency)} trend={stats.revenueTrend} color="bg-primary/10 text-primary" />
         <StatCard icon={TrendingUp} label="Encaissé" value={displayAmount(stats.totalPaid, currency)} sub={`${stats.paidCount} facture(s)`} color="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" />
@@ -377,6 +378,7 @@ export default function Reports() {
         <StatCard icon={FileCheck} label="Devis créés" value={String(stats.quoteCount)} sub={displayAmount(stats.totalQuotes, currency)} color="bg-blue-500/10 text-blue-600 dark:text-blue-400" />
         <StatCard icon={Target} label="Conversion" value={`${stats.conversionRate.toFixed(0)}%`} sub="Devis → Facture" color="bg-violet-500/10 text-violet-600 dark:text-violet-400" />
         <StatCard icon={Package} label="Valeur du stock" value={displayAmount(stats.totalStockValue, currency)} sub={`${products.length} produit(s)`} color="bg-cyan-500/10 text-cyan-600 dark:text-cyan-400" />
+      </div>
       </div>
 
       {/* Low stock alert */}
