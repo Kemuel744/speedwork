@@ -428,6 +428,7 @@ export default function Reports() {
             products={products}
             displayAmount={displayAmount}
             currency={currency}
+            activeSession={activeCashSession}
             onSaleComplete={async (cartItems) => {
               if (!user) return;
               const receiptNo = `REC-${Date.now().toString(36).toUpperCase()}`;
