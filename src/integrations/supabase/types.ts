@@ -3468,6 +3468,15 @@ export type Database = {
           status: Database["public"]["Enums"]["subscription_status"]
         }[]
       }
+      get_org_member_profiles: {
+        Args: never
+        Returns: {
+          company_name: string
+          full_name: string
+          logo_url: string
+          user_id: string
+        }[]
+      }
       get_overdue_invoices: {
         Args: never
         Returns: {
