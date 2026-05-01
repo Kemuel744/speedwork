@@ -1,18 +1,20 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Banknote, Undo2, Wallet, Calculator, Receipt, Percent } from 'lucide-react';
+import { Banknote, Undo2, Wallet, Calculator, Receipt, Percent, PiggyBank } from 'lucide-react';
 import CashRegister from './CashRegister';
 import Returns from './Returns';
 import CustomerCredits from './CustomerCredits';
 import Accounting from './Accounting';
 import VatDeclaration from './VatDeclaration';
 import TaxRates from './TaxRates';
+import Savings from './Savings';
 
 const TABS = [
   { value: 'cash', label: 'Caisse', icon: Banknote, Comp: CashRegister },
   { value: 'returns', label: 'Retours', icon: Undo2, Comp: Returns },
   { value: 'credits', label: 'Crédit clients', icon: Wallet, Comp: CustomerCredits },
+  { value: 'savings', label: 'Épargne / Dépôts', icon: PiggyBank, Comp: Savings },
   { value: 'accounting', label: 'Comptabilité', icon: Calculator, Comp: Accounting },
   { value: 'vat', label: 'TVA', icon: Receipt, Comp: VatDeclaration },
   { value: 'tax-rates', label: 'Taux TVA', icon: Percent, Comp: TaxRates },
