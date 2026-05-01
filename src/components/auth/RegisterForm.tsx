@@ -10,13 +10,14 @@ import {
   Building2, User, Briefcase, Heart,
   Mail, Phone, MapPin, Globe, Lock, Eye, EyeOff,
   ArrowRight, ArrowLeft, Check, AlertCircle,
-  Factory, Users, Wrench, Clock, Shield
+  Factory, Users, Wrench, Clock, Shield, Store, Truck
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 type AccountType = 'enterprise' | 'freelance' | 'pme' | 'ong';
+type UserRole = 'seller' | 'supplier';
 
 interface RegisterFormProps {
   onRegister: (email: string, password: string, name: string) => Promise<{ success: boolean; error?: string; needsConfirmation?: boolean }>;
@@ -26,6 +27,7 @@ interface RegisterFormProps {
 }
 
 interface FormData {
+  userRole: UserRole | '';
   accountType: AccountType;
   fullName: string;
   email: string;
@@ -47,6 +49,7 @@ interface FormData {
 }
 
 const initialData: FormData = {
+  userRole: '',
   accountType: '' as AccountType,
   fullName: '', email: '', phone: '', country: '', city: '', address: '',
   companyName: '', sector: '', employeeCount: '', website: '',
