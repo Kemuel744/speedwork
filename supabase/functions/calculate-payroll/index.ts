@@ -208,8 +208,8 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
-    console.error("Error:", err);
-    return new Response(JSON.stringify({ error: err.message }), {
+    console.error("calculate-payroll error:", err);
+    return new Response(JSON.stringify({ error: "Erreur serveur. Réessayez plus tard." }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

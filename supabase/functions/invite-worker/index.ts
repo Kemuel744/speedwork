@@ -114,7 +114,8 @@ Deno.serve(async (req) => {
     });
 
     if (inviteError) {
-      return new Response(JSON.stringify({ error: inviteError.message }), {
+      console.error("invite-worker inviteError:", inviteError);
+      return new Response(JSON.stringify({ error: "Impossible d'envoyer l'invitation. Réessayez plus tard." }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -136,7 +137,8 @@ Deno.serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
+    console.error("invite-worker error:", err);
+    return new Response(JSON.stringify({ error: "Erreur serveur. Réessayez plus tard." }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
