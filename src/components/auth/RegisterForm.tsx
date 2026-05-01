@@ -262,6 +262,36 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
                 <h2 className="text-xl font-bold text-foreground">{t('register.stepType')}</h2>
                 <p className="text-sm text-muted-foreground">{t('register.selectType')}</p>
               </div>
+
+              {/* Role choice: Seller vs Supplier */}
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-foreground">{t('register.roleQuestion')}</p>
+                <div className="grid grid-cols-2 gap-3">
+                  {([
+                    { value: 'seller' as UserRole, label: t('register.roleSeller'), desc: t('register.roleSellerDesc'), icon: <Store className="w-6 h-6" /> },
+                    { value: 'supplier' as UserRole, label: t('register.roleSupplier'), desc: t('register.roleSupplierDesc'), icon: <Truck className="w-6 h-6" /> },
+                  ]).map(r => (
+                    <button
+                      key={r.value}
+                      type="button"
+                      onClick={() => update('userRole', r.value)}
+                      className={`p-4 rounded-xl border-2 text-left transition-all hover:shadow-md ${
+                        data.userRole === r.value
+                          ? 'border-primary bg-primary/5 shadow-sm'
+                          : 'border-border hover:border-primary/40'
+                      }`}
+                    >
+                      <div className={`mb-2 ${data.userRole === r.value ? 'text-primary' : 'text-muted-foreground'}`}>
+                        {r.icon}
+                      </div>
+                      <p className="font-semibold text-sm text-foreground">{r.label}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{r.desc}</p>
+                    </button>
+                  ))}
+                </div>
+                <FieldError message={errors.userRole} />
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 {accountTypes.map(at => (
                   <button
