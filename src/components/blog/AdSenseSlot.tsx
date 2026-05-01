@@ -29,7 +29,14 @@ export default function AdSenseSlot({ slot, className = "" }: AdSenseSlotProps) 
       <ins
         ref={adRef}
         className="adsbygoogle"
-        style={{ display: "block", textAlign: "center" }}
+        // Reserve vertical space to prevent layout shift / forced reflow
+        // when AdSense injects the iframe after measuring the container width.
+        style={{
+          display: "block",
+          textAlign: "center",
+          minHeight: 280,
+          width: "100%",
+        }}
         data-ad-client="ca-pub-9622797998614025"
         data-ad-slot="9742566834"
         data-ad-format="auto"
