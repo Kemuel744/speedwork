@@ -12,6 +12,7 @@ import PublicFooter from '@/components/PublicFooter';
 import { motion } from 'framer-motion';
 import ScrollReveal, { StaggerContainer, StaggerItem } from '@/components/home/ScrollReveal';
 import { useLanguage } from '@/contexts/LanguageContext';
+import NewFeaturesSection from '@/components/home/NewFeaturesSection';
 
 export default function Features() {
   const { t, language } = useLanguage();
@@ -118,6 +119,9 @@ export default function Features() {
           </StaggerContainer>
         </div>
       </section>
+
+      {/* Showcase: latest features */}
+      <NewFeaturesSection />
 
       {/* Features */}
       <section className="py-20">
