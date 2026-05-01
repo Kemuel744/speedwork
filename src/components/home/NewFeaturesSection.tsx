@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import {
   Sparkles, Globe, PiggyBank, Building2, CreditCard, Gift,
-  ScanLine, Brain, MessagesSquare, ArrowRight,
+  Brain, MessagesSquare, ArrowRight,
 } from 'lucide-react';
 import ScrollReveal, { StaggerContainer, StaggerItem } from './ScrollReveal';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -16,7 +16,6 @@ export default function NewFeaturesSection() {
     { icon: Building2, titleKey: 'newFeat.multidepot.title', descKey: 'newFeat.multidepot.desc', color: 'text-blue-600 bg-blue-500/10' },
     { icon: CreditCard, titleKey: 'newFeat.credits.title', descKey: 'newFeat.credits.desc', color: 'text-amber-600 bg-amber-500/10' },
     { icon: Gift, titleKey: 'newFeat.loyalty.title', descKey: 'newFeat.loyalty.desc', color: 'text-pink-600 bg-pink-500/10' },
-    { icon: ScanLine, titleKey: 'newFeat.scanner.title', descKey: 'newFeat.scanner.desc', color: 'text-violet-600 bg-violet-500/10' },
     { icon: Brain, titleKey: 'newFeat.ai.title', descKey: 'newFeat.ai.desc', color: 'text-fuchsia-600 bg-fuchsia-500/10' },
     { icon: MessagesSquare, titleKey: 'newFeat.messages.title', descKey: 'newFeat.messages.desc', color: 'text-teal-600 bg-teal-500/10' },
   ];
