@@ -117,7 +117,10 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
   const progress = ((step + 1) / 4) * 100;
 
   const validateStep = (): boolean => {
-    const step1Schema = z.object({ accountType: z.string().min(1) });
+    const step1Schema = z.object({
+      userRole: z.string().min(1, t('register.roleRequired')),
+      accountType: z.string().min(1),
+    });
     const step2Schema = z.object({
       fullName: z.string().trim().min(2, t('register.nameRequired')).max(100),
       email: z.string().trim().email(t('register.emailInvalid')).max(255),
@@ -145,7 +148,7 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
     }).refine(d => d.password === d.confirmPassword, { message: t('register.pwMismatch'), path: ['confirmPassword'] });
 
     let result: z.SafeParseReturnType<any, any>;
-    if (step === 0) result = step1Schema.safeParse({ accountType: data.accountType });
+    if (step === 0) result = step1Schema.safeParse({ userRole: data.userRole, accountType: data.accountType });
     else if (step === 1) result = step2Schema.safeParse(data);
     else if (step === 2) {
       result = isEnterprise ? step3EntSchema.safeParse(data) : step3FreelanceSchema.safeParse(data);
