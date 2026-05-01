@@ -482,6 +482,42 @@ export type Database = {
         }
         Relationships: []
       }
+      deposits: {
+        Row: {
+          amount: number
+          bank: string | null
+          created_at: string
+          deposit_date: string
+          deposit_type: Database["public"]["Enums"]["deposit_type"]
+          id: string
+          note: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          bank?: string | null
+          created_at?: string
+          deposit_date?: string
+          deposit_type?: Database["public"]["Enums"]["deposit_type"]
+          id?: string
+          note?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          bank?: string | null
+          created_at?: string
+          deposit_date?: string
+          deposit_type?: Database["public"]["Enums"]["deposit_type"]
+          id?: string
+          note?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       documents: {
         Row: {
           client_address: string | null
@@ -3469,6 +3505,10 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_savings_summary: {
+        Args: { _end?: string; _start?: string }
+        Returns: Json
+      }
       get_supplier_public_catalog: {
         Args: { _supplier_user_id: string }
         Returns: {
@@ -3509,6 +3549,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "client"
+      deposit_type: "business_savings" | "personal_withdrawal"
       payment_method:
         | "mtn_mobile_money"
         | "airtel_money"
@@ -3644,6 +3685,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "client"],
+      deposit_type: ["business_savings", "personal_withdrawal"],
       payment_method: [
         "mtn_mobile_money",
         "airtel_money",
