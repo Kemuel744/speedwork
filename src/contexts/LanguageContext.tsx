@@ -39,6 +39,17 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
 export function useLanguage() {
   const ctx = useContext(LanguageContext);
-  if (!ctx) throw new Error('useLanguage must be used within LanguageProvider');
+  if (!ctx) {
+    // Fallback safe: évite l'écran blanc si le Provider est manquant
+    // (ex: HMR désynchronisé, composant rendu hors arbre, tests isolés).
+    if (typeof console !== 'undefined') {
+      console.warn('[useLanguage] Provider manquant — fallback FR utilisé.');
+    }
+    return {
+      language: 'fr' as Language,
+      setLanguage: () => {},
+      t: (key: string) => translations.fr?.[key] ?? key,
+    };
+  }
   return ctx;
 }
