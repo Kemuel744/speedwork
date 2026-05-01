@@ -204,6 +204,7 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
           experience_years: data.experienceYears,
           skills: data.skills,
           availability: data.availability,
+          is_public_supplier: data.userRole === 'supplier',
         } as any).eq('user_id', user.id);
       }
 
