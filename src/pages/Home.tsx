@@ -35,7 +35,6 @@ function lazyWithRetry<T extends React.ComponentType<unknown>>(
 
 const ProblemSection = lazyWithRetry(() => import('@/components/home/ProblemSection'));
 const PowerFeaturesSection = lazyWithRetry(() => import('@/components/home/PowerFeaturesSection'));
-const NewFeaturesSection = lazyWithRetry(() => import('@/components/home/NewFeaturesSection'));
 const SolutionSection = lazyWithRetry(() => import('@/components/home/SolutionSection'));
 const SocialProofSection = lazyWithRetry(() => import('@/components/home/SocialProofSection'));
 const SimplicitySection = lazyWithRetry(() => import('@/components/home/SimplicitySection'));
@@ -94,7 +93,6 @@ export default function Home() {
       <Suspense fallback={<SectionFallback />}>
         <ProblemSection />
         <PowerFeaturesSection />
-        <NewFeaturesSection />
         <SolutionSection />
         <SocialProofSection />
         <WhySpeedWorkSection />
