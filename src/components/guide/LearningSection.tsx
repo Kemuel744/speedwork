@@ -51,13 +51,6 @@ export default function LearningSection({ isAdmin = false, userId }: { isAdmin?:
 
   useEffect(() => {
     fetchResources();
-    const channel = supabase
-      .channel('learning_resources_changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'learning_resources' }, () => {
-        fetchResources();
-      })
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
   }, []);
 
   const handleSubmit = async () => {

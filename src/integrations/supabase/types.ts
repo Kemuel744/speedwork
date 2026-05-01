@@ -3383,6 +3383,25 @@ export type Database = {
       }
     }
     Functions: {
+      admin_get_subscriptions: {
+        Args: never
+        Returns: {
+          access_code: string
+          amount: number
+          company_name: string
+          created_at: string
+          email: string
+          end_date: string
+          id: string
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          plan: Database["public"]["Enums"]["subscription_plan"]
+          start_date: string
+          status: Database["public"]["Enums"]["subscription_status"]
+          transaction_id: string
+          updated_at: string
+          user_id: string
+        }[]
+      }
       cancel_sale: {
         Args: { _reason?: string; _sale_id: string }
         Returns: Json

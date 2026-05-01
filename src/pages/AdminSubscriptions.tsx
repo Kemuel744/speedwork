@@ -158,36 +158,17 @@ export default function AdminSubscriptions() {
   const { data: subscriptions = [], isLoading } = useQuery({
     queryKey: ['admin-subscriptions'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('subscriptions')
-        .select('*, profiles!subscriptions_user_id_fkey(company_name, email)')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        // Fallback: join manually if FK doesn't exist
-        if (error.message.includes('relationship')) {
-          const { data: subs, error: subErr } = await supabase
-            .from('subscriptions')
-            .select('*')
-            .order('created_at', { ascending: false });
-          if (subErr) throw subErr;
-
-          const userIds = [...new Set((subs || []).map(s => s.user_id))];
-          const { data: profiles } = await supabase
-            .from('profiles')
-            .select('user_id, company_name, email')
-            .in('user_id', userIds);
-
-          const profileMap = new Map((profiles || []).map(p => [p.user_id, p]));
-          return (subs || []).map(s => ({
-            ...s,
-            profiles: profileMap.get(s.user_id) ? { company_name: profileMap.get(s.user_id)!.company_name, email: profileMap.get(s.user_id)!.email } : null,
-          })) as SubscriptionWithProfile[];
-        }
-        throw error;
-      }
-
-      return (data || []) as unknown as SubscriptionWithProfile[];
+      // Admin-only RPC returns subscriptions with sensitive fields (access_code, transaction_id)
+      // and joined profile info. Regular users cannot read these columns directly anymore.
+      const { data, error } = await supabase.rpc('admin_get_subscriptions');
+      if (error) throw error;
+      return ((data as any[]) || []).map((s) => ({
+        ...s,
+        profiles:
+          s.company_name || s.email
+            ? { company_name: s.company_name, email: s.email }
+            : null,
+      })) as SubscriptionWithProfile[];
     },
   });
 
