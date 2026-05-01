@@ -10,13 +10,14 @@ import {
   Building2, User, Briefcase, Heart,
   Mail, Phone, MapPin, Globe, Lock, Eye, EyeOff,
   ArrowRight, ArrowLeft, Check, AlertCircle,
-  Factory, Users, Wrench, Clock, Shield
+  Factory, Users, Wrench, Clock, Shield, Store, Truck
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 type AccountType = 'enterprise' | 'freelance' | 'pme' | 'ong';
+type UserRole = 'seller' | 'supplier';
 
 interface RegisterFormProps {
   onRegister: (email: string, password: string, name: string) => Promise<{ success: boolean; error?: string; needsConfirmation?: boolean }>;
@@ -26,6 +27,7 @@ interface RegisterFormProps {
 }
 
 interface FormData {
+  userRole: UserRole | '';
   accountType: AccountType;
   fullName: string;
   email: string;
@@ -47,6 +49,7 @@ interface FormData {
 }
 
 const initialData: FormData = {
+  userRole: '',
   accountType: '' as AccountType,
   fullName: '', email: '', phone: '', country: '', city: '', address: '',
   companyName: '', sector: '', employeeCount: '', website: '',
@@ -114,7 +117,10 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
   const progress = ((step + 1) / 4) * 100;
 
   const validateStep = (): boolean => {
-    const step1Schema = z.object({ accountType: z.string().min(1) });
+    const step1Schema = z.object({
+      userRole: z.string().min(1, t('register.roleRequired')),
+      accountType: z.string().min(1),
+    });
     const step2Schema = z.object({
       fullName: z.string().trim().min(2, t('register.nameRequired')).max(100),
       email: z.string().trim().email(t('register.emailInvalid')).max(255),
@@ -142,7 +148,7 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
     }).refine(d => d.password === d.confirmPassword, { message: t('register.pwMismatch'), path: ['confirmPassword'] });
 
     let result: z.SafeParseReturnType<any, any>;
-    if (step === 0) result = step1Schema.safeParse({ accountType: data.accountType });
+    if (step === 0) result = step1Schema.safeParse({ userRole: data.userRole, accountType: data.accountType });
     else if (step === 1) result = step2Schema.safeParse(data);
     else if (step === 2) {
       result = isEnterprise ? step3EntSchema.safeParse(data) : step3FreelanceSchema.safeParse(data);
@@ -198,6 +204,7 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
           experience_years: data.experienceYears,
           skills: data.skills,
           availability: data.availability,
+          is_public_supplier: data.userRole === 'supplier',
         } as any).eq('user_id', user.id);
       }
 
@@ -256,6 +263,36 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, loading, set
                 <h2 className="text-xl font-bold text-foreground">{t('register.stepType')}</h2>
                 <p className="text-sm text-muted-foreground">{t('register.selectType')}</p>
               </div>
+
+              {/* Role choice: Seller vs Supplier */}
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-foreground">{t('register.roleQuestion')}</p>
+                <div className="grid grid-cols-2 gap-3">
+                  {([
+                    { value: 'seller' as UserRole, label: t('register.roleSeller'), desc: t('register.roleSellerDesc'), icon: <Store className="w-6 h-6" /> },
+                    { value: 'supplier' as UserRole, label: t('register.roleSupplier'), desc: t('register.roleSupplierDesc'), icon: <Truck className="w-6 h-6" /> },
+                  ]).map(r => (
+                    <button
+                      key={r.value}
+                      type="button"
+                      onClick={() => update('userRole', r.value)}
+                      className={`p-4 rounded-xl border-2 text-left transition-all hover:shadow-md ${
+                        data.userRole === r.value
+                          ? 'border-primary bg-primary/5 shadow-sm'
+                          : 'border-border hover:border-primary/40'
+                      }`}
+                    >
+                      <div className={`mb-2 ${data.userRole === r.value ? 'text-primary' : 'text-muted-foreground'}`}>
+                        {r.icon}
+                      </div>
+                      <p className="font-semibold text-sm text-foreground">{r.label}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{r.desc}</p>
+                    </button>
+                  ))}
+                </div>
+                <FieldError message={errors.userRole} />
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 {accountTypes.map(at => (
                   <button
