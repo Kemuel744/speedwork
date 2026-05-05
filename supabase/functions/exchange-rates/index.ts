@@ -11,10 +11,18 @@ serve(async (req) => {
   }
 
   try {
-    const { base } = await req.json();
-    const baseCurrency = base || 'EUR';
+    const supportedCodes = ['EUR', 'XOF', 'XAF', 'USD', 'GBP', 'MAD', 'TND', 'GNF'];
+    const { base } = await req.json().catch(() => ({ base: 'EUR' }));
+    const baseCurrency = typeof base === 'string' && base.length > 0 ? base : 'EUR';
 
-    const response = await fetch(`https://open.er-api.com/v6/latest/${baseCurrency}`);
+    if (!supportedCodes.includes(baseCurrency)) {
+      return new Response(JSON.stringify({ error: 'Devise non supportée' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const response = await fetch(`https://open.er-api.com/v6/latest/${encodeURIComponent(baseCurrency)}`);
     if (!response.ok) {
       throw new Error(`Exchange rate API error: ${response.status}`);
     }
@@ -22,7 +30,6 @@ serve(async (req) => {
     const data = await response.json();
 
     // Filter to only our supported currencies
-    const supportedCodes = ['EUR', 'XOF', 'XAF', 'USD', 'GBP', 'MAD', 'TND', 'GNF'];
     const rates: Record<string, number> = {};
     for (const code of supportedCodes) {
       if (data.rates[code]) {
