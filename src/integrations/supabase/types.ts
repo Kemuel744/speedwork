@@ -3468,6 +3468,20 @@ export type Database = {
           status: Database["public"]["Enums"]["subscription_status"]
         }[]
       }
+      get_open_missions: {
+        Args: never
+        Returns: {
+          deadline: string
+          description: string
+          duration: string
+          id: string
+          location: string
+          mission_date: string
+          priority: string
+          title: string
+          workers_needed: number
+        }[]
+      }
       get_org_member_profiles: {
         Args: never
         Returns: {
