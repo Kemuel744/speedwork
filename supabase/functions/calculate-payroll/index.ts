@@ -83,6 +83,7 @@ Deno.serve(async (req) => {
     const { data: missionsData } = await supabase
       .from("missions")
       .select("id, assigned_worker_id, assigned_team_id, salary, status")
+      .eq("user_id", user.id)
       .in("status", ["completed", "closed"])
       .gte("updated_at", startDate.toISOString())
       .lte("updated_at", endDate.toISOString());
