@@ -1718,6 +1718,27 @@ export type Database = {
           },
         ]
       }
+      pin_attempts: {
+        Row: {
+          attempted_at: string
+          id: string
+          success: boolean
+          user_id: string
+        }
+        Insert: {
+          attempted_at?: string
+          id?: string
+          success?: boolean
+          user_id: string
+        }
+        Update: {
+          attempted_at?: string
+          id?: string
+          success?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
       product_batches: {
         Row: {
           batch_number: string
@@ -3466,6 +3487,20 @@ export type Database = {
           plan: Database["public"]["Enums"]["subscription_plan"]
           start_date: string
           status: Database["public"]["Enums"]["subscription_status"]
+        }[]
+      }
+      get_open_missions: {
+        Args: never
+        Returns: {
+          deadline: string
+          description: string
+          duration: string
+          id: string
+          location: string
+          mission_date: string
+          priority: string
+          title: string
+          workers_needed: number
         }[]
       }
       get_org_member_profiles: {
