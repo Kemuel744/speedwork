@@ -4,6 +4,29 @@ import App from "./App.tsx";
 import "./index.css";
 import { registerAutoSync } from "./lib/syncQueue";
 
+const removeLovableBadge = () => {
+  const selectors = [
+    '[id*="lovable" i]',
+    '[class*="lovable" i]',
+    '[data-lovable]',
+    '[aria-label*="lovable" i]',
+    '[title*="lovable" i]',
+    'a[href*="lovable" i]',
+    'iframe[src*="lovable" i]',
+  ].join(",");
+
+  document.querySelectorAll<HTMLElement>(selectors).forEach((element) => {
+    if (element.id === "root" || element.closest("#root")) return;
+    element.remove();
+  });
+
+  document.body.querySelectorAll<HTMLElement>("body > *:not(#root)").forEach((element) => {
+    if (element.textContent?.toLowerCase().includes("edit with lovable")) {
+      element.remove();
+    }
+  });
+};
+
 // Suppress known Recharts warning about refs on function components (XAxis/YAxis/CartesianGrid)
 // This is an upstream library issue, not a bug in our code.
 if (import.meta.env.DEV) {
@@ -21,6 +44,12 @@ if (import.meta.env.DEV) {
 }
 
 registerAutoSync();
+
+removeLovableBadge();
+new MutationObserver(removeLovableBadge).observe(document.body, {
+  childList: true,
+  subtree: true,
+});
 
 registerSW({
   immediate: true,
