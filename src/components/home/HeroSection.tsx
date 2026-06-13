@@ -1,18 +1,18 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Store, Package, QrCode, BarChart3, Wifi, Zap } from 'lucide-react';
+import { ArrowRight, Package, ClipboardCheck, TrendingDown, BellRing, Wifi, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
-import promoHero from '@/assets/promo-hero-final.png';
+import HeroDashboardMockup from './HeroDashboardMockup';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function HeroSection() {
   const { t } = useLanguage();
 
   const badges = [
-    { icon: Store, label: t('hero.badgePOS') },
+    { icon: ClipboardCheck, label: t('hero.badgeInventory') },
+    { icon: TrendingDown, label: t('hero.badgeGap') },
     { icon: Package, label: t('hero.badgeStock') },
-    { icon: QrCode, label: t('hero.badgeQR') },
-    { icon: BarChart3, label: t('hero.badgeStats') },
+    { icon: BellRing, label: t('hero.badgeAlerts') },
     { icon: Wifi, label: t('hero.badgeOffline') },
   ];
 
@@ -22,26 +22,12 @@ export default function HeroSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 lg:py-16 relative">
         {/* Image en paysage, plein cadre, en premier */}
         <motion.div
-          className="relative w-full mb-16 sm:mb-20 lg:mb-24"
+          className="relative w-full mb-12 sm:mb-16 lg:mb-20"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
-          {/* Wrapper réservant l'aspect ratio 3:2 pour éviter tout CLS pendant le chargement */}
-          <div
-            className="relative w-full overflow-hidden rounded-2xl shadow-xl bg-gradient-to-br from-primary/5 via-secondary to-accent/5"
-            style={{ aspectRatio: '3 / 2' }}
-          >
-            <img
-              src={promoHero}
-              alt="SpeedWork – Logiciel de gestion de boutique, dépôt et pharmacie en Afrique"
-              className="absolute inset-0 w-full h-full object-contain"
-              width={1536}
-              height={1024}
-              fetchPriority="high"
-              decoding="async"
-            />
-          </div>
+          <HeroDashboardMockup />
         </motion.div>
 
         {/* Texte / CTA en dessous, pleine largeur centrée */}
@@ -80,7 +66,7 @@ export default function HeroSection() {
 
             <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4">
               <Button size="lg" asChild className="h-12 sm:h-13 px-6 sm:px-8 text-base font-semibold w-full sm:w-auto">
-                <Link to="/tarifs">
+                <Link to="/inventaire">
                   {t('hero.tryFree')}
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>

@@ -22,6 +22,7 @@ const Blog = lazy(() => import("@/pages/Blog"));
 const BlogArticle = lazy(() => import("@/pages/BlogArticle"));
 const About = lazy(() => import("@/pages/About"));
 const PublicPurchaseOrder = lazy(() => import("@/pages/PublicPurchaseOrder"));
+const InventoryExpress = lazy(() => import("@/pages/InventoryExpress"));
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/fonctionnalites" element={<Features />} />
+            <Route path="/inventaire" element={<InventoryExpress />} />
             <Route path="/tarifs" element={<Subscription />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/subscription" element={<Navigate to="/tarifs" replace />} />
