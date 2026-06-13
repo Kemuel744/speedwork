@@ -43,8 +43,8 @@ export default function Features() {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title="Fonctionnalités – Solution d'inventaire et de gestion de stock"
-        description="Découvrez les fonctionnalités de SpeedWork : inventaire express, détection automatique des écarts, alertes de rupture, rapports PDF, scanner QR et mode hors ligne."
+        title="Fonctionnalités – Logiciel de gestion de boutique et pharmacie"
+        description="Découvrez les fonctionnalités de SpeedWork : caisse POS, gestion de stock, scanner QR, reçus professionnels et mode hors ligne pour boutiques et pharmacies."
         path="/fonctionnalites"
       />
       <PublicNavbar />

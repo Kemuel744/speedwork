@@ -34,12 +34,13 @@ function lazyWithRetry<T extends React.ComponentType<unknown>>(
 }
 
 const ProblemSection = lazyWithRetry(() => import('@/components/home/ProblemSection'));
-const InventoryExpressSection = lazyWithRetry(() => import('@/components/home/InventoryExpressSection'));
-const InventoryBenefitsSection = lazyWithRetry(() => import('@/components/home/InventoryBenefitsSection'));
-const OfflineSyncSection = lazyWithRetry(() => import('@/components/home/OfflineSyncSection'));
-const ReportsShowcaseSection = lazyWithRetry(() => import('@/components/home/ReportsShowcaseSection'));
+const PowerFeaturesSection = lazyWithRetry(() => import('@/components/home/PowerFeaturesSection'));
+const SolutionSection = lazyWithRetry(() => import('@/components/home/SolutionSection'));
 const SocialProofSection = lazyWithRetry(() => import('@/components/home/SocialProofSection'));
+const SimplicitySection = lazyWithRetry(() => import('@/components/home/SimplicitySection'));
+const BenefitsSection = lazyWithRetry(() => import('@/components/home/BenefitsSection'));
 const PositioningSection = lazyWithRetry(() => import('@/components/home/PositioningSection'));
+const WhySpeedWorkSection = lazyWithRetry(() => import('@/components/home/WhySpeedWorkSection'));
 const ScrollReveal = lazyWithRetry(() => import('@/components/home/ScrollReveal'));
 
 const SectionFallback = () => <div className="py-20" />;
@@ -51,8 +52,8 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title="SpeedWork – Solution d'inventaire et de gestion de stock pour commerces africains"
-        description="Effectuez vos inventaires en quelques minutes, détectez automatiquement les écarts de stock et gardez le contrôle total de votre commerce. Conçu pour boutiques, dépôts et pharmacies en Afrique."
+        title="SpeedWork – Logiciel de gestion pour boutiques, dépôts et pharmacies en Afrique"
+        description="Caisse POS, gestion de stock, scanner QR, reçus professionnels et mode hors ligne. Le logiciel simple et puissant pour gérer votre boutique ou pharmacie en Afrique."
         path="/"
         jsonLd={{
           "@context": "https://schema.org",
@@ -63,7 +64,7 @@ export default function Home() {
               "name": "Qu'est-ce que SpeedWork ?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "SpeedWork est la solution d'inventaire intelligent et de gestion de stock conçue pour les commerces africains : boutiques, alimentations, dépôts, pharmacies, quincailleries et grossistes."
+                "text": "SpeedWork est un logiciel de gestion de boutique tout-en-un pour les commerces, dépôts et pharmacies en Afrique. Il permet de gérer les ventes (POS), le stock, les codes QR et les reçus professionnels."
               }
             },
             {
@@ -76,10 +77,10 @@ export default function Home() {
             },
             {
               "@type": "Question",
-              "name": "Comment SpeedWork aide à réduire les pertes de stock ?",
+              "name": "Quelles fonctionnalités propose SpeedWork ?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "SpeedWork compare automatiquement le stock théorique au stock réel après chaque inventaire, identifie les produits manquants, en surplus ou périmés, et génère un rapport PDF signé pour la traçabilité."
+                "text": "SpeedWork propose une caisse POS complète, la gestion de stock avec alertes, le scanner de codes QR, la génération de reçus professionnels, l'historique des ventes, les statistiques et le mode hors ligne."
               }
             }
           ]
@@ -91,11 +92,12 @@ export default function Home() {
 
       <Suspense fallback={<SectionFallback />}>
         <ProblemSection />
-        <InventoryExpressSection />
-        <InventoryBenefitsSection />
-        <OfflineSyncSection />
-        <ReportsShowcaseSection />
+        <PowerFeaturesSection />
+        <SolutionSection />
         <SocialProofSection />
+        <WhySpeedWorkSection />
+        <SimplicitySection />
+        <BenefitsSection />
         <PositioningSection />
 
         <ScrollReveal>
@@ -109,7 +111,7 @@ export default function Home() {
               </p>
               <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button size="lg" variant="secondary" asChild className="h-13 px-8 text-base font-semibold">
-                  <Link to="/inventaire">
+                  <Link to="/tarifs">
                     {t('homeCta.button')}
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Link>

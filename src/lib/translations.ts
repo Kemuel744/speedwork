@@ -202,32 +202,29 @@ export const translations: Record<Language, Record<string, string>> = {
     'pub.closeMenu': 'Fermer le menu',
 
     // Public Footer
-    'footer.description': "La solution d'inventaire intelligent et de gestion de stock pour les commerces africains. Boutiques, alimentations, dépôts, pharmacies, quincailleries et grossistes.",
+    'footer.description': "Le logiciel de gestion simple et puissant pour boutiques, dépôts et pharmacies en Afrique. Caisse POS, gestion de stock, scanner QR et reçus professionnels.",
     'footer.navigation': 'Navigation',
     'footer.userGuide': "Guide d'utilisation",
     'footer.contact': 'Contact',
     'footer.rights': 'Tous droits réservés.',
 
     // Hero Section
-    'hero.badge': "Solution d'inventaire intelligent",
-    'hero.title1': 'Maîtrisez votre stock. Réduisez vos pertes.',
-    'hero.title2': 'Augmentez vos profits.',
-    'hero.subtitle': "Effectuez vos inventaires en quelques minutes, détectez automatiquement les écarts de stock et gardez le contrôle total de votre commerce grâce à SpeedWork.",
+    'hero.badge': 'Logiciel de gestion de boutique',
+    'hero.title1': 'Gérez votre boutique simplement avec',
+    'hero.title2': 'SpeedWork',
+    'hero.subtitle': "Caisse POS, gestion de stock, scanner QR, reçus professionnels et mode hors ligne — tout ce dont votre commerce a besoin pour vendre plus et mieux.",
     'hero.badgePOS': 'Caisse POS',
     'hero.badgeStock': 'Gestion de stock',
     'hero.badgeQR': 'Scanner QR',
     'hero.badgeStats': 'Statistiques',
     'hero.badgeOffline': 'Mode hors ligne',
-    'hero.badgeInventory': 'Inventaire express',
-    'hero.badgeGap': "Écarts auto",
-    'hero.badgeAlerts': 'Alertes rupture',
     'hero.badgeInvoicing': 'Facturation',
     'hero.badgeTeams': 'Équipes',
     'hero.badgeMissions': 'Missions terrain',
     'hero.badgeAnalytics': 'Analytics',
     'hero.badgeReliability': 'Fiabilité',
-    'hero.tryFree': 'Démarrer un inventaire gratuit',
-    'hero.discoverFeatures': 'Voir une démonstration',
+    'hero.tryFree': 'Essayer gratuitement',
+    'hero.discoverFeatures': 'Découvrir les fonctionnalités',
     'hero.trialInfo': '✓ Essai gratuit 3 jours · ✓ Aucune carte requise · ✓ Franc CFA natif',
 
     // Problem Section
@@ -333,9 +330,9 @@ export const translations: Record<Language, Record<string, string>> = {
     'why.cta': 'Tester SpeedWork maintenant',
 
     // Home CTA
-    'homeCta.title': 'Découvrez aujourd\'hui les produits qui disparaissent dans votre commerce.',
-    'homeCta.subtitle': "Ne perdez plus d'argent à cause des écarts de stock. Commencez votre premier inventaire avec SpeedWork.",
-    'homeCta.button': 'Essayer gratuitement',
+    'homeCta.title': 'Prêt à gérer votre boutique efficacement ?',
+    'homeCta.subtitle': 'Rejoignez les commerçants qui digitalisent leur gestion avec SpeedWork.',
+    'homeCta.button': 'Créer mon compte gratuitement',
     'homeCta.login': 'Se connecter',
     'homeCta.trial': '3 jours gratuits • Sans engagement • Aucune carte requise',
 
@@ -508,8 +505,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'enterprise.subscribe_now': "S'abonner maintenant",
 
     // About Page
-    'about.seoTitle': "À propos de SpeedWork – Plateforme de gestion des stocks pour commerces africains",
-    'about.seoDesc': "Découvrez SpeedWork, la solution d'inventaire intelligent et de gestion de stock conçue pour les commerces et pharmacies en Afrique.",
+    'about.seoTitle': 'A propos de SpeedWork - Gestion de boutique en Afrique',
+    'about.seoDesc': 'Découvrez SpeedWork, le logiciel de gestion de boutique conçu pour les commerces et pharmacies en Afrique.',
     'about.heroTitle': 'Nous construisons le futur de la gestion des commerces en Afrique',
     'about.heroSubtitle': 'Une plateforme. Une vision. Un continent.',
     'about.heroIntro': "SpeedWork est né d'une conviction profonde : les commerçants africains méritent des outils de gestion aussi performants que ceux disponibles partout ailleurs dans le monde.",
@@ -562,7 +559,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'about.ctaContact': 'Nous contacter',
 
     // Features Page
-    'features.heroBadge': "Solution d'inventaire intelligent",
+    'features.heroBadge': 'Logiciel de gestion de boutique',
     'features.heroTitle1': 'Des outils',
     'features.heroTitle2': 'puissants',
     'features.heroTitle3': 'pour gérer votre commerce',
@@ -579,7 +576,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'features.allTitle': 'Toutes les fonctionnalités pour votre commerce',
     'features.allSubtitle': "Du point de vente à la gestion de stock, en passant par les statistiques et le mode hors ligne.",
     'features.ctaTitle': 'Prêt à digitaliser votre boutique ?',
-    'features.ctaSubtitle': "Essayez gratuitement pendant 3 jours. Solution d'inventaire intelligent pour commerces africains.",
+    'features.ctaSubtitle': 'Essayez gratuitement pendant 3 jours. Logiciel de gestion de boutique en Afrique.',
     'features.ctaButton': 'Voir les tarifs',
 
     // New features showcase (Home + Features)
