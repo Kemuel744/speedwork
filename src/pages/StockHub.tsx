@@ -1,12 +1,13 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Package, FolderTree, Grid3x3, ArrowLeftRight, Printer } from 'lucide-react';
+import { Package, FolderTree, Grid3x3, ArrowLeftRight, Printer, ClipboardCheck } from 'lucide-react';
 import Reports from './Reports';
 import Categories from './Categories';
 import MultiDepotStock from './MultiDepotStock';
 import StockTransfers from './StockTransfers';
 import Labels from './Labels';
+import Inventory from './Inventory';
 
 const TABS = [
   { value: 'products', label: 'Produits', icon: Package, Comp: Reports },
@@ -14,6 +15,7 @@ const TABS = [
   { value: 'multi-depot', label: 'Multi-dépôts', icon: Grid3x3, Comp: MultiDepotStock },
   { value: 'transfers', label: 'Transferts', icon: ArrowLeftRight, Comp: StockTransfers },
   { value: 'labels', label: 'Étiquettes', icon: Printer, Comp: Labels },
+  { value: 'inventory', label: 'Inventaire', icon: ClipboardCheck, Comp: Inventory },
 ];
 
 export default function StockHub() {

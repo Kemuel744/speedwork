@@ -1,49 +1,72 @@
-Je vais corriger le problème d’impression blanche en remplaçant l’isolation CSS fragile actuelle par un système d’impression plus sûr et ciblé.
+# Module Inventaire physique
 
-Constat principal : les règles globales d’impression cachent tout le contenu de l’application avec `visibility: hidden`, puis tentent de réafficher `.print-zone`. Sur certaines pages, notamment les pages à onglets comme Finance, un contenu imprimable peut exister dans un onglet non actif ou être caché par Radix/Tailwind (`display: none`, `hidden`, `print:hidden`). Résultat : le navigateur imprime une page blanche.
+Nouvelle fonctionnalité **Inventaire** ajoutée à la page **Stock & Produits** (`StockHub`), permettant aux commerçants de réaliser des comptages physiques et de comparer stock théorique vs stock compté, sans jamais créer de nouveaux produits.
 
-Plan d’implémentation :
+## 1. Nouvel onglet dans StockHub
 
-1. Stabiliser les règles globales d’impression
-   - Réécrire la section `@media print` de `src/index.css` pour éviter de rendre tout le site invisible de façon trop agressive.
-   - Conserver l’isolation de `.a4-preview`, `.guide-doc`, `.label-print-area` et `.print-zone`, mais avec des règles qui ne dépendent pas d’un contenu caché par un onglet inactif.
-   - Masquer les éléments d’interface uniquement avec une classe dédiée (`.no-print`, `print:hidden`, navigation, sidebar, chat, header fixe), sans casser le contenu réel à imprimer.
+Ajout d'un onglet **"Inventaire"** (icône `ClipboardCheck`) dans `src/pages/StockHub.tsx`, pointant vers une nouvelle page `src/pages/Inventory.tsx`.
 
-2. Empêcher les onglets cachés de déclencher une impression blanche
-   - Sur la page Finance, ne pas rendre tous les onglets en même temps comme contenu imprimable.
-   - Faire en sorte que seule la page active puisse contenir une zone imprimable.
-   - Pour les pages Comptabilité/TVA, garder leurs boutons et filtres masqués à l’impression, mais garantir que le rapport lui-même reste visible.
+## 2. Base de données (migration)
 
-3. Corriger les pages de rapports internes
-   - Sur `Reports.tsx`, éviter que toute la page “Ma Boutique” soit imprimée en bloc avec tous les onglets.
-   - Ajouter une zone d’impression claire pour les statistiques/rapports visibles, et masquer les parties interactives non destinées au papier.
-   - Vérifier que le bouton “Imprimer” n’imprime plus les menus, la sidebar, les filtres ou une page vide.
+Deux nouvelles tables liées aux produits existants :
 
-4. Corriger le rapport d’inventaire dans la boîte de dialogue
-   - Le composant `InventoryReport.tsx` appelle `window.print()` mais son contenu n’est pas marqué comme zone imprimable.
-   - Ajouter une zone dédiée au contenu du rapport d’inventaire, avec les boutons masqués à l’impression, pour éviter une page blanche ou l’impression de l’arrière-plan.
+- **`inventories`** — entête d'une session d'inventaire
+  - `name`, `inventory_date`, `location_id` (FK locations), `responsible_name`, `comment`, `status` (`draft` / `validated`), totaux calculés (produits contrôlés, écart total, valeur écart, taux précision)
+- **`inventory_items`** — lignes par produit
+  - `inventory_id`, `product_id` (FK produits existants), `variant_id` (optionnel), `system_qty`, `counted_qty`, `unit_price`, écart calculé
 
-5. Préserver les impressions spéciales existantes
-   - Ne pas casser les documents A4 (`.a4-preview`) comme factures/devis/bons de commande.
-   - Ne pas casser le guide utilisateur (`.guide-doc`).
-   - Ne pas casser les tickets thermiques et rapports Z, qui s’impriment déjà via une iframe dédiée.
-   - Conserver les étiquettes produits (`.label-print-area`) avec leur mise en page A4.
+RLS standard `user_id = auth.uid()`, GRANTs `authenticated` + `service_role`, triggers `updated_at`.
 
-Détails techniques :
+Aucune écriture dans `products`. À la validation, génération de `stock_movements` (type `adjustment`) et mise à jour de `products.quantity_in_stock` (et `location_stock` si multi-dépôts).
 
-```text
-Avant :
-body:has(.print-zone) #root * { visibility: hidden }
-.print-zone, .print-zone * { visibility: visible }
+## 3. Page Inventory
 
-Problème : si .print-zone est dans un onglet non actif ou si ses enfants sont display:none,
-le navigateur voit une zone imprimable mais aucun contenu visible -> page blanche.
+### Tableau de bord (haut de page)
+- Dernier inventaire (date)
+- Produits vérifiés
+- Écart total (unités)
+- Valeur des pertes
+- Taux de précision (%)
 
-Après :
-- isolation plus ciblée par type de document
-- classes no-print/print:hidden pour masquer l’interface
-- zones imprimables uniquement sur le contenu réellement actif
-- compatibilité A4 et tickets/iframes préservée
-```
+### Bouton "➕ Nouvel Inventaire"
+Ouvre un dialog avec : nom, date, magasin (select sur `locations`), responsable, commentaire.
 
-Après approbation, j’appliquerai les changements dans les fichiers concernés et je vérifierai le parcours principal depuis `/finance?tab=cash`, notamment le bouton Z et les onglets Comptabilité/TVA.
+### Écran de comptage
+Tableau : `Produit | Stock système | Stock compté | Écart | Valeur écart`
+- Recherche produit (par nom / SKU / code-barres)
+- Saisie manuelle de la quantité comptée
+- Scan code-barres / QR (réutilisation de `QRScanner` existant)
+- Calculs en direct : surplus, manquants, valeur écarts, taux précision
+
+### Validation
+Bouton **"Valider l'inventaire"** :
+- Crée les mouvements de stock d'ajustement
+- Met à jour `products.quantity_in_stock`
+- Passe le statut à `validated` et fige les totaux
+
+### Historique
+Liste des inventaires validés : date, responsable, produits vérifiés, écart total, statut. Clic = vue détaillée en lecture seule.
+
+### Rapports
+- **Imprimer** (réutilise `printElement`)
+- **Export PDF** via `printElement` (impression navigateur en PDF)
+- **Export Excel** via `xlsx` (déjà présent dans le projet si dispo, sinon CSV natif)
+
+## 4. UI & i18n
+
+- Style cohérent avec le reste de SpeedWork (cards, badges, dialog shadcn)
+- Responsive mobile / tablette / desktop
+- Textes FR (ajout des clés dans `src/lib/translations.ts`, EN en suivant)
+- Devise via `displayAmount` du `CurrencyContext`
+
+## Détails techniques
+
+- Page : `src/pages/Inventory.tsx`
+- Composants : `src/components/inventory/InventoryDialog.tsx`, `InventoryCountTable.tsx`, `InventoryHistory.tsx`, `InventoryKPIs.tsx`
+- Tables : `public.inventories`, `public.inventory_items`
+- Mutations : insert dans `stock_movements` (type `adjustment`) + update `products.quantity_in_stock` à la validation
+- Aucun nouvel `INSERT INTO products` n'est effectué dans tout le module
+
+## Hors scope (à confirmer plus tard si besoin)
+- Intégration multi-dépôts fine (`location_stock`) : version 1 prend le stock global du produit ; ajustement multi-dépôts pourra suivre.
+- Export Excel natif (vs CSV) selon dépendances disponibles.
