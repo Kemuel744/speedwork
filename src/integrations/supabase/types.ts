@@ -862,6 +862,119 @@ export type Database = {
         }
         Relationships: []
       }
+      inventories: {
+        Row: {
+          accuracy_rate: number
+          comment: string
+          created_at: string
+          id: string
+          inventory_date: string
+          location_id: string | null
+          name: string
+          products_checked: number
+          responsible_name: string
+          status: string
+          total_variance: number
+          updated_at: string
+          user_id: string
+          validated_at: string | null
+          variance_value: number
+        }
+        Insert: {
+          accuracy_rate?: number
+          comment?: string
+          created_at?: string
+          id?: string
+          inventory_date?: string
+          location_id?: string | null
+          name?: string
+          products_checked?: number
+          responsible_name?: string
+          status?: string
+          total_variance?: number
+          updated_at?: string
+          user_id: string
+          validated_at?: string | null
+          variance_value?: number
+        }
+        Update: {
+          accuracy_rate?: number
+          comment?: string
+          created_at?: string
+          id?: string
+          inventory_date?: string
+          location_id?: string | null
+          name?: string
+          products_checked?: number
+          responsible_name?: string
+          status?: string
+          total_variance?: number
+          updated_at?: string
+          user_id?: string
+          validated_at?: string | null
+          variance_value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventories_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_items: {
+        Row: {
+          counted_qty: number
+          created_at: string
+          id: string
+          inventory_id: string
+          product_id: string
+          system_qty: number
+          unit_price: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          counted_qty?: number
+          created_at?: string
+          id?: string
+          inventory_id: string
+          product_id: string
+          system_qty?: number
+          unit_price?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          counted_qty?: number
+          created_at?: string
+          id?: string
+          inventory_id?: string
+          product_id?: string
+          system_qty?: number
+          unit_price?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_items_inventory_id_fkey"
+            columns: ["inventory_id"]
+            isOneToOne: false
+            referencedRelation: "inventories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoice_reminders: {
         Row: {
           document_id: string
@@ -3485,6 +3598,7 @@ export type Database = {
         Args: { _employee_id: string; _pin: string }
         Returns: Json
       }
+      validate_inventory: { Args: { _inventory_id: string }; Returns: Json }
       validate_promo_code: {
         Args: { _code: string; _subtotal: number }
         Returns: Json
