@@ -69,6 +69,10 @@ export default function Inventory() {
   const [viewInv, setViewInv] = useState<InventoryHeader | null>(null);
   const [viewItems, setViewItems] = useState<InventoryItemRow[]>([]);
 
+  // Alert focus
+  const [alertFocus, setAlertFocus] = useState<'low' | 'out' | null>(null);
+  const alertRef = useRef<HTMLDivElement>(null);
+
   const fetchAll = useCallback(async () => {
     if (!user) return;
     setLoading(true);
