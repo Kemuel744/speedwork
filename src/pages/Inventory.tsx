@@ -463,12 +463,20 @@ export default function Inventory() {
           <KpiTile icon={TrendingUp} label="Solde actuel"
             value={displayAmount(stockOverview.currentValue)}
             tone={stockOverview.currentValue >= stockOverview.initialPurchaseValue ? 'success' : 'destructive'} />
-          <KpiTile icon={PackageMinus} label="Stock bas"
+          <KpiTile
+            icon={PackageMinus} label="Stock bas"
             value={stockOverview.lowStock.toString()}
-            tone={stockOverview.lowStock > 0 ? 'destructive' : 'success'} />
-          <KpiTile icon={PackageX} label="En rupture"
+            tone={stockOverview.lowStock > 0 ? 'destructive' : 'success'}
+            className="cursor-pointer hover:bg-accent/50 transition-colors"
+            onClick={() => { setAlertFocus('low'); alertRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+          />
+          <KpiTile
+            icon={PackageX} label="En rupture"
             value={stockOverview.outOfStock.toString()}
-            tone={stockOverview.outOfStock > 0 ? 'destructive' : 'success'} />
+            tone={stockOverview.outOfStock > 0 ? 'destructive' : 'success'}
+            className="cursor-pointer hover:bg-accent/50 transition-colors"
+            onClick={() => { setAlertFocus('out'); alertRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+          />
         </div>
       </div>
 
