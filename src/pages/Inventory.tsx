@@ -704,8 +704,9 @@ export default function Inventory() {
   );
 }
 
-function KpiTile({ icon: Icon, label, value, tone }: {
+function KpiTile({ icon: Icon, label, value, tone, onClick, className }: {
   icon: any; label: string; value: string; tone?: 'success' | 'destructive';
+  onClick?: () => void; className?: string;
 }) {
   const toneClass = tone === 'destructive'
     ? 'text-destructive bg-destructive/10'
@@ -713,9 +714,9 @@ function KpiTile({ icon: Icon, label, value, tone }: {
       ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10'
       : 'text-primary bg-primary/10';
   return (
-    <div className="rounded-lg border border-border bg-card p-3">
+    <div className={cn("rounded-lg border border-border bg-card p-3", onClick && "cursor-pointer hover:bg-accent/50 transition-colors", className)} onClick={onClick}>
       <div className="flex items-center gap-2 mb-1">
-        <div className={`w-7 h-7 rounded-md flex items-center justify-center ${toneClass}`}>
+        <div className={cn("w-7 h-7 rounded-md flex items-center justify-center", toneClass)}>
           <Icon className="w-3.5 h-3.5" />
         </div>
         <p className="text-xs text-muted-foreground">{label}</p>
