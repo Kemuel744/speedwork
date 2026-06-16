@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import {
   ClipboardCheck, Plus, ScanLine, Printer, FileSpreadsheet,
   Search, History, CheckCircle2, AlertTriangle, TrendingUp, Package, Trash2,
+  Wallet, ShoppingCart, PackageX, PackageMinus,
 } from 'lucide-react';
 import QRScanner from '@/components/reports/QRScanner';
 import { printElement } from '@/lib/printElement';
@@ -25,6 +26,7 @@ import { fr } from 'date-fns/locale';
 interface Product {
   id: string; name: string; sku: string | null; barcode: string | null;
   unit_price: number; quantity_in_stock: number;
+  cost_price: number | null; alert_threshold: number | null;
 }
 interface InventoryHeader {
   id: string; name: string; inventory_date: string; location_id: string | null;
@@ -45,6 +47,7 @@ export default function Inventory() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [inventories, setInventories] = useState<InventoryHeader[]>([]);
+  const [purchasedByProduct, setPurchasedByProduct] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
 
   // Creation dialog
@@ -68,12 +71,20 @@ export default function Inventory() {
   const fetchAll = useCallback(async () => {
     if (!user) return;
     setLoading(true);
-    const [pRes, iRes] = await Promise.all([
-      supabase.from('products').select('id,name,sku,barcode,unit_price,quantity_in_stock').order('name'),
+    const [pRes, iRes, mRes] = await Promise.all([
+      supabase.from('products').select('id,name,sku,barcode,unit_price,quantity_in_stock,cost_price,alert_threshold').order('name'),
       supabase.from('inventories').select('*').order('created_at', { ascending: false }),
+      supabase.from('stock_movements').select('product_id,quantity').gt('quantity', 0),
     ]);
     if (pRes.data) setProducts(pRes.data as Product[]);
     if (iRes.data) setInventories(iRes.data as InventoryHeader[]);
+    if (mRes.data) {
+      const map: Record<string, number> = {};
+      (mRes.data as any[]).forEach(m => {
+        map[m.product_id] = (map[m.product_id] || 0) + Number(m.quantity || 0);
+      });
+      setPurchasedByProduct(map);
+    }
     setLoading(false);
   }, [user]);
 
@@ -111,6 +122,42 @@ export default function Inventory() {
       : 100;
     return { last, checked, variance, loss, accuracy: avgAccuracy };
   }, [inventories]);
+
+  // Global stock overview
+  const stockOverview = useMemo(() => {
+    let initialUnits = 0;
+    let currentUnits = 0;
+    let initialPurchaseValue = 0;
+    let currentValue = 0;
+    let lowStock = 0;
+    let outOfStock = 0;
+    products.forEach(p => {
+      const cost = Number(p.cost_price) || Number(p.unit_price) || 0;
+      const qty = Number(p.quantity_in_stock) || 0;
+      const initialQty = Math.max(qty, purchasedByProduct[p.id] || 0);
+      initialUnits += initialQty;
+      currentUnits += qty;
+      initialPurchaseValue += initialQty * cost;
+      currentValue += qty * cost;
+      const threshold = Number(p.alert_threshold) || 0;
+      if (qty <= 0) outOfStock += 1;
+      else if (threshold > 0 && qty <= threshold) lowStock += 1;
+    });
+    return { initialUnits, currentUnits, initialPurchaseValue, currentValue, lowStock, outOfStock };
+  }, [products, purchasedByProduct]);
+
+  const lowStockList = useMemo(
+    () => products.filter(p => {
+      const qty = Number(p.quantity_in_stock) || 0;
+      const t = Number(p.alert_threshold) || 0;
+      return qty > 0 && t > 0 && qty <= t;
+    }),
+    [products],
+  );
+  const outOfStockList = useMemo(
+    () => products.filter(p => (Number(p.quantity_in_stock) || 0) <= 0),
+    [products],
+  );
 
   const createInventory = async () => {
     if (!user) return;
