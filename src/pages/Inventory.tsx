@@ -445,6 +445,89 @@ export default function Inventory() {
           value={`${kpis.accuracy.toFixed(1)}%`} tone="success" />
       </div>
 
+      {/* Vue d'ensemble du stock */}
+      <div>
+        <h2 className="text-sm font-semibold text-muted-foreground mb-2">Vue d'ensemble du stock</h2>
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-2">
+          <KpiTile icon={ShoppingCart} label="Stock initial"
+            value={`${stockOverview.initialUnits} u.`} />
+          <KpiTile icon={Package} label="Stock actuel"
+            value={`${stockOverview.currentUnits} u.`} />
+          <KpiTile icon={Wallet} label="Achat stock initial"
+            value={displayAmount(stockOverview.initialPurchaseValue)} />
+          <KpiTile icon={TrendingUp} label="Solde actuel"
+            value={displayAmount(stockOverview.currentValue)}
+            tone={stockOverview.currentValue >= stockOverview.initialPurchaseValue ? 'success' : 'destructive'} />
+          <KpiTile icon={PackageMinus} label="Stock bas"
+            value={stockOverview.lowStock.toString()}
+            tone={stockOverview.lowStock > 0 ? 'destructive' : 'success'} />
+          <KpiTile icon={PackageX} label="En rupture"
+            value={stockOverview.outOfStock.toString()}
+            tone={stockOverview.outOfStock > 0 ? 'destructive' : 'success'} />
+        </div>
+      </div>
+
+      {/* Produits en alerte */}
+      {(lowStockList.length > 0 || outOfStockList.length > 0) && (
+        <div className="grid gap-3 lg:grid-cols-2">
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <PackageMinus className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                  <h2 className="font-semibold">Produits en stock bas</h2>
+                </div>
+                <Badge variant="secondary">{lowStockList.length}</Badge>
+              </div>
+              {lowStockList.length === 0 ? (
+                <p className="text-sm text-muted-foreground italic">Aucun produit en stock bas.</p>
+              ) : (
+                <div className="space-y-1.5 max-h-64 overflow-y-auto">
+                  {lowStockList.map(p => (
+                    <div key={p.id} className="flex items-center justify-between border border-border/50 rounded-md px-3 py-2 text-sm">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium truncate">{p.name}</p>
+                        <p className="text-xs text-muted-foreground">Seuil : {p.alert_threshold}</p>
+                      </div>
+                      <Badge variant="outline" className="text-amber-700 dark:text-amber-300 border-amber-500/50">
+                        {p.quantity_in_stock} u.
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <PackageX className="w-4 h-4 text-destructive" />
+                  <h2 className="font-semibold">Produits en rupture</h2>
+                </div>
+                <Badge variant="secondary">{outOfStockList.length}</Badge>
+              </div>
+              {outOfStockList.length === 0 ? (
+                <p className="text-sm text-muted-foreground italic">Aucun produit en rupture.</p>
+              ) : (
+                <div className="space-y-1.5 max-h-64 overflow-y-auto">
+                  {outOfStockList.map(p => (
+                    <div key={p.id} className="flex items-center justify-between border border-border/50 rounded-md px-3 py-2 text-sm">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium truncate">{p.name}</p>
+                        {p.sku && <p className="text-xs text-muted-foreground">{p.sku}</p>}
+                      </div>
+                      <Badge variant="destructive">0 u.</Badge>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       {/* History */}
       <Card>
         <CardContent className="p-4">
