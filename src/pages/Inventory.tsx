@@ -481,8 +481,8 @@ export default function Inventory() {
       </div>
 
       {/* Produits en alerte */}
-      {(lowStockList.length > 0 || outOfStockList.length > 0) && (
-        <div className="grid gap-3 lg:grid-cols-2">
+      <div ref={alertRef}>
+        {alertFocus === 'low' && (
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
@@ -490,12 +490,17 @@ export default function Inventory() {
                   <PackageMinus className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                   <h2 className="font-semibold">Produits en stock bas</h2>
                 </div>
-                <Badge variant="secondary">{lowStockList.length}</Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary">{lowStockList.length}</Badge>
+                  <Button variant="ghost" size="sm" onClick={() => setAlertFocus(null)}>
+                    Voir tout
+                  </Button>
+                </div>
               </div>
               {lowStockList.length === 0 ? (
                 <p className="text-sm text-muted-foreground italic">Aucun produit en stock bas.</p>
               ) : (
-                <div className="space-y-1.5 max-h-64 overflow-y-auto">
+                <div className="space-y-1.5">
                   {lowStockList.map(p => (
                     <div key={p.id} className="flex items-center justify-between border border-border/50 rounded-md px-3 py-2 text-sm">
                       <div className="min-w-0 flex-1">
@@ -511,7 +516,9 @@ export default function Inventory() {
               )}
             </CardContent>
           </Card>
+        )}
 
+        {alertFocus === 'out' && (
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
@@ -519,12 +526,17 @@ export default function Inventory() {
                   <PackageX className="w-4 h-4 text-destructive" />
                   <h2 className="font-semibold">Produits en rupture</h2>
                 </div>
-                <Badge variant="secondary">{outOfStockList.length}</Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary">{outOfStockList.length}</Badge>
+                  <Button variant="ghost" size="sm" onClick={() => setAlertFocus(null)}>
+                    Voir tout
+                  </Button>
+                </div>
               </div>
               {outOfStockList.length === 0 ? (
                 <p className="text-sm text-muted-foreground italic">Aucun produit en rupture.</p>
               ) : (
-                <div className="space-y-1.5 max-h-64 overflow-y-auto">
+                <div className="space-y-1.5">
                   {outOfStockList.map(p => (
                     <div key={p.id} className="flex items-center justify-between border border-border/50 rounded-md px-3 py-2 text-sm">
                       <div className="min-w-0 flex-1">
@@ -538,8 +550,68 @@ export default function Inventory() {
               )}
             </CardContent>
           </Card>
-        </div>
-      )}
+        )}
+
+        {!alertFocus && (lowStockList.length > 0 || outOfStockList.length > 0) && (
+          <div className="grid gap-3 lg:grid-cols-2">
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <PackageMinus className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                    <h2 className="font-semibold">Produits en stock bas</h2>
+                  </div>
+                  <Badge variant="secondary">{lowStockList.length}</Badge>
+                </div>
+                {lowStockList.length === 0 ? (
+                  <p className="text-sm text-muted-foreground italic">Aucun produit en stock bas.</p>
+                ) : (
+                  <div className="space-y-1.5 max-h-64 overflow-y-auto">
+                    {lowStockList.map(p => (
+                      <div key={p.id} className="flex items-center justify-between border border-border/50 rounded-md px-3 py-2 text-sm">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium truncate">{p.name}</p>
+                          <p className="text-xs text-muted-foreground">Seuil : {p.alert_threshold}</p>
+                        </div>
+                        <Badge variant="outline" className="text-amber-700 dark:text-amber-300 border-amber-500/50">
+                          {p.quantity_in_stock} u.
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <PackageX className="w-4 h-4 text-destructive" />
+                    <h2 className="font-semibold">Produits en rupture</h2>
+                  </div>
+                  <Badge variant="secondary">{outOfStockList.length}</Badge>
+                </div>
+                {outOfStockList.length === 0 ? (
+                  <p className="text-sm text-muted-foreground italic">Aucun produit en rupture.</p>
+                ) : (
+                  <div className="space-y-1.5 max-h-64 overflow-y-auto">
+                    {outOfStockList.map(p => (
+                      <div key={p.id} className="flex items-center justify-between border border-border/50 rounded-md px-3 py-2 text-sm">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium truncate">{p.name}</p>
+                          {p.sku && <p className="text-xs text-muted-foreground">{p.sku}</p>}
+                        </div>
+                        <Badge variant="destructive">0 u.</Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </div>
 
       {/* History */}
       <Card>
