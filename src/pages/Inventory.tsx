@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import {
   ClipboardCheck, Plus, ScanLine, Printer, FileSpreadsheet,
   Search, History, CheckCircle2, AlertTriangle, TrendingUp, Package, Trash2,
+  Wallet, ShoppingCart, PackageX, PackageMinus,
 } from 'lucide-react';
 import QRScanner from '@/components/reports/QRScanner';
 import { printElement } from '@/lib/printElement';
@@ -25,6 +26,7 @@ import { fr } from 'date-fns/locale';
 interface Product {
   id: string; name: string; sku: string | null; barcode: string | null;
   unit_price: number; quantity_in_stock: number;
+  cost_price: number | null; alert_threshold: number | null;
 }
 interface InventoryHeader {
   id: string; name: string; inventory_date: string; location_id: string | null;
@@ -45,6 +47,7 @@ export default function Inventory() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [inventories, setInventories] = useState<InventoryHeader[]>([]);
+  const [purchasedByProduct, setPurchasedByProduct] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
 
   // Creation dialog
@@ -68,12 +71,20 @@ export default function Inventory() {
   const fetchAll = useCallback(async () => {
     if (!user) return;
     setLoading(true);
-    const [pRes, iRes] = await Promise.all([
-      supabase.from('products').select('id,name,sku,barcode,unit_price,quantity_in_stock').order('name'),
+    const [pRes, iRes, mRes] = await Promise.all([
+      supabase.from('products').select('id,name,sku,barcode,unit_price,quantity_in_stock,cost_price,alert_threshold').order('name'),
       supabase.from('inventories').select('*').order('created_at', { ascending: false }),
+      supabase.from('stock_movements').select('product_id,quantity').gt('quantity', 0),
     ]);
     if (pRes.data) setProducts(pRes.data as Product[]);
     if (iRes.data) setInventories(iRes.data as InventoryHeader[]);
+    if (mRes.data) {
+      const map: Record<string, number> = {};
+      (mRes.data as any[]).forEach(m => {
+        map[m.product_id] = (map[m.product_id] || 0) + Number(m.quantity || 0);
+      });
+      setPurchasedByProduct(map);
+    }
     setLoading(false);
   }, [user]);
 
@@ -111,6 +122,42 @@ export default function Inventory() {
       : 100;
     return { last, checked, variance, loss, accuracy: avgAccuracy };
   }, [inventories]);
+
+  // Global stock overview
+  const stockOverview = useMemo(() => {
+    let initialUnits = 0;
+    let currentUnits = 0;
+    let initialPurchaseValue = 0;
+    let currentValue = 0;
+    let lowStock = 0;
+    let outOfStock = 0;
+    products.forEach(p => {
+      const cost = Number(p.cost_price) || Number(p.unit_price) || 0;
+      const qty = Number(p.quantity_in_stock) || 0;
+      const initialQty = Math.max(qty, purchasedByProduct[p.id] || 0);
+      initialUnits += initialQty;
+      currentUnits += qty;
+      initialPurchaseValue += initialQty * cost;
+      currentValue += qty * cost;
+      const threshold = Number(p.alert_threshold) || 0;
+      if (qty <= 0) outOfStock += 1;
+      else if (threshold > 0 && qty <= threshold) lowStock += 1;
+    });
+    return { initialUnits, currentUnits, initialPurchaseValue, currentValue, lowStock, outOfStock };
+  }, [products, purchasedByProduct]);
+
+  const lowStockList = useMemo(
+    () => products.filter(p => {
+      const qty = Number(p.quantity_in_stock) || 0;
+      const t = Number(p.alert_threshold) || 0;
+      return qty > 0 && t > 0 && qty <= t;
+    }),
+    [products],
+  );
+  const outOfStockList = useMemo(
+    () => products.filter(p => (Number(p.quantity_in_stock) || 0) <= 0),
+    [products],
+  );
 
   const createInventory = async () => {
     if (!user) return;
@@ -397,6 +444,89 @@ export default function Inventory() {
         <KpiTile icon={CheckCircle2} label="Taux de précision"
           value={`${kpis.accuracy.toFixed(1)}%`} tone="success" />
       </div>
+
+      {/* Vue d'ensemble du stock */}
+      <div>
+        <h2 className="text-sm font-semibold text-muted-foreground mb-2">Vue d'ensemble du stock</h2>
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-2">
+          <KpiTile icon={ShoppingCart} label="Stock initial"
+            value={`${stockOverview.initialUnits} u.`} />
+          <KpiTile icon={Package} label="Stock actuel"
+            value={`${stockOverview.currentUnits} u.`} />
+          <KpiTile icon={Wallet} label="Achat stock initial"
+            value={displayAmount(stockOverview.initialPurchaseValue)} />
+          <KpiTile icon={TrendingUp} label="Solde actuel"
+            value={displayAmount(stockOverview.currentValue)}
+            tone={stockOverview.currentValue >= stockOverview.initialPurchaseValue ? 'success' : 'destructive'} />
+          <KpiTile icon={PackageMinus} label="Stock bas"
+            value={stockOverview.lowStock.toString()}
+            tone={stockOverview.lowStock > 0 ? 'destructive' : 'success'} />
+          <KpiTile icon={PackageX} label="En rupture"
+            value={stockOverview.outOfStock.toString()}
+            tone={stockOverview.outOfStock > 0 ? 'destructive' : 'success'} />
+        </div>
+      </div>
+
+      {/* Produits en alerte */}
+      {(lowStockList.length > 0 || outOfStockList.length > 0) && (
+        <div className="grid gap-3 lg:grid-cols-2">
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <PackageMinus className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                  <h2 className="font-semibold">Produits en stock bas</h2>
+                </div>
+                <Badge variant="secondary">{lowStockList.length}</Badge>
+              </div>
+              {lowStockList.length === 0 ? (
+                <p className="text-sm text-muted-foreground italic">Aucun produit en stock bas.</p>
+              ) : (
+                <div className="space-y-1.5 max-h-64 overflow-y-auto">
+                  {lowStockList.map(p => (
+                    <div key={p.id} className="flex items-center justify-between border border-border/50 rounded-md px-3 py-2 text-sm">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium truncate">{p.name}</p>
+                        <p className="text-xs text-muted-foreground">Seuil : {p.alert_threshold}</p>
+                      </div>
+                      <Badge variant="outline" className="text-amber-700 dark:text-amber-300 border-amber-500/50">
+                        {p.quantity_in_stock} u.
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <PackageX className="w-4 h-4 text-destructive" />
+                  <h2 className="font-semibold">Produits en rupture</h2>
+                </div>
+                <Badge variant="secondary">{outOfStockList.length}</Badge>
+              </div>
+              {outOfStockList.length === 0 ? (
+                <p className="text-sm text-muted-foreground italic">Aucun produit en rupture.</p>
+              ) : (
+                <div className="space-y-1.5 max-h-64 overflow-y-auto">
+                  {outOfStockList.map(p => (
+                    <div key={p.id} className="flex items-center justify-between border border-border/50 rounded-md px-3 py-2 text-sm">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium truncate">{p.name}</p>
+                        {p.sku && <p className="text-xs text-muted-foreground">{p.sku}</p>}
+                      </div>
+                      <Badge variant="destructive">0 u.</Badge>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* History */}
       <Card>
