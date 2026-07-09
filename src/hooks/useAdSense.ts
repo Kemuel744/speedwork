@@ -6,7 +6,7 @@ export function useAdSense() {
     if (loaded.current) return;
     if (!document.querySelector('script[src*="adsbygoogle"]')) {
       const s = document.createElement("script");
-      s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9622797998614025";
+      s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7631581991404557";
       s.async = true;
       s.crossOrigin = "anonymous";
       document.head.appendChild(s);
